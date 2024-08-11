@@ -2,11 +2,12 @@
 name = "zugferd"
 version = "0.1.0"
 edition = "2021"
-authors = "FaultierSP <faultiersp@decreation.org>"
+authors = ["FaultierSP <faultiersp@decreation.org>"]
 description = "Generate a ZUGFeRD XML for European e-invoices."
-
+repository = "https://github.com/FaultierSP/zugferd_rust"
+licence = "Apache-2.0"
 
 [dependencies]
 chrono = "0.4.38"
-serde = { version = "1.0.205", features = ["derive"] }
+serde = { version = "1.0.206", features = ["derive"] }
 serde-xml-rs = "0.6.0"
