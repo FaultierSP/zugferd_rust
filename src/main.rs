@@ -67,4 +67,6 @@ fn main() {
     }
 
     println!("Generated ZUGFeRD XML: {}",xml_string);
+
+    let _ = zugferd::components::functions::write_xml_to_file(xml_string,"examples/generated_minimum.xml",true);
 }
