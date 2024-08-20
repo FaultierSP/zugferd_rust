@@ -5,7 +5,7 @@ This crate generates an XML with the ZUGFeRD specification that can be embedded 
 > [!WARNING]
 > This crate is pretty much work in progress.
 
-Although you can generate a minimum level XML, this crate is more of a starting point and an invitation for feedback and collaboration. Breaking changes are not intended, but are not impossible either.
+Although you can generate a minimum and basic wl level XML, this crate is more of a starting point and an invitation for feedback and collaboration. Breaking changes are not intended, but are not impossible either.
 
 ## Installation
 Add the crate:
@@ -80,9 +80,10 @@ match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
 
 println!("Generated ZUGFeRD XML: {}",xml_string);
 ~~~
+Please check `main.rs` for further examples.
 ## Roadmap
 - [x] generation of minimum level
-- [ ] generation of basic level without lines
+- [x] generation of basic level without lines
 - [ ] generation of basic level
 - [ ] generation of EN 16931 level
 - [ ] generation of extended level

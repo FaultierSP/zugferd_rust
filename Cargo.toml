@@ -9,5 +9,5 @@ license = "Apache-2.0"
 
 [dependencies]
 chrono = "0.4.38"
+quick-xml = { version = "0.36.1", features = ["serialize"] }
 serde = { version = "1.0.206", features = ["derive"] }
-serde-xml-rs = "0.6.0"

@@ -1,0 +1,93 @@
+<rsm:CrossIndustryInvoice>
+    <xmlns:xsi>http://www.w3.org/2001/XMLSchema-instance</xmlns:xsi>
+    <xmlns:qdt>urn:un:unece:uncefact:data:standard:QualifiedDataType:100</xmlns:qdt>
+    <xmlns:udt>urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100</xmlns:udt>
+    <xmlns:rsm>urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100</xmlns:rsm>
+    <xmlns:ram>urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100</xmlns:ram>
+    <rsm:ExchangedDocumentContext>
+        <ram:BusinessProcessSpecifiedDocumentContextParameter>
+            <ram:ID>process1</ram:ID>
+        </ram:BusinessProcessSpecifiedDocumentContextParameter>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:factur-x.eu:1p0:basicwl</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>INV-123456</ram:ID>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime>
+            <udt:DateTimeString format="102">20240810</udt:DateTimeString>
+        </ram:IssueDateTime>
+        <ram:IncludedNote>
+            <ram:Content>Note 1</ram:Content>
+        </ram:IncludedNote>
+        <ram:IncludedNote>
+            <ram:Content>Very important note 2</ram:Content>
+        </ram:IncludedNote>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:BuyerReference>BR-7890</ram:BuyerReference>
+            <ram:SellerTradeParty>
+                <ram:Name>Seller Corp.</ram:Name>
+                <ram:SpecifiedLegalOrganization>
+                    <ram:ID schemeID="0002">LegalOrg-001</ram:ID>
+                </ram:SpecifiedLegalOrganization>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>66666</ram:PostcodeCode>
+                    <ram:LineOne>Best street</ram:LineOne>
+                    <ram:LineTwo>Building 3</ram:LineTwo>
+                    <ram:LineThree>Ap. 18</ram:LineThree>
+                    <ram:CityName>Hometown</ram:CityName>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="VA">DE123456789</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>Buyer Inc.</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>777777</ram:PostcodeCode>
+                    <ram:LineOne>Main street</ram:LineOne>
+                    <ram:LineTwo>Near pizzeria</ram:LineTwo>
+                    <ram:CityName>Springfield</ram:CityName>
+                    <ram:CountryID>NotSet</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:SpecifiedLegalOrganization>
+                    <ram:ID schemeID="0002">LegalOrg-002</ram:ID>
+                </ram:SpecifiedLegalOrganization>
+            </ram:BuyerTradeParty>
+            <ram:BuyerOrderReferencedDocument>
+                <ram:IssuerAssignedID>OD-2024-001</ram:IssuerAssignedID>
+            </ram:BuyerOrderReferencedDocument>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery>
+            <ram:ActualDeliverySupplyChainEvent>
+                <ram:OccurrenceDateTime format="102">20240706</ram:OccurrenceDateTime>
+            </ram:ActualDeliverySupplyChainEvent>
+        </ram:ApplicableHeaderTradeDelivery>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>16.90</ram:LineTotalAmount>
+                <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
+                <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+                <ram:TaxBasisTotalAmount>100.00</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">19.00</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount>119.00</ram:GrandTotalAmount>
+                <ram:DuePayableAmount>69.00</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>12.44</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode>
+                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:CategoryCode>S</ram:CategoryCode>
+                <ram:RateApplicablePercent>42.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradePaymentTerms>
+                <ram:DueDateTime format="102">20250412</ram:DueDateTime>
+            </ram:SpecifiedTradePaymentTerms>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

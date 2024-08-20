@@ -6,6 +6,7 @@ use crate::components::enums::{
     invoice_type_code::InvoiceTypeCode,
     country_code::CountryCode,
     currency_code::CurrencyCode,
+    vat_category_code::VATCategoryCode,
 };
 
 use crate::components::constants;
@@ -14,6 +15,19 @@ use crate::components::constants;
 fn f64_format <S> (value: &f64, serializer: S) -> Result<S::Ok, S::Error> where S:Serializer {
     let formatted = format!("{:.2}",value);
     serializer.serialize_str(&formatted)
+}
+
+fn format_f64_option <S> (option: &Option<f64>, serializer: S) -> Result<S::Ok, S::Error>
+where S:Serializer
+{
+    if option.is_some() {
+        let formatted = format!("{:.2}",option.unwrap());
+        return serializer.serialize_str(&formatted);
+    }
+    else {
+        return serializer.serialize_none();
+        //return Err(serde::ser::Error::custom("Expected a value, got None"));
+    }
 }
 
 //Specifications
@@ -78,6 +92,8 @@ pub struct Document<'invoice> {
     pub type_code: InvoiceTypeCode,
     #[serde(rename="ram:IssueDateTime")]
     pub issue_date_time: IssueDateTime<'invoice>,
+    #[serde(rename="ram:IncludedNote", skip_serializing_if = "Option::is_none")]
+    pub included_note: Option<Vec<IncludedNote>>,
 }
 
 #[derive(Serialize)]
@@ -92,7 +108,13 @@ pub struct Guideline {
     pub id: SpecificationLevel,
 }
 
-#[derive(Serialize,Clone)]
+#[derive(Serialize)]
+pub struct IssueDateTime<'invoice> {
+    #[serde(rename="udt:DateTimeString")]
+    pub date_time_string: DateTimeString<'invoice>,
+}
+
+#[derive(Serialize, Clone)]
 pub struct DateTimeString<'invoice> {
     #[serde(rename="@format")]
     format: &'invoice str,
@@ -109,10 +131,10 @@ impl<'invoice> DateTimeString<'invoice> {
     }
 }
 
-#[derive(Serialize)]
-pub struct IssueDateTime<'invoice> {
-    #[serde(rename="udt:DateTimeString")]
-    pub date_time_string: DateTimeString<'invoice>,
+#[derive(Serialize, Clone)]
+pub struct IncludedNote {
+    #[serde(rename="ram:Content")]
+    pub content: String,
 }
 
 #[derive(Serialize)]
@@ -120,9 +142,9 @@ pub struct SupplyChainTradeTransaction<'invoice> {
     #[serde(rename="ram:ApplicableHeaderTradeAgreement")]
     pub applicable_header_trade_agreement: ApplicableHeaderTradeAgreement<'invoice>,
     #[serde(rename="ram:ApplicableHeaderTradeDelivery")]
-    pub applicable_header_trade_delivery: ApplicableHeaderTradeDelivery,
+    pub applicable_header_trade_delivery: ApplicableHeaderTradeDelivery<'invoice>,
     #[serde(rename="ram:ApplicableHeaderTradeSettlement")]
-    pub applicable_header_trade_settlement: ApplicableHeaderTradeSettlement,
+    pub applicable_header_trade_settlement: ApplicableHeaderTradeSettlement<'invoice>,
 }
 
 #[derive(Serialize)]
@@ -144,7 +166,7 @@ pub struct SellerTradeParty<'invoice> {
     #[serde(rename="ram:SpecifiedLegalOrganization")]
     pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
     #[serde(rename="ram:PostalTradeAddress")]
-    pub postal_trade_address: PostalTradeAddress,
+    pub postal_trade_address: PostalTradeAddress<'invoice>,
     #[serde(rename="ram:SpecifiedTaxRegistration")]
     pub specified_tax_registration: SpecifiedTaxRegistration<'invoice>,
 }
@@ -172,10 +194,35 @@ pub struct SpecifiedLegalOrganization<'invoice> {
     pub id: LegalOrganizationID<'invoice>,
 }
 
-#[derive(Serialize)]
-pub struct PostalTradeAddress {
+#[derive(Serialize, Clone)]
+pub struct PostalTradeAddress <'invoice> {
+
+    #[serde(rename="ram:PostcodeCode", skip_serializing_if = "Option::is_none")]
+    pub postcode_code: Option<&'invoice str>,
+    #[serde(rename="ram:LineOne", skip_serializing_if = "Option::is_none")]
+    pub line_one: Option<&'invoice str>,
+    #[serde(rename="ram:LineTwo", skip_serializing_if = "Option::is_none")]
+    pub line_two: Option<&'invoice str>,
+    #[serde(rename="ram:LineThree", skip_serializing_if = "Option::is_none")]
+    pub line_three: Option<&'invoice str>,
+    #[serde(rename="ram:CityName", skip_serializing_if = "Option::is_none")]
+    pub city_name: Option<&'invoice str>,
+
     #[serde(rename="ram:CountryID")]
     pub country_id: CountryCode,
+}
+
+impl<'invoice> Default for PostalTradeAddress<'invoice> {
+    fn default() -> Self {
+        Self {
+            postcode_code: None,
+            line_one: None,
+            line_two: None,
+            line_three: None,
+            city_name: None,
+            country_id: CountryCode::NotSet,
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -205,6 +252,8 @@ pub struct SpecifiedTaxRegistration<'invoice> {
 pub struct BuyerTradeParty<'invoice> {
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
+    #[serde(rename="ram:PostalTradeAddress")]
+    pub postal_trade_address: PostalTradeAddress<'invoice>,
     #[serde(rename="ram:SpecifiedLegalOrganization")]
     pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
 }
@@ -216,32 +265,111 @@ pub struct BuyerOrderReferencedDocument<'invoice> {
 }
 
 #[derive(Serialize)]
-pub struct ApplicableHeaderTradeDelivery {
+pub struct ApplicableHeaderTradeDelivery<'invoice> {
+    #[serde(rename="ram:ActualDeliverySupplyChainEvent", skip_serializing_if = "Option::is_none")]
+    pub actual_delivery_supply_chain_event: Option<ActualDeliverySupplyChainEvent<'invoice>>,
+}
 
+#[derive(Serialize, Clone)]
+pub struct ActualDeliverySupplyChainEvent<'invoice> {
+    #[serde(rename="ram:OccurrenceDateTime", skip_serializing_if = "Option::is_none")]
+    pub occurrence_date_time: Option<DateTimeString<'invoice>>,
+}
+
+impl<'invoice> ApplicableHeaderTradeDelivery<'invoice> {
+    pub fn new_with_event(occurrence_date_time: Option<DateTimeString<'invoice>>) -> Self {
+        Self {
+            actual_delivery_supply_chain_event: if occurrence_date_time.is_some() {
+                Some(ActualDeliverySupplyChainEvent {
+                    occurrence_date_time
+                })
+            } else {
+                None
+            }
+        }
+    }
 }
 
 #[derive(Serialize)]
-pub struct ApplicableHeaderTradeSettlement {
+pub struct ApplicableHeaderTradeSettlement <'invoice>{
     #[serde(rename="ram:InvoiceCurrencyCode")]
     pub invoice_currency_code: CurrencyCode,
     #[serde(rename="ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
     pub specified_trade_settlement_header_monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
-    
+    #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
+    pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
+    #[serde(rename="ram:SpecifiedTradePaymentTerms", skip_serializing_if = "Option::is_none")]
+    pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
+}   
+
+#[derive(Serialize, Clone, Copy)]
+pub struct ApplicableTradeTax <'invoice> {
+    #[serde(rename="ram:CalculatedAmount",serialize_with="format_f64_option")]
+    pub calculated_amount: Option<f64>,
+    #[serde(rename="ram:TypeCode")]
+    pub type_code: &'invoice str,
+    #[serde(rename="ram:BasisAmount",serialize_with="format_f64_option")]
+    pub basis_amount: Option<f64>,
+    #[serde(rename="ram:CategoryCode")]
+    pub category_code: VATCategoryCode,
+    #[serde(rename="ram:RateApplicablePercent",serialize_with="format_f64_option")]
+    pub rate_applicable_percent: Option<f64>,
+
 }
 
-#[derive(Serialize)]
+impl<'invoice> Default for ApplicableTradeTax<'invoice> {
+    fn default() -> Self {
+        Self {
+            calculated_amount: None,
+            type_code: "VAT",
+            basis_amount: None,
+            category_code: VATCategoryCode::StandardRate,
+            rate_applicable_percent: None,
+        }
+    }
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedTradePaymentTerms <'invoice> {
+    #[serde(rename="ram:DueDateTime")]
+    pub due_date_time: DateTimeString<'invoice>,
+}
+
+#[derive(Serialize, Clone)]
 pub struct SpecifiedTradeSettlementHeaderMonetarySummation {
-    #[serde(rename="ram:TaxBasisTotalAmount",serialize_with="f64_format")]
-    pub tax_basis_total_amount: f64,
+    #[serde(rename="ram:LineTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub line_total_amount: Option<f64>,
+    #[serde(rename="ram:ChargeTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub charge_total_amount: Option<f64>,
+    #[serde(rename="ram:AllowanceTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub allowance_total_amount: Option<f64>,
+    
+    //Required for minimum specification
+    #[serde(rename="ram:TaxBasisTotalAmount",serialize_with="format_f64_option")]
+    pub tax_basis_total_amount: Option<f64>,
     #[serde(rename="ram:TaxTotalAmount")]
-    pub tax_total_amount: TaxTotalAmount,
-    #[serde(rename="ram:GrandTotalAmount",serialize_with="f64_format")]
-    pub grand_total_amount: f64,
-    #[serde(rename="ram:DuePayableAmount",serialize_with="f64_format")]
-    pub due_payable_amount: f64,
+    pub tax_total_amount: Option<TaxTotalAmount>,
+    #[serde(rename="ram:GrandTotalAmount",serialize_with="format_f64_option")]
+    pub grand_total_amount: Option<f64>,
+    #[serde(rename="ram:DuePayableAmount",serialize_with="format_f64_option")]
+    pub due_payable_amount: Option<f64>,
 }
 
-#[derive(Serialize)]
+impl Default for SpecifiedTradeSettlementHeaderMonetarySummation {
+    fn default() -> Self {
+        Self {
+            line_total_amount: None,
+            charge_total_amount: None,
+            allowance_total_amount: None,
+            tax_basis_total_amount: None,
+            tax_total_amount: None,
+            grand_total_amount: None,
+            due_payable_amount: None,
+        }
+    }
+}
+
+#[derive(Serialize, Clone)]
 pub struct TaxTotalAmount {
     #[serde(rename="@currencyID")]
     pub currency_id: CurrencyCode,

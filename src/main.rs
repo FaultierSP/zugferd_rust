@@ -35,11 +35,11 @@ fn main() {
     let tax: f64 = sum_net * 19.0 /100.0;
     let sum_gross: f64 = sum_net + tax;
     let customer_paid_already: f64 = 50.0;
-    
-    invoice_builder.set_tax_basis_total_amount(sum_net)
-            .set_tax_total_amount(tax)
-            .set_grand_total_amount(sum_gross)
-            .set_due_payable_amount(sum_gross - customer_paid_already);
+
+    invoice_builder.set_monetary_summation_tax_basis_total_amount(sum_net)
+            .set_monetary_summation_tax_total_amount(tax)
+            .set_monetary_summation_grand_total_amount(sum_gross)
+            .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 
     //You can check again
     match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
@@ -54,10 +54,45 @@ fn main() {
         }
     }
 
+    //Setting further data
+    //Basic WL
+    invoice_builder.set_invoice_notes(vec![
+        "Note 1",
+        "Very important note 2",
+    ]);
+
+    invoice_builder
+        .set_sellers_postal_trade_address_line_one("Best street")
+        .set_sellers_postal_trade_address_line_two("Building 3")
+        .set_sellers_postal_trade_address_line_three("Ap. 18")
+        .set_sellers_postal_trade_address_postcode_code("66666")
+        .set_sellers_postal_trade_address_city_name("Hometown");
+
+    invoice_builder
+        .set_buyers_postal_trade_address_line_one("Main street")
+        .set_buyers_postal_trade_address_line_two("Near pizzeria")
+        .set_buyers_postal_trade_address_postcode_code("777777")
+        .set_buyers_postal_trade_address_city_name("Springfield");
+
+    invoice_builder
+        .set_occurrence_date(chrono::NaiveDate::from_ymd_opt(2024,07,06).unwrap());
+
+    invoice_builder
+        .set_applicable_trade_tax_basis_amount(sum_net)
+        .set_applicable_trade_tax_calculated_amount(12.44)
+        .set_applicable_trade_tax_rate_applicable_percent(42.0);
+
+    invoice_builder.set_specified_trade_payment_terms_due_date(chrono::NaiveDate::from_ymd_opt(2025,4,12).unwrap());
+
+    invoice_builder
+        .set_monetary_summation_line_total_amount(16.90)
+        .set_monetary_summation_charge_total_amount(0.0)
+        .set_monetary_summation_allowance_total_amount(0.0);
+
     //Convert the instance to an actual XML string
     let mut xml_string: String = String::new();
 
-    match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
+    match invoice_builder.to_xml_string(SpecificationLevel::BasicWithoutLines) {
         Ok(string_returned_by_function) => {
             xml_string = string_returned_by_function;
         },
@@ -68,5 +103,5 @@ fn main() {
 
     println!("Generated ZUGFeRD XML: {}",xml_string);
 
-    let _ = zugferd::components::functions::write_xml_to_file(xml_string,"examples/generated_minimum.xml",true);
+    let _ = zugferd::components::functions::write_xml_to_file(xml_string,"examples/generated_basic_wl.xml",true);
 }

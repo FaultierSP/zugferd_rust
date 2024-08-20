@@ -1,22 +1,22 @@
 use serde::{Serialize, Serializer};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SpecificationLevel {
+    Minimum,
+    BasicWithoutLines,
     Basic,
     En16931,
-    Extended,
-    Minimum,
-    BasicWithLess,
+    Extended
 }
 
 impl SpecificationLevel {
     pub fn as_str(&self) -> &'static str {
         match self {
+            SpecificationLevel::Minimum => "urn:factur-x.eu:1p0:minimum",
+            SpecificationLevel::BasicWithoutLines => "urn:factur-x.eu:1p0:basicwl",
             SpecificationLevel::Basic => "urn:factur-x.eu:1p0:basic",
             SpecificationLevel::En16931 => "urn:factur-x.eu:1p0:en16931",
             SpecificationLevel::Extended => "urn:factur-x.eu:1p0:extended",
-            SpecificationLevel::Minimum => "urn:factur-x.eu:1p0:minimum",
-            SpecificationLevel::BasicWithLess => "urn:factur-x.eu:1p0:basicwl",
         }
     }
 }
