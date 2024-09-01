@@ -84,7 +84,7 @@ Please check `main.rs` for further examples.
 ## Roadmap
 - [x] generation of minimum level
 - [x] generation of basic level without lines
-- [ ] generation of basic level
+- [x] generation of basic level
 - [ ] generation of EN 16931 level
 - [ ] generation of extended level
 - [ ] validation of all levels
