@@ -1,4 +1,16 @@
-use zugferd::{InvoiceBuilder,InvoiceTypeCode,CountryCode,CurrencyCode,SpecificationLevel};
+use zugferd::components::enums::unit_code::UnitCode;
+use zugferd::{ApplicableTradeTax, BilledQuantity, CountryCode, CurrencyCode, InvoiceBuilder, InvoiceTypeCode, NetPriceProductTradePrice, SpecificationLevel, SpecifiedTradeSettlementLineMonetarySummation};
+// For Basic specification
+use zugferd::{
+    IncludedSupplyChainTradeLineItem,
+    AssociatedDocumentLineDocument,
+    SpecifiedTradeProduct,
+    GlobalID,
+    SpecifiedLineTradeAgreement,
+    SpecifiedLineTradeDelivery,
+    SpecifiedLineTradeSettlement,
+    components::enums::identifier_scheme_code::IdentifierSchemeCode,
+};
 
 fn main() {
     //Initialize and pass first data
@@ -89,10 +101,79 @@ fn main() {
         .set_monetary_summation_charge_total_amount(0.0)
         .set_monetary_summation_allowance_total_amount(0.0);
 
+    //Going even further with Basic specification
+    invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
+        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        specified_trade_product:SpecifiedTradeProduct {
+            global_id: GlobalID {
+                value: "1234567890123",
+                scheme_id: IdentifierSchemeCode::GTIN,
+            },
+            name: "Product 1",
+        },
+        specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            net_price_product_trade_price: NetPriceProductTradePrice {
+                charge_amount: 100.0,
+            },
+        },
+        specified_line_trade_delivery:SpecifiedLineTradeDelivery {
+            billed_quantity: BilledQuantity {
+                value: 1.0,
+                unit_code: UnitCode::Piece,
+            },
+        },
+        specified_line_trade_settlement:SpecifiedLineTradeSettlement {
+            applicable_trade_tax: Some(ApplicableTradeTax {
+                calculated_amount: Some(19.0),
+                type_code: "VAT",
+                category_code: zugferd::VATCategoryCode::StandardRate,
+                basis_amount: Some(100.0),
+                rate_applicable_percent: Some(19.0),
+            }),
+            specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
+                line_total_amount: 119.0,
+            },
+        },
+    });
+
+    invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
+        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        specified_trade_product:SpecifiedTradeProduct {
+            global_id: GlobalID {
+                value: "2546585465423",
+                scheme_id: IdentifierSchemeCode::GTIN,
+            },
+            name: "Product 2",
+        },
+        specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            net_price_product_trade_price: NetPriceProductTradePrice {
+                charge_amount: 1.0,
+            },
+        },
+        specified_line_trade_delivery:SpecifiedLineTradeDelivery {
+            billed_quantity: BilledQuantity {
+                value: 44.0,
+                unit_code: UnitCode::Piece,
+            },
+        },
+        specified_line_trade_settlement:SpecifiedLineTradeSettlement {
+            applicable_trade_tax: Some(ApplicableTradeTax {
+                calculated_amount: Some(0.44*19.0),
+                type_code: "VAT",
+                category_code: zugferd::VATCategoryCode::StandardRate,
+                basis_amount: Some(44.0),
+                rate_applicable_percent: Some(19.0),
+            }),
+            specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
+                line_total_amount: (44.0*1.19),
+            },
+        },
+    });
+
     //Convert the instance to an actual XML string
     let mut xml_string: String = String::new();
 
-    match invoice_builder.to_xml_string(SpecificationLevel::BasicWithoutLines) {
+    match invoice_builder.to_xml_string(SpecificationLevel::Basic) {
         Ok(string_returned_by_function) => {
             xml_string = string_returned_by_function;
         },
@@ -101,7 +182,7 @@ fn main() {
         }
     }
 
-    println!("Generated ZUGFeRD XML: {}",xml_string);
+    //println!("Generated ZUGFeRD XML: {}",xml_string);
 
-    let _ = zugferd::components::functions::write_xml_to_file(xml_string,"examples/generated_basic_wl.xml",true);
+    let _ = zugferd::components::functions::write_xml_to_file(xml_string,"examples/generated_basic.xml",true);
 }

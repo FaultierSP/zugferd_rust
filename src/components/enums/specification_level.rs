@@ -1,6 +1,6 @@
 use serde::{Serialize, Serializer};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SpecificationLevel {
     Minimum,
     BasicWithoutLines,

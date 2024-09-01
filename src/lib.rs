@@ -30,11 +30,6 @@ pub struct InvoiceBuilder<'invoice_builder> {
     buyers_order_specified_document: Option<&'invoice_builder str>,
     occurrence_date: Option<DateTimeString<'invoice_builder>>,
     invoice_currency_code: Option<CurrencyCode>,
-    /*monetary_summation_tax_basis_total_amount: Option<f64>,
-    monetary_summation_tax_basis_total_amount_str: &'invoice_builder str,
-    monetary_summation_tax_total_amount: Option<f64>,
-    monetary_summation_grand_total_amount: Option<f64>,
-    monetary_summation_due_payable_amount: Option<f64>,*/
     monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 
     //Basic WL specification
@@ -45,6 +40,9 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation_charge_total_amount: Option<f64>,
     monetary_summation_allowance_total_amount: Option<f64>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
+
+    //Basic specification
+    included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
 }
 
 impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
@@ -64,11 +62,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             buyers_order_specified_document: None,
             occurrence_date: None,
             invoice_currency_code: None,
-            /*monetary_summation_tax_basis_total_amount: None,
-            monetary_summation_tax_basis_total_amount_str: "",
-            monetary_summation_tax_total_amount: None,
-            monetary_summation_grand_total_amount: None,
-            monetary_summation_due_payable_amount: None,*/
             monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation::default(),
 
             applicable_trade_tax: None,
@@ -78,6 +71,8 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             monetary_summation_charge_total_amount: None,
             monetary_summation_allowance_total_amount: None,
             specified_trade_payment_terms: None,
+
+            included_supply_chain_trade_line_items: Vec::new(),
         }
     }
 
@@ -139,8 +134,8 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             error_text += "Invoice currency code not set\n";
         }
 
-        // Additional checks for different specification levels will be added here
-        if specification_level == SpecificationLevel::BasicWithoutLines {
+        // Additional checks for different specification levels
+        if specification_level >= SpecificationLevel::BasicWithoutLines {
 
             if self.applicable_trade_tax.is_none() {
                 error_text += "Applicable trade tax not set\n";
@@ -207,6 +202,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
             if self.monetary_summation.allowance_total_amount.is_none() {
                 error_text += "Specified trade settlement monetary summation: Allowance total amount not set\n";
+            }
+        }
+
+        if specification_level >= SpecificationLevel::Basic {
+            if self.included_supply_chain_trade_line_items.is_empty() {
+                error_text += "No included supply chain trade line items set\n";
             }
         }
 
@@ -452,11 +453,22 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
+    pub fn add_supply_chain_trade_line_item(&mut self, line_item: IncludedSupplyChainTradeLineItem<'invoice_builder>) -> &mut Self {
+        self.included_supply_chain_trade_line_items.push(line_item);
+        self
+    }
+
+    // What the whole crate is actually about
     pub fn to_xml_string(mut self,specification_level: SpecificationLevel) -> Result<String,String> {
         let built_invoice = self.build(specification_level)?;
 
         match quick_xml::se::to_string(&built_invoice) {
-          Ok(xml_string) => Ok(xml_string),
+          Ok(xml_string) => Ok(
+            format!(
+              "<?xml version='1.0' encoding='UTF-8'?>{}",
+              xml_string
+            )
+          ),
           Err(e) => Err(e.to_string()),  
         }
     }
@@ -481,6 +493,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 included_note: Some(self.document_notes.clone().unwrap_or_default()),
             },
             SupplyChainTradeTransaction {
+                included_supply_chain_trade_line_items: self.included_supply_chain_trade_line_items.clone(),
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
                     buyer_reference: self.buyer_reference.unwrap(),
                     seller_trade_party: SellerTradeParty {

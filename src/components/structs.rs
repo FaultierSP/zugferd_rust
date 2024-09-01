@@ -7,6 +7,8 @@ use crate::components::enums::{
     country_code::CountryCode,
     currency_code::CurrencyCode,
     vat_category_code::VATCategoryCode,
+    identifier_scheme_code::IdentifierSchemeCode,
+    unit_code::UnitCode,
 };
 
 use crate::components::constants;
@@ -14,6 +16,11 @@ use crate::components::constants;
 //Formatting and serializing functions
 fn f64_format <S> (value: &f64, serializer: S) -> Result<S::Ok, S::Error> where S:Serializer {
     let formatted = format!("{:.2}",value);
+    serializer.serialize_str(&formatted)
+}
+
+fn f64_format_with_precision_4 <S> (value: &f64, serializer: S) -> Result<S::Ok, S::Error> where S:Serializer {
+    let formatted = format!("{:.4}",value);
     serializer.serialize_str(&formatted)
 }
 
@@ -30,20 +37,24 @@ where S:Serializer
     }
 }
 
+fn vector_is_empty <S> (vector: &Vec<S>) -> bool {
+    vector.is_empty()
+}
+
 //Specifications
 #[derive(Serialize)]
 #[serde(rename="rsm:CrossIndustryInvoice")]
 pub struct Invoice<'invoice> {
     //Namespaces
-    #[serde(rename="xmlns:xsi")]
+    #[serde(rename="@xmlns:xsi")]
     xmlns_xsi: &'static str,
-    #[serde(rename="xmlns:qdt")]
+    #[serde(rename="@xmlns:qdt")]
     xmlns_qdt: &'static str,
-    #[serde(rename="xmlns:udt")]
+    #[serde(rename="@xmlns:udt")]
     xmlns_udt: &'static str,
-    #[serde(rename="xmlns:rsm")]
+    #[serde(rename="@xmlns:rsm")]
     xmlns_rsm: &'static str,
-    #[serde(rename="xmlns:ram")]
+    #[serde(rename="@xmlns:ram")]
     xmlns_ram: &'static str,
     
     //Document
@@ -145,6 +156,105 @@ pub struct SupplyChainTradeTransaction<'invoice> {
     pub applicable_header_trade_delivery: ApplicableHeaderTradeDelivery<'invoice>,
     #[serde(rename="ram:ApplicableHeaderTradeSettlement")]
     pub applicable_header_trade_settlement: ApplicableHeaderTradeSettlement<'invoice>,
+    #[serde(rename="ram:IncludedSupplyChainTradeLineItem", skip_serializing_if = "vector_is_empty")]
+    pub included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice>>,
+}
+
+#[derive(Serialize, Clone)]
+pub struct IncludedSupplyChainTradeLineItem<'invoice> {
+    #[serde(rename="ram:AssociatedDocumentLineDocument")]
+    pub associated_document_line_document: AssociatedDocumentLineDocument<'invoice>,
+    #[serde(rename="ram:SpecifiedTradeProduct")]
+    pub specified_trade_product: SpecifiedTradeProduct<'invoice>,
+    #[serde(rename="ram:SpecifiedLineTradeAgreement")]
+    pub specified_line_trade_agreement: SpecifiedLineTradeAgreement,
+    #[serde(rename="ram:SpecifiedLineTradeDelivery")]
+    pub specified_line_trade_delivery: SpecifiedLineTradeDelivery,
+    #[serde(rename="ram:SpecifiedLineTradeSettlement")]
+    pub specified_line_trade_settlement: SpecifiedLineTradeSettlement<'invoice>,
+}
+
+#[derive(Serialize, Clone)]
+pub struct AssociatedDocumentLineDocument<'invoice> {
+    #[serde(rename="ram:LineID")]
+    pub line_id: &'invoice str,
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedTradeProduct<'invoice> {
+    #[serde(rename="ram:GlobalID")]
+    pub global_id: GlobalID<'invoice>,
+    #[serde(rename="ram:Name")]
+    pub name: &'invoice str,
+    //#[serde(rename="ram:Description")]
+    //pub description: &'invoice str,
+}
+
+#[derive(Serialize, Clone)]
+pub struct GlobalID<'invoice> {
+    #[serde(rename="@schemeID")]
+    pub scheme_id: IdentifierSchemeCode,
+    #[serde(rename="$value")]
+    pub value: &'invoice str,
+}
+
+impl <'invoice> GlobalID<'invoice> {
+    pub fn new(scheme_id: IdentifierSchemeCode, value: &'invoice str) -> Self {
+        Self {
+            scheme_id,
+            value,
+        }
+    }
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedLineTradeAgreement {
+    #[serde(rename="ram:NetPriceProductTradePrice")]
+    pub net_price_product_trade_price: NetPriceProductTradePrice,
+}
+
+#[derive(Serialize, Clone)]
+pub struct NetPriceProductTradePrice {
+    #[serde(rename="ram:ChargeAmount",serialize_with="f64_format")]
+    pub charge_amount: f64,
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedLineTradeDelivery {
+    #[serde(rename="ram:BilledQuantity")]
+    pub billed_quantity: BilledQuantity,
+}
+
+#[derive(Serialize, Clone)]
+pub struct BilledQuantity {
+    #[serde(rename="@unitCode")]
+    pub unit_code: UnitCode,
+    #[serde(rename="$value",serialize_with="f64_format_with_precision_4")]
+    pub value: f64,
+}
+
+impl BilledQuantity {
+    pub fn new(unit_code: UnitCode, value: f64) -> Self {
+        Self {
+            unit_code,
+            value,
+        }
+    }
+    
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedLineTradeSettlement<'invoice> {
+    #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
+    pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
+    #[serde(rename="ram:SpecifiedTradeSettlementLineMonetarySummation")]
+    pub specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation,
+}
+
+#[derive(Serialize, Clone)]
+pub struct SpecifiedTradeSettlementLineMonetarySummation {
+    #[serde(rename="ram:LineTotalAmount", serialize_with="f64_format")]
+    pub line_total_amount: f64,
 }
 
 #[derive(Serialize)]
