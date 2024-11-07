@@ -103,7 +103,10 @@ fn main() {
 
     //Going even further with Basic specification
     invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
-        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        associated_document_line_document:AssociatedDocumentLineDocument {
+            line_id: "1",
+            included_note: None,
+        },
         specified_trade_product:SpecifiedTradeProduct {
             global_id: GlobalID {
                 value: "1234567890123",
@@ -137,7 +140,10 @@ fn main() {
     });
 
     invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
-        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        associated_document_line_document:AssociatedDocumentLineDocument {
+            line_id: "1",
+            included_note: None,
+        },
         specified_trade_product:SpecifiedTradeProduct {
             global_id: GlobalID {
                 value: "2546585465423",

@@ -178,6 +178,9 @@ pub struct IncludedSupplyChainTradeLineItem<'invoice> {
 pub struct AssociatedDocumentLineDocument<'invoice> {
     #[serde(rename="ram:LineID")]
     pub line_id: &'invoice str,
+    #[serde(rename="ram:IncludedNote", skip_serializing_if = "Option::is_none")]
+    /// BT-127-00
+    pub included_note: Option<&'invoice str>,
 }
 
 #[derive(Serialize, Clone, Debug)]
