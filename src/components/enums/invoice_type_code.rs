@@ -1,6 +1,6 @@
 use serde::{Serialize, Serializer};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum InvoiceTypeCode {
     CommercialInvoice,
     CreditNote,

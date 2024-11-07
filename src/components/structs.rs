@@ -42,7 +42,7 @@ fn vector_is_empty <S> (vector: &Vec<S>) -> bool {
 }
 
 //Specifications
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 #[serde(rename="rsm:CrossIndustryInvoice")]
 pub struct Invoice<'invoice> {
     //Namespaces
@@ -87,7 +87,7 @@ impl<'invoice> Invoice<'invoice> {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct DocumentContext<'invoice> {
     #[serde(rename="ram:BusinessProcessSpecifiedDocumentContextParameter")]
     pub business_process: BusinessProcess<'invoice>,
@@ -95,7 +95,7 @@ pub struct DocumentContext<'invoice> {
     pub guideline: Guideline,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct Document<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: &'invoice str,
@@ -107,25 +107,25 @@ pub struct Document<'invoice> {
     pub included_note: Option<Vec<IncludedNote>>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct BusinessProcess<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: &'invoice str,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct Guideline {
     #[serde(rename="ram:ID")]
     pub id: SpecificationLevel,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct IssueDateTime<'invoice> {
     #[serde(rename="udt:DateTimeString")]
     pub date_time_string: DateTimeString<'invoice>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct DateTimeString<'invoice> {
     #[serde(rename="@format")]
     format: &'invoice str,
@@ -142,13 +142,13 @@ impl<'invoice> DateTimeString<'invoice> {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct IncludedNote {
     #[serde(rename="ram:Content")]
     pub content: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SupplyChainTradeTransaction<'invoice> {
     #[serde(rename="ram:ApplicableHeaderTradeAgreement")]
     pub applicable_header_trade_agreement: ApplicableHeaderTradeAgreement<'invoice>,
@@ -160,7 +160,7 @@ pub struct SupplyChainTradeTransaction<'invoice> {
     pub included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice>>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct IncludedSupplyChainTradeLineItem<'invoice> {
     #[serde(rename="ram:AssociatedDocumentLineDocument")]
     pub associated_document_line_document: AssociatedDocumentLineDocument<'invoice>,
@@ -174,13 +174,13 @@ pub struct IncludedSupplyChainTradeLineItem<'invoice> {
     pub specified_line_trade_settlement: SpecifiedLineTradeSettlement<'invoice>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct AssociatedDocumentLineDocument<'invoice> {
     #[serde(rename="ram:LineID")]
     pub line_id: &'invoice str,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeProduct<'invoice> {
     #[serde(rename="ram:GlobalID")]
     pub global_id: GlobalID<'invoice>,
@@ -190,7 +190,7 @@ pub struct SpecifiedTradeProduct<'invoice> {
     //pub description: &'invoice str,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct GlobalID<'invoice> {
     #[serde(rename="@schemeID")]
     pub scheme_id: IdentifierSchemeCode,
@@ -207,25 +207,25 @@ impl <'invoice> GlobalID<'invoice> {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeAgreement {
     #[serde(rename="ram:NetPriceProductTradePrice")]
     pub net_price_product_trade_price: NetPriceProductTradePrice,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct NetPriceProductTradePrice {
     #[serde(rename="ram:ChargeAmount",serialize_with="f64_format")]
     pub charge_amount: f64,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeDelivery {
     #[serde(rename="ram:BilledQuantity")]
     pub billed_quantity: BilledQuantity,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct BilledQuantity {
     #[serde(rename="@unitCode")]
     pub unit_code: UnitCode,
@@ -243,7 +243,7 @@ impl BilledQuantity {
     
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeSettlement<'invoice> {
     #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
     pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
@@ -251,13 +251,13 @@ pub struct SpecifiedLineTradeSettlement<'invoice> {
     pub specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeSettlementLineMonetarySummation {
     #[serde(rename="ram:LineTotalAmount", serialize_with="f64_format")]
     pub line_total_amount: f64,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ApplicableHeaderTradeAgreement<'invoice> {
     #[serde(rename="ram:BuyerReference")]
     pub buyer_reference: &'invoice str,
@@ -269,7 +269,7 @@ pub struct ApplicableHeaderTradeAgreement<'invoice> {
     pub buyer_order_referenced_document: BuyerOrderReferencedDocument<'invoice>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SellerTradeParty<'invoice> {
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
@@ -281,7 +281,7 @@ pub struct SellerTradeParty<'invoice> {
     pub specified_tax_registration: SpecifiedTaxRegistration<'invoice>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct LegalOrganizationID<'invoice> {
     #[serde(rename = "@schemeID")]
     scheme_id: &'static str,
@@ -298,13 +298,13 @@ impl<'invoice> LegalOrganizationID<'invoice> {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLegalOrganization<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: LegalOrganizationID<'invoice>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct PostalTradeAddress <'invoice> {
 
     #[serde(rename="ram:PostcodeCode", skip_serializing_if = "Option::is_none")]
@@ -335,7 +335,7 @@ impl<'invoice> Default for PostalTradeAddress<'invoice> {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTaxRegistrationID<'invoice> {
     #[serde(rename = "@schemeID")]
     scheme_id: &'static str,
@@ -352,13 +352,13 @@ impl<'invoice> SpecifiedTaxRegistrationID<'invoice> {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTaxRegistration<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: SpecifiedTaxRegistrationID<'invoice>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct BuyerTradeParty<'invoice> {
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
@@ -368,19 +368,19 @@ pub struct BuyerTradeParty<'invoice> {
     pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct BuyerOrderReferencedDocument<'invoice> {
     #[serde(rename="ram:IssuerAssignedID")]
     pub issuer_assigned_id: &'invoice str,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ApplicableHeaderTradeDelivery<'invoice> {
     #[serde(rename="ram:ActualDeliverySupplyChainEvent", skip_serializing_if = "Option::is_none")]
     pub actual_delivery_supply_chain_event: Option<ActualDeliverySupplyChainEvent<'invoice>>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ActualDeliverySupplyChainEvent<'invoice> {
     #[serde(rename="ram:OccurrenceDateTime", skip_serializing_if = "Option::is_none")]
     pub occurrence_date_time: Option<DateTimeString<'invoice>>,
@@ -400,7 +400,7 @@ impl<'invoice> ApplicableHeaderTradeDelivery<'invoice> {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ApplicableHeaderTradeSettlement <'invoice>{
     #[serde(rename="ram:InvoiceCurrencyCode")]
     pub invoice_currency_code: CurrencyCode,
@@ -412,7 +412,7 @@ pub struct ApplicableHeaderTradeSettlement <'invoice>{
     pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
 }   
 
-#[derive(Serialize, Clone, Copy)]
+#[derive(Serialize, Clone, Copy, Debug)]
 pub struct ApplicableTradeTax <'invoice> {
     #[serde(rename="ram:CalculatedAmount",serialize_with="format_f64_option")]
     pub calculated_amount: Option<f64>,
@@ -439,13 +439,13 @@ impl<'invoice> Default for ApplicableTradeTax<'invoice> {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradePaymentTerms <'invoice> {
     #[serde(rename="ram:DueDateTime")]
     pub due_date_time: DateTimeString<'invoice>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeSettlementHeaderMonetarySummation {
     #[serde(rename="ram:LineTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub line_total_amount: Option<f64>,
@@ -479,7 +479,7 @@ impl Default for SpecifiedTradeSettlementHeaderMonetarySummation {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct TaxTotalAmount {
     #[serde(rename="@currencyID")]
     pub currency_id: CurrencyCode,

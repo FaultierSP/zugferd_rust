@@ -1,6 +1,6 @@
 use serde::{Serialize,Serializer};
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum CountryCode {
     NotSet,
     Germany,
