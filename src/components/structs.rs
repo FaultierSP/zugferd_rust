@@ -185,8 +185,9 @@ pub struct AssociatedDocumentLineDocument<'invoice> {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeProduct<'invoice> {
-    #[serde(rename="ram:GlobalID")]
-    pub global_id: GlobalID<'invoice>,
+    #[serde(rename="ram:GlobalID", skip_serializing_if = "Option::is_none")]
+    /// BT-157
+    pub global_id: Option<GlobalID<'invoice>>,
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
     //#[serde(rename="ram:Description")]

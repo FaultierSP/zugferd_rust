@@ -108,10 +108,10 @@ fn main() {
             included_note: None,
         },
         specified_trade_product:SpecifiedTradeProduct {
-            global_id: GlobalID {
+            global_id: Some(GlobalID {
                 value: "1234567890123",
                 scheme_id: IdentifierSchemeCode::GTIN,
-            },
+            }),
             name: "Product 1",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
@@ -145,10 +145,10 @@ fn main() {
             included_note: None,
         },
         specified_trade_product:SpecifiedTradeProduct {
-            global_id: GlobalID {
+            global_id: Some(GlobalID {
                 value: "2546585465423",
                 scheme_id: IdentifierSchemeCode::GTIN,
-            },
+            }),
             name: "Product 2",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
