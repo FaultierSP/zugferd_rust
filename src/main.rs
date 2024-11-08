@@ -115,6 +115,7 @@ fn main() {
             name: "Product 1",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            gross_price_product_trade_price: None,
             net_price_product_trade_price: NetPriceProductTradePrice {
                 charge_amount: 100.0,
             },
@@ -152,6 +153,7 @@ fn main() {
             name: "Product 2",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            gross_price_product_trade_price: None,
             net_price_product_trade_price: NetPriceProductTradePrice {
                 charge_amount: 1.0,
             },
