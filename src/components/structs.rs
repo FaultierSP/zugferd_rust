@@ -257,8 +257,8 @@ impl BilledQuantity {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeSettlement<'invoice> {
-    #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
-    pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
+    #[serde(rename="ram:ApplicableTradeTax")]
+    pub applicable_trade_tax: ApplicableTradeTax<'invoice>,
     #[serde(rename="ram:SpecifiedTradeSettlementLineMonetarySummation")]
     pub specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation,
 }

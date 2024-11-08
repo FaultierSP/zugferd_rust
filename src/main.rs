@@ -127,13 +127,13 @@ fn main() {
             },
         },
         specified_line_trade_settlement:SpecifiedLineTradeSettlement {
-            applicable_trade_tax: Some(ApplicableTradeTax {
+            applicable_trade_tax: ApplicableTradeTax {
                 calculated_amount: Some(19.0),
                 type_code: "VAT",
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(100.0),
                 rate_applicable_percent: Some(19.0),
-            }),
+            },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: 119.0,
             },
@@ -165,13 +165,13 @@ fn main() {
             },
         },
         specified_line_trade_settlement:SpecifiedLineTradeSettlement {
-            applicable_trade_tax: Some(ApplicableTradeTax {
+            applicable_trade_tax: ApplicableTradeTax {
                 calculated_amount: Some(0.44*19.0),
                 type_code: "VAT",
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(44.0),
                 rate_applicable_percent: Some(19.0),
-            }),
+            },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: (44.0*1.19),
             },
