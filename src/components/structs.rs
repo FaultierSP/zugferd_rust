@@ -376,8 +376,8 @@ pub struct BuyerTradeParty<'invoice> {
     pub name: &'invoice str,
     #[serde(rename="ram:PostalTradeAddress")]
     pub postal_trade_address: PostalTradeAddress<'invoice>,
-    #[serde(rename="ram:SpecifiedLegalOrganization")]
-    pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
+    #[serde(rename="ram:SpecifiedLegalOrganization", skip_serializing_if = "Option::is_none")]
+    pub specified_legal_organization: Option<SpecifiedLegalOrganization<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
