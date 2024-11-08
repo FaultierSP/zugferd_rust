@@ -271,8 +271,8 @@ pub struct SpecifiedTradeSettlementLineMonetarySummation {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct ApplicableHeaderTradeAgreement<'invoice> {
-    #[serde(rename="ram:BuyerReference")]
-    pub buyer_reference: &'invoice str,
+    #[serde(rename="ram:BuyerReference", skip_serializing_if = "Option::is_none")]
+    pub buyer_reference: Option<&'invoice str>,
     #[serde(rename="ram:SellerTradeParty")]
     pub seller_trade_party: SellerTradeParty<'invoice>,
     #[serde(rename="ram:BuyerTradeParty")]

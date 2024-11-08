@@ -495,7 +495,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             SupplyChainTradeTransaction {
                 included_supply_chain_trade_line_items: self.included_supply_chain_trade_line_items.clone(),
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
-                    buyer_reference: self.buyer_reference.unwrap(),
+                    buyer_reference: self.buyer_reference,
                     seller_trade_party: SellerTradeParty {
                         name: self.sellers_name.unwrap(),
                         specified_legal_organization: SpecifiedLegalOrganization {
