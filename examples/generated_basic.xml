@@ -9,7 +9,7 @@
             <ram:ID>process1</ram:ID>
         </ram:BusinessProcessSpecifiedDocumentContextParameter>
         <ram:GuidelineSpecifiedDocumentContextParameter>
-            <ram:ID>urn:factur-x.eu:1p0:basic</ram:ID>
+            <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic</ram:ID>
         </ram:GuidelineSpecifiedDocumentContextParameter>
     </rsm:ExchangedDocumentContext>
     <rsm:ExchangedDocument>
@@ -98,6 +98,7 @@
                 <ram:Name>Product 1</ram:Name>
             </ram:SpecifiedTradeProduct>
             <ram:SpecifiedLineTradeAgreement>
+                <ram:GrossPriceProductTradePrice />
                 <ram:NetPriceProductTradePrice>
                     <ram:ChargeAmount>100.00</ram:ChargeAmount>
                 </ram:NetPriceProductTradePrice>
@@ -127,6 +128,7 @@
                 <ram:Name>Product 2</ram:Name>
             </ram:SpecifiedTradeProduct>
             <ram:SpecifiedLineTradeAgreement>
+                <ram:GrossPriceProductTradePrice />
                 <ram:NetPriceProductTradePrice>
                     <ram:ChargeAmount>1.00</ram:ChargeAmount>
                 </ram:NetPriceProductTradePrice>
