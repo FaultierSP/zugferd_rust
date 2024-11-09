@@ -103,15 +103,19 @@ fn main() {
 
     //Going even further with Basic specification
     invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
-        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        associated_document_line_document:AssociatedDocumentLineDocument {
+            line_id: "1",
+            included_note: None,
+        },
         specified_trade_product:SpecifiedTradeProduct {
-            global_id: GlobalID {
+            global_id: Some(GlobalID {
                 value: "1234567890123",
                 scheme_id: IdentifierSchemeCode::GTIN,
-            },
+            }),
             name: "Product 1",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            gross_price_product_trade_price: None,
             net_price_product_trade_price: NetPriceProductTradePrice {
                 charge_amount: 100.0,
             },
@@ -123,13 +127,13 @@ fn main() {
             },
         },
         specified_line_trade_settlement:SpecifiedLineTradeSettlement {
-            applicable_trade_tax: Some(ApplicableTradeTax {
+            applicable_trade_tax: ApplicableTradeTax {
                 calculated_amount: Some(19.0),
                 type_code: "VAT",
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(100.0),
                 rate_applicable_percent: Some(19.0),
-            }),
+            },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: 119.0,
             },
@@ -137,15 +141,19 @@ fn main() {
     });
 
     invoice_builder.add_supply_chain_trade_line_item(IncludedSupplyChainTradeLineItem {
-        associated_document_line_document:AssociatedDocumentLineDocument { line_id: "1" },
+        associated_document_line_document:AssociatedDocumentLineDocument {
+            line_id: "1",
+            included_note: None,
+        },
         specified_trade_product:SpecifiedTradeProduct {
-            global_id: GlobalID {
+            global_id: Some(GlobalID {
                 value: "2546585465423",
                 scheme_id: IdentifierSchemeCode::GTIN,
-            },
+            }),
             name: "Product 2",
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
+            gross_price_product_trade_price: None,
             net_price_product_trade_price: NetPriceProductTradePrice {
                 charge_amount: 1.0,
             },
@@ -157,13 +165,13 @@ fn main() {
             },
         },
         specified_line_trade_settlement:SpecifiedLineTradeSettlement {
-            applicable_trade_tax: Some(ApplicableTradeTax {
+            applicable_trade_tax: ApplicableTradeTax {
                 calculated_amount: Some(0.44*19.0),
                 type_code: "VAT",
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(44.0),
                 rate_applicable_percent: Some(19.0),
-            }),
+            },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: (44.0*1.19),
             },

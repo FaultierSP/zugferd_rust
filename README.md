@@ -92,4 +92,4 @@ Please check `main.rs` for further examples.
 - [ ] embedding the generated XML into PDF/A-3 files
 ## Further reading
 
-[ZUGFeRD 2.2 specification](https://www.ferd-net.de/standards/zugferd-2.2/index.html)
+[ZUGFeRD 2.3 specification](https://www.ferd-net.de/standards/zugferd-2.3/zugferd-2.3.html)
