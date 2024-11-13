@@ -60,10 +60,11 @@ let customer_paid_already: f64 = 50.0;
 ~~~
 Pass missing data to the instance:
 ~~~    
-invoice_builder.set_tax_basis_total_amount(sum_net)
-    .set_tax_total_amount(tax)
-    .set_grand_total_amount(sum_gross)
-    .set_due_payable_amount(sum_gross - customer_paid_already);
+invoice_builder
+    .set_monetary_summation_tax_basis_total_amount(sum_net)
+    .set_monetary_summation_tax_total_amount(tax)
+    .set_monetary_summation_grand_total_amount(sum_gross)
+    .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 ~~~
 Generate XML:
 ~~~
