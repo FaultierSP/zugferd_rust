@@ -13,11 +13,11 @@ Add the crate:
 cargo add zugferd
 ~~~
 Import the crate:
-~~~
+~~~rs
 use zugferd::{InvoiceBuilder,InvoiceTypeCode,CountryCode,CurrencyCode,SpecificationLevel};
 ~~~
 Initialize and pass first data:
-~~~
+~~~rs
 let mut invoice_builder = InvoiceBuilder::new();
 
 invoice_builder.set_business_process("process1")
@@ -35,7 +35,7 @@ invoice_builder.set_business_process("process1")
     .set_invoice_currency_code(CurrencyCode::Euro);
 ~~~
 You can always check if the provided data enough for the specified level. (At this stage only "minimum" is supported.)
-~~~
+~~~rs
 match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
     Ok(_) => {
         //Carry on
@@ -48,18 +48,18 @@ match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
 }
 ~~~
 Or simply
-~~~
+~~~rs
 invoice_builder.all_fields_are_set(SpecificationLevel::Minimum)?;
 ~~~
 Calculate your data further, for example:
-~~~
+~~~rs
 let sum_net: f64 = 100.0;
 let tax: f64 = sum_net * 19.0 /100.0;
 let sum_gross: f64 = sum_net + tax;
 let customer_paid_already: f64 = 50.0;
 ~~~
 Pass missing data to the instance:
-~~~    
+~~~rs
 invoice_builder
     .set_monetary_summation_tax_basis_total_amount(sum_net)
     .set_monetary_summation_tax_total_amount(tax)
@@ -67,7 +67,7 @@ invoice_builder
     .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 ~~~
 Generate XML:
-~~~
+~~~rs
 let mut xml_string: String = String::new();
 
 match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
