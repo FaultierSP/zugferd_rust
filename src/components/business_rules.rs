@@ -144,13 +144,22 @@ fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
 /// Shortcut to handle possibly missing values
 trait OptionExt<T> {
     /// Check if the Option is Some, otherwise return a BusinessRuleViolation
-    fn check(self, rule: &str) -> Result<T, BusinessRuleViolation>;
+    fn check_msg(self, rule: &str, message: &str) -> Result<T, BusinessRuleViolation>;
+    /// Check if the Option is Some, otherwise return a BusinessRuleViolation
+    fn check(self, rule: &str) -> Result<T, BusinessRuleViolation> where Self: Sized {
+        self.check_msg(rule, "Value is None")
+    }
+    /// Transform [`Option<T>`] into [`Option<()>`]
+    fn discard_value(&self) -> Option<()>;
 }
 impl <T> OptionExt<T> for Option<T> {
-    fn check(self, rule: &str) -> Result<T, BusinessRuleViolation> {
+    fn check_msg(self, rule: &str, msg: &str) -> Result<T, BusinessRuleViolation> {
         self.ok_or_else(|| BusinessRuleViolation {
             rule: rule.to_string(),
-            message: "Value is None".to_string(),
+            message: msg.to_string(),
         })
+    }
+    fn discard_value(&self) -> Option<()> {
+        self.as_ref().map(|_| ())
     }
 }
