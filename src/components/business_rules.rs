@@ -74,7 +74,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_co_07,
     // br_co_08,
     // br_co_09,
-    // br_co_10,
+    br_co_10,
     // br_co_11,
     // br_co_12,
     // br_co_13,
@@ -126,6 +126,17 @@ fn br_12(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let br_106 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.line_total_amount;
 
     br_106.discard_value().check_msg(rule, "An Invoice shall have the Sum of Invoice line net amount (BT-106).")
+}
+
+/// BR-CO-10: Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).
+fn br_co_10(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = "BR-CO-10";
+    let br_106 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.line_total_amount.check(rule)?;
+    let bt_131_sum = invoice.supply_chain_trade_transaction.included_supply_chain_trade_line_items.iter()
+        .map(|line| line.specified_line_trade_settlement.specified_trade_settlement_line_monetary_summation.line_total_amount)
+        .sum::<f64>();
+
+    check_float_eq!(rule; br_106, bt_131_sum)
 }
 
 /// BR-CO-14: Invoice total VAT amount (BT-110) = ∑ VAT category tax amount (BT-117)
