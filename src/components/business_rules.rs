@@ -20,7 +20,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_09,
     // br_10,
     // br_11,
-    // br_12,
+    br_12,
     // br_13,
     // br_14,
     // br_15,
@@ -119,6 +119,14 @@ macro_rules! check_float_eq {
     };
 }
 
+
+/// BR-12: An Invoice shall have the Sum of Invoice line net amount (BT-106).
+fn br_12(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = "BR-12";
+    let br_106 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.line_total_amount;
+
+    br_106.discard_value().check_msg(rule, "An Invoice shall have the Sum of Invoice line net amount (BT-106).")
+}
 
 /// BR-CO-14: Invoice total VAT amount (BT-110) = ∑ VAT category tax amount (BT-117)
 fn br_co_14(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
