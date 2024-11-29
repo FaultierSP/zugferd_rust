@@ -21,7 +21,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_10,
     // br_11,
     br_12,
-    // br_13,
+    br_13,
     // br_14,
     // br_15,
     // br_16,
@@ -77,7 +77,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     br_co_10,
     // br_co_11,
     // br_co_12,
-    // br_co_13,
+    br_co_13,
     br_co_14,
     // br_co_15,
     // br_co_16,
@@ -128,6 +128,14 @@ fn br_12(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     br_106.discard_value().check_msg(rule, "An Invoice shall have the Sum of Invoice line net amount (BT-106).")
 }
 
+/// BR-13: An Invoice shall have the Invoice total amount without VAT (BT-109).
+fn br_13(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = "BR-13";
+    let br_109 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.tax_basis_total_amount;
+
+    br_109.discard_value().check_msg(rule, "An Invoice shall have the Invoice total amount without VAT (BT-109).")
+}
+
 /// BR-CO-10: Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).
 fn br_co_10(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let rule = "BR-CO-10";
@@ -137,6 +145,19 @@ fn br_co_10(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
         .sum::<f64>();
 
     check_float_eq!(rule; br_106, bt_131_sum)
+}
+
+/// BR-CO-13: Invoice total amount without VAT (BT-109) = ∑ Invoice line net amount (BT-131) - Sum of allowances on document level (BT-107) + Sum of charges on document level (BT-108).
+fn br_co_13(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = "BR-CO-13";
+    let bt_131_sum = invoice.supply_chain_trade_transaction.included_supply_chain_trade_line_items.iter()
+        .map(|line| line.specified_line_trade_settlement.specified_trade_settlement_line_monetary_summation.line_total_amount)
+        .sum::<f64>();
+    let br_107 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.allowance_total_amount.unwrap_or(0.0);
+    let br_108 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.charge_total_amount.unwrap_or(0.0);
+    let bt_109 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.tax_basis_total_amount.check(rule)?;
+
+    check_float_eq!(rule; bt_109, bt_131_sum - br_107 + br_108)
 }
 
 /// BR-CO-14: Invoice total VAT amount (BT-110) = ∑ VAT category tax amount (BT-117)
