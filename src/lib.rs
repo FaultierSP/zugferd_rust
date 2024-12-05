@@ -12,6 +12,7 @@ pub use crate::components::enums::{
     currency_code::CurrencyCode,
     vat_category_code::VATCategoryCode,
 };
+pub use components::business_rules::validate as validate_business_rules;
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
