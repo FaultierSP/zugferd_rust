@@ -25,7 +25,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     br_12,
     br_13,
     br_14,
-    // br_15,
+    br_15,
     // br_16,
     // br_17,
     // br_18,
@@ -82,7 +82,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     br_co_13,
     br_co_14,
     br_co_15,
-    // br_co_16,
+    br_co_16,
     br_co_17,
     // br_co_18,
     // br_co_19,
@@ -148,6 +148,14 @@ fn br_14(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     br_112.discard_value().check(rule, "BR-112")
 }
 
+/// BR-15: An Invoice shall have the Amount due for payment (BT-115).
+fn br_15(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-15", "An Invoice shall have the Amount due for payment (BT-115).");
+    let br_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount;
+
+    br_115.discard_value().check(rule, "BR-115")
+}
+
 /// BR-CO-10: Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).
 fn br_co_10(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let rule = ("BR-CO-10", "Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).");
@@ -190,6 +198,20 @@ fn br_co_15(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let bt_112 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.grand_total_amount.check(rule, "BT-112")?;
 
     check_float_eq!(rule; bt_112, bt_109 + bt_110; bt_112, bt_109, bt_110)
+}
+
+/// BR-CO-16: Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) - Paid amount (BT-113) + Rounding amount (BT-114).
+fn br_co_16(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-CO-16", "Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) - Paid amount (BT-113) + Rounding amount (BT-114).");
+    let bt_112 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.grand_total_amount.check(rule, "BT-112")?;
+    // TODO: neither exists so far
+    // let bt_113 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.paid_amount.unwrap_or(0.0);
+    // let bt_114 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.rounding_amount.unwrap_or(0.0);
+    let bt_113 = 0.0;
+    let bt_114 = 0.0;
+    let bt_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount.check(rule, "BT-115")?;
+
+    check_float_eq!(rule; bt_115, bt_112 - bt_113 + bt_114; bt_115, bt_112, bt_113, bt_114)
 }
 
 
