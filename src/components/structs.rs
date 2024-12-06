@@ -213,7 +213,7 @@ impl <'invoice> GlobalID<'invoice> {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeAgreement {
-    #[serde(rename="ram:GrossPriceProductTradePrice")]
+    #[serde(rename="ram:GrossPriceProductTradePrice", skip_serializing_if = "Option::is_none")]
     pub gross_price_product_trade_price: Option<GrossPriceProductTradePrice>,
     #[serde(rename="ram:NetPriceProductTradePrice")]
     pub net_price_product_trade_price: NetPriceProductTradePrice,
