@@ -89,8 +89,8 @@ impl<'invoice> Invoice<'invoice> {
 
 #[derive(Serialize, Debug)]
 pub struct DocumentContext<'invoice> {
-    #[serde(rename="ram:BusinessProcessSpecifiedDocumentContextParameter")]
-    pub business_process: BusinessProcess<'invoice>,
+    #[serde(rename="ram:BusinessProcessSpecifiedDocumentContextParameter", skip_serializing_if = "Option::is_none")]
+    pub business_process: Option<BusinessProcess<'invoice>>,
     #[serde(rename="ram:GuidelineSpecifiedDocumentContextParameter")]
     pub guideline: Guideline,
 }
