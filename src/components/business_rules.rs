@@ -70,7 +70,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_64,
     // br_65,
     // br_co_03,
-    // br_co_04,
+    br_co_04,
     // br_co_05,
     // br_co_06,
     // br_co_07,
@@ -154,6 +154,23 @@ fn br_15(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let br_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount;
 
     br_115.discard_value().check(rule, "BR-115")
+}
+
+/// BR-CO-4: Each Invoice line (BG-25) shall be categorized with an Invoiced item VAT category code (BT-151).
+fn br_co_04(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    // Should never fail because structure is enforced, but maybe something changes in the future
+    let rule = ("BR-CO-4", "Each Invoice line (BG-25) shall be categorized with an Invoiced item VAT category code (BT-151).");
+    for line in &invoice.supply_chain_trade_transaction.included_supply_chain_trade_line_items {
+        if line.specified_line_trade_settlement.applicable_trade_tax.category_code.as_str().is_empty() {
+            return Err(BusinessRuleViolation {
+                rule_id: rule.0.to_string(),
+                rule_text: rule.1.to_string(),
+                message: "VAT category code is missing".to_string(),
+                fields: vec![("line_id".to_string(), line.associated_document_line_document.line_id.to_string())],
+            });
+        }
+    }
+    Ok(())
 }
 
 /// BR-CO-10: Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).
