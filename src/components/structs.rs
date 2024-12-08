@@ -150,14 +150,14 @@ pub struct IncludedNote {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SupplyChainTradeTransaction<'invoice> {
+    #[serde(rename="ram:IncludedSupplyChainTradeLineItem", skip_serializing_if = "vector_is_empty")]
+    pub included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice>>,
     #[serde(rename="ram:ApplicableHeaderTradeAgreement")]
     pub applicable_header_trade_agreement: ApplicableHeaderTradeAgreement<'invoice>,
     #[serde(rename="ram:ApplicableHeaderTradeDelivery")]
     pub applicable_header_trade_delivery: ApplicableHeaderTradeDelivery<'invoice>,
     #[serde(rename="ram:ApplicableHeaderTradeSettlement")]
     pub applicable_header_trade_settlement: ApplicableHeaderTradeSettlement<'invoice>,
-    #[serde(rename="ram:IncludedSupplyChainTradeLineItem", skip_serializing_if = "vector_is_empty")]
-    pub included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
