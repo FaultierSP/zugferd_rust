@@ -65,7 +65,7 @@ pub struct Invoice<'invoice> {
 
     //Supply chain trade transaction
     #[serde(rename="rsm:SupplyChainTradeTransaction")]
-    supply_chain_trade_transaction: SupplyChainTradeTransaction<'invoice>,
+    pub supply_chain_trade_transaction: SupplyChainTradeTransaction<'invoice>,
 }
 
 impl<'invoice> Invoice<'invoice> {
