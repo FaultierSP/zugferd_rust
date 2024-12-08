@@ -457,22 +457,32 @@ pub struct SpecifiedTradePaymentTerms <'invoice> {
     pub due_date_time: DateTimeString<'invoice>,
 }
 
+/// `BG-22`: A group of business terms providing the monetary totals for the Invoice.
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeSettlementHeaderMonetarySummation {
+    /// `BT-106`: Sum of all Invoice line net amounts in the Invoice.
     #[serde(rename="ram:LineTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub line_total_amount: Option<f64>,
+    /// `BT-108`: Sum of all charges on document level in the Invoice.
     #[serde(rename="ram:ChargeTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub charge_total_amount: Option<f64>,
+    /// `BT-107`: Sum of all allowances on document level in the Invoice.
     #[serde(rename="ram:AllowanceTotalAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub allowance_total_amount: Option<f64>,
     
+
     //Required for minimum specification
+    
+    /// `BT-109`: The total amount of the Invoice without VAT.
     #[serde(rename="ram:TaxBasisTotalAmount",serialize_with="format_f64_option")]
     pub tax_basis_total_amount: Option<f64>,
+    /// `BT-110`: The total VAT amount for the Invoice.
     #[serde(rename="ram:TaxTotalAmount")]
     pub tax_total_amount: Option<TaxTotalAmount>,
+    /// `BT-112`: The total amount of the Invoice with VAT.
     #[serde(rename="ram:GrandTotalAmount",serialize_with="format_f64_option")]
     pub grand_total_amount: Option<f64>,
+    /// `BT-115`: The outstanding amount that is requested to be paid.
     #[serde(rename="ram:DuePayableAmount",serialize_with="format_f64_option")]
     pub due_payable_amount: Option<f64>,
 }
