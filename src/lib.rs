@@ -81,9 +81,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         let mut error_text: String = String::new();
 
         // Check fields required for minimum specification
-        if self.business_process.is_none() {
-            error_text += "Business process variable not set\n";
-        }
         if self.invoice_type_code.is_none() {
             error_text += "Invoice type code not set\n";
         }
@@ -482,7 +479,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         // Build the invoice structure
         Ok(Invoice::new(
             DocumentContext {
-                business_process: BusinessProcess { id: self.business_process.unwrap() },
+                business_process: self.business_process.map(|id| BusinessProcess { id }),
                 guideline: Guideline { id: specification_level },
             },
             Document {
