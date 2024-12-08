@@ -26,6 +26,64 @@
         </ram:IncludedNote>
     </rsm:ExchangedDocument>
     <rsm:SupplyChainTradeTransaction>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>1</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:GlobalID schemeID="0160">1234567890123</ram:GlobalID>
+                <ram:Name>Product 1</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>100.00</ram:ChargeAmount>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="H87">1.0000</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:CalculatedAmount>19.00</ram:CalculatedAmount>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:BasisAmount>100.00</ram:BasisAmount>
+                    <ram:CategoryCode>S</ram:CategoryCode>
+                    <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>119.00</ram:LineTotalAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>1</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:GlobalID schemeID="0160">2546585465423</ram:GlobalID>
+                <ram:Name>Product 2</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>1.00</ram:ChargeAmount>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="H87">44.0000</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:CalculatedAmount>8.36</ram:CalculatedAmount>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:BasisAmount>44.00</ram:BasisAmount>
+                    <ram:CategoryCode>S</ram:CategoryCode>
+                    <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>52.36</ram:LineTotalAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
         <ram:ApplicableHeaderTradeAgreement>
             <ram:BuyerReference>BR-7890</ram:BuyerReference>
             <ram:SellerTradeParty>
@@ -64,7 +122,9 @@
         </ram:ApplicableHeaderTradeAgreement>
         <ram:ApplicableHeaderTradeDelivery>
             <ram:ActualDeliverySupplyChainEvent>
-                <ram:OccurrenceDateTime format="102">20240706</ram:OccurrenceDateTime>
+                <ram:OccurrenceDateTime>
+                    <udt:DateTimeString format="102">20240706</udt:DateTimeString>
+                </ram:OccurrenceDateTime>
             </ram:ActualDeliverySupplyChainEvent>
         </ram:ApplicableHeaderTradeDelivery>
         <ram:ApplicableHeaderTradeSettlement>
@@ -89,65 +149,5 @@
                 <ram:DueDateTime format="102">20250412</ram:DueDateTime>
             </ram:SpecifiedTradePaymentTerms>
         </ram:ApplicableHeaderTradeSettlement>
-        <ram:IncludedSupplyChainTradeLineItem>
-            <ram:AssociatedDocumentLineDocument>
-                <ram:LineID>1</ram:LineID>
-            </ram:AssociatedDocumentLineDocument>
-            <ram:SpecifiedTradeProduct>
-                <ram:GlobalID schemeID="0160">1234567890123</ram:GlobalID>
-                <ram:Name>Product 1</ram:Name>
-            </ram:SpecifiedTradeProduct>
-            <ram:SpecifiedLineTradeAgreement>
-                <ram:GrossPriceProductTradePrice />
-                <ram:NetPriceProductTradePrice>
-                    <ram:ChargeAmount>100.00</ram:ChargeAmount>
-                </ram:NetPriceProductTradePrice>
-            </ram:SpecifiedLineTradeAgreement>
-            <ram:SpecifiedLineTradeDelivery>
-                <ram:BilledQuantity unitCode="H87">1.0000</ram:BilledQuantity>
-            </ram:SpecifiedLineTradeDelivery>
-            <ram:SpecifiedLineTradeSettlement>
-                <ram:ApplicableTradeTax>
-                    <ram:CalculatedAmount>19.00</ram:CalculatedAmount>
-                    <ram:TypeCode>VAT</ram:TypeCode>
-                    <ram:BasisAmount>100.00</ram:BasisAmount>
-                    <ram:CategoryCode>S</ram:CategoryCode>
-                    <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
-                </ram:ApplicableTradeTax>
-                <ram:SpecifiedTradeSettlementLineMonetarySummation>
-                    <ram:LineTotalAmount>119.00</ram:LineTotalAmount>
-                </ram:SpecifiedTradeSettlementLineMonetarySummation>
-            </ram:SpecifiedLineTradeSettlement>
-        </ram:IncludedSupplyChainTradeLineItem>
-        <ram:IncludedSupplyChainTradeLineItem>
-            <ram:AssociatedDocumentLineDocument>
-                <ram:LineID>1</ram:LineID>
-            </ram:AssociatedDocumentLineDocument>
-            <ram:SpecifiedTradeProduct>
-                <ram:GlobalID schemeID="0160">2546585465423</ram:GlobalID>
-                <ram:Name>Product 2</ram:Name>
-            </ram:SpecifiedTradeProduct>
-            <ram:SpecifiedLineTradeAgreement>
-                <ram:GrossPriceProductTradePrice />
-                <ram:NetPriceProductTradePrice>
-                    <ram:ChargeAmount>1.00</ram:ChargeAmount>
-                </ram:NetPriceProductTradePrice>
-            </ram:SpecifiedLineTradeAgreement>
-            <ram:SpecifiedLineTradeDelivery>
-                <ram:BilledQuantity unitCode="H87">44.0000</ram:BilledQuantity>
-            </ram:SpecifiedLineTradeDelivery>
-            <ram:SpecifiedLineTradeSettlement>
-                <ram:ApplicableTradeTax>
-                    <ram:CalculatedAmount>8.36</ram:CalculatedAmount>
-                    <ram:TypeCode>VAT</ram:TypeCode>
-                    <ram:BasisAmount>44.00</ram:BasisAmount>
-                    <ram:CategoryCode>S</ram:CategoryCode>
-                    <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
-                </ram:ApplicableTradeTax>
-                <ram:SpecifiedTradeSettlementLineMonetarySummation>
-                    <ram:LineTotalAmount>52.36</ram:LineTotalAmount>
-                </ram:SpecifiedTradeSettlementLineMonetarySummation>
-            </ram:SpecifiedLineTradeSettlement>
-        </ram:IncludedSupplyChainTradeLineItem>
     </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
