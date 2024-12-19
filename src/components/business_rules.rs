@@ -24,8 +24,8 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_11,
     br_12,
     br_13,
-    // br_14,
-    // br_15,
+    br_14,
+    br_15,
     // br_16,
     // br_17,
     // br_18,
@@ -70,7 +70,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_64,
     // br_65,
     // br_co_03,
-    // br_co_04,
+    br_co_04,
     // br_co_05,
     // br_co_06,
     // br_co_07,
@@ -81,8 +81,8 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_co_12,
     br_co_13,
     br_co_14,
-    // br_co_15,
-    // br_co_16,
+    br_co_15,
+    br_co_16,
     br_co_17,
     // br_co_18,
     // br_co_19,
@@ -140,6 +140,39 @@ fn br_13(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     br_109.discard_value().check(rule, "BR-109")
 }
 
+/// BR-14: An Invoice shall have the Invoice total amount with VAT (BT-112)
+fn br_14(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-14", "An Invoice shall have the Invoice total amount with VAT (BT-112).");
+    let br_112 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.grand_total_amount;
+
+    br_112.discard_value().check(rule, "BR-112")
+}
+
+/// BR-15: An Invoice shall have the Amount due for payment (BT-115).
+fn br_15(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-15", "An Invoice shall have the Amount due for payment (BT-115).");
+    let br_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount;
+
+    br_115.discard_value().check(rule, "BR-115")
+}
+
+/// BR-CO-4: Each Invoice line (BG-25) shall be categorized with an Invoiced item VAT category code (BT-151).
+fn br_co_04(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    // Should never fail because structure is enforced, but maybe something changes in the future
+    let rule = ("BR-CO-4", "Each Invoice line (BG-25) shall be categorized with an Invoiced item VAT category code (BT-151).");
+    for line in &invoice.supply_chain_trade_transaction.included_supply_chain_trade_line_items {
+        if line.specified_line_trade_settlement.applicable_trade_tax.category_code.as_str().is_empty() {
+            return Err(BusinessRuleViolation {
+                rule_id: rule.0.to_string(),
+                rule_text: rule.1.to_string(),
+                message: "VAT category code is missing".to_string(),
+                fields: vec![("line_id".to_string(), line.associated_document_line_document.line_id.to_string())],
+            });
+        }
+    }
+    Ok(())
+}
+
 /// BR-CO-10: Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).
 fn br_co_10(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let rule = ("BR-CO-10", "Sum of Invoice line net amount (BT-106) = ∑ Invoice line net amount (BT-131).");
@@ -173,6 +206,31 @@ fn br_co_14(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
         .sum::<f64>();
     check_float_eq!(rule; bt_110, bt_117_sum; bt_110, bt_117_sum)
 }
+
+/// BR-CO-15: Invoice total amount with VAT (BT-112) = Invoice total amount without VAT (BT-109) + Invoice total VAT amount (BT-110).
+fn br_co_15(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-CO-15", "Invoice total amount with VAT (BT-112) = Invoice total amount without VAT (BT-109) + Invoice total VAT amount (BT-110).");
+    let bt_109 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.tax_basis_total_amount.check(rule, "BT-109")?;
+    let bt_110 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.tax_total_amount.clone().check(rule, "BT-110")?.amount;
+    let bt_112 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.grand_total_amount.check(rule, "BT-112")?;
+
+    check_float_eq!(rule; bt_112, bt_109 + bt_110; bt_112, bt_109, bt_110)
+}
+
+/// BR-CO-16: Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) - Paid amount (BT-113) + Rounding amount (BT-114).
+fn br_co_16(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-CO-16", "Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) - Paid amount (BT-113) + Rounding amount (BT-114).");
+    let bt_112 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.grand_total_amount.check(rule, "BT-112")?;
+    // TODO: neither exists so far
+    // let bt_113 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.paid_amount.unwrap_or(0.0);
+    // let bt_114 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.rounding_amount.unwrap_or(0.0);
+    let bt_113 = 0.0;
+    let bt_114 = 0.0;
+    let bt_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount.check(rule, "BT-115")?;
+
+    check_float_eq!(rule; bt_115, bt_112 - bt_113 + bt_114; bt_115, bt_112, bt_113, bt_114)
+}
+
 
 /// BR-CO-17: VAT category tax amount (BT-117) = VAT category taxable amount (BT-116) x (VAT category rate (BT-119) / 100), rounded to two decimals
 fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
