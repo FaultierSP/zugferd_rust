@@ -141,6 +141,13 @@ impl<'invoice> DateTimeString<'invoice> {
         }
     }
 }
+impl std::fmt::Display for DateTimeString<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let date = NaiveDate::parse_from_str(&self.value, constants::DATE_TIME_FORMAT_102).unwrap();
+        write!(f, "{}", date.format("%Y-%m-%d"))
+    }
+}
+
 
 #[derive(Serialize, Clone, Debug)]
 pub struct IncludedNote {
