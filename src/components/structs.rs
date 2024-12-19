@@ -461,8 +461,19 @@ impl<'invoice> Default for ApplicableTradeTax<'invoice> {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradePaymentTerms <'invoice> {
-    #[serde(rename="ram:DueDateTime")]
-    pub due_date_time: DateTimeString<'invoice>,
+    /// `BT-20`: A textual description of the payment terms that apply to the amount due for payment (Including description of possible penalties).
+    #[serde(rename="ram:Description", skip_serializing_if = "Option::is_none")]
+    pub description: Option<&'invoice str>,
+    /// `BT-9-00`: The date when the payment is due.
+    #[serde(rename="ram:DueDateDateTime", skip_serializing_if = "Option::is_none")]
+    pub due_date_time: Option<DueDateDateTime<'invoice>>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct DueDateDateTime<'invoice> {
+    /// `BT-9`: The date when the payment is due.
+    #[serde(rename="udt:DateTimeString")]
+    pub payment_due_date: DateTimeString<'invoice>,
 }
 
 /// `BG-22`: A group of business terms providing the monetary totals for the Invoice.
