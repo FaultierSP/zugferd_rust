@@ -424,12 +424,12 @@ impl<'invoice> ApplicableHeaderTradeDelivery<'invoice> {
 pub struct ApplicableHeaderTradeSettlement <'invoice>{
     #[serde(rename="ram:InvoiceCurrencyCode")]
     pub invoice_currency_code: CurrencyCode,
-    #[serde(rename="ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
-    pub specified_trade_settlement_header_monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
     #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
     pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
     #[serde(rename="ram:SpecifiedTradePaymentTerms", skip_serializing_if = "Option::is_none")]
     pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
+    #[serde(rename="ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
+    pub specified_trade_settlement_header_monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 }   
 
 #[derive(Serialize, Clone, Copy, Debug)]
