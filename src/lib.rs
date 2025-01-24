@@ -397,12 +397,16 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     }
 
     pub fn set_specified_trade_payment_terms_due_date(&mut self, date: NaiveDate) -> &mut Self {
+        let due_date_time = DueDateDateTime {
+            payment_due_date: DateTimeString::new(date),
+        };
         if let Some(specified_trade_payment_terms) = self.specified_trade_payment_terms.as_mut() {
-            specified_trade_payment_terms.due_date_time = DateTimeString::new(date);
+            specified_trade_payment_terms.due_date_time = Some(due_date_time);
         }
         else {
             let new_struct = SpecifiedTradePaymentTerms{
-                due_date_time: DateTimeString::new(date),
+                description: None,
+                due_date_time: Some(due_date_time),
             };
 
             self.specified_trade_payment_terms = Some(new_struct);
