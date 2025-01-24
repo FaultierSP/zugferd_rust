@@ -247,7 +247,7 @@ fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
 trait OptionExt<T> {
     /// Check if the Option is Some, otherwise return a BusinessRuleViolation
     fn check(self, rule: (&str, &str), field: &str) -> Result<T, BusinessRuleViolation>;
-    /// Check if the Option is Some, otherwise return a BusinessRuleViolation
+
     /// Transform [`Option<T>`] into [`Option<()>`]
     fn discard_value(&self) -> Option<()>;
 }
