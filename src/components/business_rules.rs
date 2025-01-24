@@ -91,7 +91,7 @@ const BUSINESS_RULES: &[fn(&Invoice) -> Result<(), BusinessRuleViolation>] = &[
     // br_co_22,
     // br_co_23,
     // br_co_24,
-    // br_co_25,
+    br_co_25,
     // br_co_26,
 ];
 
@@ -231,7 +231,6 @@ fn br_co_16(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     check_float_eq!(rule; bt_115, bt_112 - bt_113 + bt_114; bt_115, bt_112, bt_113, bt_114)
 }
 
-
 /// BR-CO-17: VAT category tax amount (BT-117) = VAT category taxable amount (BT-116) x (VAT category rate (BT-119) / 100), rounded to two decimals
 fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let rule = ("BR-CO-17", "VAT category tax amount (BT-117) = VAT category taxable amount (BT-116) x (VAT category rate (BT-119) / 100), rounded to two decimals");
@@ -242,6 +241,28 @@ fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     check_float_eq!(rule; bt_117, bt_116 * (bt_119 / 100.0); bt_117, bt_116, bt_119)
 }
 
+/// BR-CO-25: In case the Amount due for payment (BT-115) is positive, either the Payment due date (BT-9) or the Payment terms (BT-20) shall be present.
+fn br_co_25(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
+    let rule = ("BR-CO-25", "In case the Amount due for payment (BT-115) is positive, either the Payment due date (BT-9) or the Payment terms (BT-20) shall be present.");
+    let bt_115 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_settlement_header_monetary_summation.due_payable_amount.check(rule, "BT-115")?;
+    let bt_20_00 = invoice.supply_chain_trade_transaction.applicable_header_trade_settlement.specified_trade_payment_terms.as_ref().check(rule, "BT-20-00")?;
+    let bt_9 = bt_20_00.due_date_time.as_ref();
+    let bt_20 = bt_20_00.description;
+
+    if bt_115 > 0.0 && bt_9.is_none() && bt_20.is_none() {
+        return Err(BusinessRuleViolation {
+            rule_id: rule.0.to_string(),
+            rule_text: rule.1.to_string(),
+            message: "Payment due date or Payment terms are missing".to_string(),
+            fields: vec![
+                ("BT-115".to_string(), format!("{:.2}", bt_115)),
+                ("BT-9".to_string(), bt_9.map_or("-".to_string(), |dt| dt.payment_due_date.to_string())),
+                ("BT-20".to_string(), bt_20.map_or("-".to_string(), |desc| desc.to_string())),
+            ],
+        });
+    }
+    Ok(())
+}
 
 /// Shortcut to handle possibly missing values
 trait OptionExt<T> {
