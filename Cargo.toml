@@ -8,6 +8,6 @@ repository = "https://github.com/FaultierSP/zugferd_rust"
 license = "Apache-2.0"
 
 [dependencies]
-chrono = "0.4.38"
-quick-xml = { version = "0.37.1", features = ["serialize"] }
-serde = { version = "1.0.215", features = ["derive"] }
+chrono = "0.4.39"
+quick-xml = { version = "0.37.2", features = ["serialize"] }
+serde = { version = "1.0.217", features = ["derive"] }
