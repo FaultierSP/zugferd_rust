@@ -445,13 +445,16 @@ pub struct ApplicableTradeTax <'invoice> {
     pub calculated_amount: Option<f64>,
     #[serde(rename="ram:TypeCode")]
     pub type_code: &'invoice str,
+    #[serde(rename="ram:ExemptionReason", skip_serializing_if = "Option::is_none")]
+    pub exemption_reason: Option<&'invoice str>,
     #[serde(rename="ram:BasisAmount",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub basis_amount: Option<f64>,
     #[serde(rename="ram:CategoryCode")]
     pub category_code: VATCategoryCode,
+    #[serde(rename="ram:ExemptionReasonCode", skip_serializing_if = "Option::is_none")]
+    pub exemption_reason_code: Option<&'invoice str>,
     #[serde(rename="ram:RateApplicablePercent",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub rate_applicable_percent: Option<f64>,
-
 }
 
 impl<'invoice> Default for ApplicableTradeTax<'invoice> {
@@ -462,6 +465,8 @@ impl<'invoice> Default for ApplicableTradeTax<'invoice> {
             basis_amount: None,
             category_code: VATCategoryCode::StandardRate,
             rate_applicable_percent: None,
+            exemption_reason: None,
+            exemption_reason_code: None,
         }
     }
 }

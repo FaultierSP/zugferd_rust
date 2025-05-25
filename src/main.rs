@@ -133,6 +133,8 @@ fn main() {
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(100.0),
                 rate_applicable_percent: Some(19.0),
+                exemption_reason: None,
+                exemption_reason_code: None,
             },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: 119.0,
@@ -171,6 +173,8 @@ fn main() {
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(44.0),
                 rate_applicable_percent: Some(19.0),
+                exemption_reason: None,
+                exemption_reason_code: None,
             },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: (44.0*1.19),
