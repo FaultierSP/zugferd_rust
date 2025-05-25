@@ -93,9 +93,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if self.sellers_name.is_none() {
             error_text += "Seller's name not set\n";
         }
-        if self.sellers_specified_legal_organization.is_none() {
-            error_text += "Seller's specified legal organization not set\n";
-        }
         if self.sellers_postal_trade_address.country_id == CountryCode::NotSet {
             error_text += "Seller's postal trade address country code not set\n";
         }
@@ -104,9 +101,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         }
         if self.buyers_name.is_none() {
             error_text += "Buyer's name not set\n";
-        }
-        if self.buyers_specified_legal_organization.is_none() {
-            error_text += "Buyer's specified legal organization not set\n";
         }
         if self.buyers_order_specified_document.is_none() {
             error_text += "Buyer's order specified document not set\n";
@@ -209,6 +203,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if specification_level >= SpecificationLevel::Extended {
             if self.buyer_reference.is_none() {
                 error_text += "Buyer reference not set\n";
+            }
+            if self.sellers_specified_legal_organization.is_none() {
+                error_text += "Seller's specified legal organization not set\n";
+            }
+            if self.buyers_specified_legal_organization.is_none() {
+                error_text += "Buyer's specified legal organization not set\n";
             }
         }
 
