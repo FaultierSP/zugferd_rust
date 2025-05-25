@@ -90,9 +90,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if self.date_of_issue.is_none() {
             error_text += "Date of issue not set\n";
         }
-        if self.buyer_reference.is_none() {
-            error_text += "Buyer reference not set\n";
-        }
         if self.sellers_name.is_none() {
             error_text += "Seller's name not set\n";
         }
@@ -206,6 +203,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if specification_level >= SpecificationLevel::Basic {
             if self.included_supply_chain_trade_line_items.is_empty() {
                 error_text += "No included supply chain trade line items set\n";
+            }
+        }
+
+        if specification_level >= SpecificationLevel::Extended {
+            if self.buyer_reference.is_none() {
+                error_text += "Buyer reference not set\n";
             }
         }
 
