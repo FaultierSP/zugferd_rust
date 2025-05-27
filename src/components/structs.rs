@@ -379,6 +379,12 @@ impl<'invoice> SpecifiedTaxRegistrationID<'invoice> {
             value,
         }
     }
+    pub fn new_fc(value: &'invoice str) -> Self {
+        Self {
+            scheme_id: "FC",
+            value,
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
