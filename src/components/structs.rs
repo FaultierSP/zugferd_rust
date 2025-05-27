@@ -197,9 +197,11 @@ pub struct SpecifiedTradeProduct<'invoice> {
     /// BT-157
     pub global_id: Option<GlobalID<'invoice>>,
     #[serde(rename="ram:Name")]
+    /// BT-153
     pub name: &'invoice str,
-    //#[serde(rename="ram:Description")]
-    //pub description: &'invoice str,
+    #[serde(rename="ram:Description", skip_serializing_if = "Option::is_none")]
+    /// BT-154
+    pub description: Option<&'invoice str>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -285,20 +287,27 @@ pub struct ApplicableHeaderTradeAgreement<'invoice> {
     pub seller_trade_party: SellerTradeParty<'invoice>,
     #[serde(rename="ram:BuyerTradeParty")]
     pub buyer_trade_party: BuyerTradeParty<'invoice>,
-    #[serde(rename="ram:BuyerOrderReferencedDocument")]
-    pub buyer_order_referenced_document: BuyerOrderReferencedDocument<'invoice>,
+    #[serde(rename="ram:BuyerOrderReferencedDocument", skip_serializing_if = "Option::is_none")]
+    pub buyer_order_referenced_document: Option<BuyerOrderReferencedDocument<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SellerTradeParty<'invoice> {
+    #[serde(rename="ram:ID")]
+    pub id: Vec<&'invoice str>,
+    #[serde(rename="ram:GlobalID")]
+    pub global_id: Vec<GlobalID<'invoice>>,
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
-    #[serde(rename="ram:SpecifiedLegalOrganization")]
-    pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
+    #[serde(rename="ram:SpecifiedLegalOrganization", skip_serializing_if = "Option::is_none")]
+    pub specified_legal_organization: Option<SpecifiedLegalOrganization<'invoice>>,
     #[serde(rename="ram:PostalTradeAddress")]
     pub postal_trade_address: PostalTradeAddress<'invoice>,
+    #[serde(rename="ram:URIUniversalCommunication", skip_serializing_if = "Option::is_none")]
+    /// BT-34-00
+    pub uri_universal_communication: Option<URIUniversalCommunication<'invoice>>,
     #[serde(rename="ram:SpecifiedTaxRegistration")]
-    pub specified_tax_registration: SpecifiedTaxRegistration<'invoice>,
+    pub specified_tax_registration: Vec<SpecifiedTaxRegistration<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -376,6 +385,20 @@ impl<'invoice> SpecifiedTaxRegistrationID<'invoice> {
 pub struct SpecifiedTaxRegistration<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: SpecifiedTaxRegistrationID<'invoice>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct URIUniversalCommunication<'invoice> {
+    #[serde(rename="ram:URIID")]
+    pub uriid: UriId<'invoice>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct UriId<'invoice> {
+    #[serde(rename="@schemeID")]
+    pub scheme_id: &'invoice str,    
+    #[serde(rename="$value")]
+    pub value: &'invoice str,
 }
 
 #[derive(Serialize, Clone, Debug)]

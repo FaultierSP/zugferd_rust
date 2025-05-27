@@ -113,6 +113,7 @@ fn main() {
                 scheme_id: IdentifierSchemeCode::GTIN,
             }),
             name: "Product 1",
+            description: None,
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,
@@ -153,6 +154,7 @@ fn main() {
                 scheme_id: IdentifierSchemeCode::GTIN,
             }),
             name: "Product 2",
+            description: Some("This is an interesting second product."),
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,

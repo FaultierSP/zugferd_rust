@@ -502,10 +502,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
                     buyer_reference: self.buyer_reference,
                     seller_trade_party: SellerTradeParty {
+                        id: Vec::new(),
+                        global_id: Vec::new() ,
                         name: self.sellers_name.unwrap(),
-                        specified_legal_organization: SpecifiedLegalOrganization {
-                            id: LegalOrganizationID::new(self.sellers_specified_legal_organization.unwrap()),
-                        },
+                        specified_legal_organization: self.sellers_specified_legal_organization.map(|v|
+                            SpecifiedLegalOrganization {
+                                id: LegalOrganizationID::new(v),
+                            }
+                        ),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.sellers_postal_trade_address.country_id,
                             postcode_code: self.sellers_postal_trade_address.postcode_code,
@@ -514,9 +518,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             line_three: self.sellers_postal_trade_address.line_three,
                             city_name: self.sellers_postal_trade_address.city_name,
                         },
-                        specified_tax_registration: SpecifiedTaxRegistration {
-                            id: SpecifiedTaxRegistrationID::new(self.sellers_specified_tax_registration.unwrap()),
-                        },
+                        uri_universal_communication: None,
+                        specified_tax_registration: vec![
+                            SpecifiedTaxRegistration {
+                                id: SpecifiedTaxRegistrationID::new(self.sellers_specified_tax_registration.unwrap()),
+                            }
+                        ],
                     },
                     buyer_trade_party: BuyerTradeParty {
                         name: self.buyers_name.unwrap(),
@@ -532,9 +539,11 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             city_name: self.buyers_postal_trade_address.city_name,
                         },
                     },
-                    buyer_order_referenced_document: BuyerOrderReferencedDocument {
-                        issuer_assigned_id: self.buyers_order_specified_document.unwrap(),
-                    },
+                    buyer_order_referenced_document: self.buyers_order_specified_document.map(|v|
+                        BuyerOrderReferencedDocument {
+                            issuer_assigned_id: v,
+                        }
+                    ),
                 },
                 applicable_header_trade_delivery: ApplicableHeaderTradeDelivery {
                     actual_delivery_supply_chain_event: Some(ActualDeliverySupplyChainEvent {
