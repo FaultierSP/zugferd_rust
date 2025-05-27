@@ -547,6 +547,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 },
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code: self.invoice_currency_code.clone().unwrap(),
+                    specified_trade_settlement_payment_means: Vec::new(),
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
                     specified_trade_settlement_header_monetary_summation: self.monetary_summation.clone(),
