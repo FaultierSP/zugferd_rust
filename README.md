@@ -16,7 +16,12 @@ Import the crate:
 ~~~rs
 use zugferd::{InvoiceBuilder,InvoiceTypeCode,CountryCode,CurrencyCode,SpecificationLevel};
 ~~~
+
+> [!WARNING]
+> Although you can populate data into structs without the invoice builder, at this point I strongly suggest you use it. Breaking changes may occure. Besides, it takes care of conversion from Strings.
+
 Initialize and pass first data:
+
 ~~~rs
 let mut invoice_builder = InvoiceBuilder::new();
 
