@@ -62,6 +62,7 @@
             <ram:SpecifiedTradeProduct>
                 <ram:GlobalID schemeID="0160">2546585465423</ram:GlobalID>
                 <ram:Name>Product 2</ram:Name>
+                <ram:Description>This is an interesting second product.</ram:Description>
             </ram:SpecifiedTradeProduct>
             <ram:SpecifiedLineTradeAgreement>
                 <ram:NetPriceProductTradePrice>
@@ -129,6 +130,18 @@
         </ram:ApplicableHeaderTradeDelivery>
         <ram:ApplicableHeaderTradeSettlement>
             <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>12.44</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode>
+                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:CategoryCode>S</ram:CategoryCode>
+                <ram:RateApplicablePercent>42.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradePaymentTerms>
+                <ram:DueDateDateTime>
+                    <udt:DateTimeString format="102">20250412</udt:DateTimeString>
+                </ram:DueDateDateTime>
+            </ram:SpecifiedTradePaymentTerms>
             <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
                 <ram:LineTotalAmount>16.90</ram:LineTotalAmount>
                 <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
@@ -138,16 +151,6 @@
                 <ram:GrandTotalAmount>119.00</ram:GrandTotalAmount>
                 <ram:DuePayableAmount>69.00</ram:DuePayableAmount>
             </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-            <ram:ApplicableTradeTax>
-                <ram:CalculatedAmount>12.44</ram:CalculatedAmount>
-                <ram:TypeCode>VAT</ram:TypeCode>
-                <ram:BasisAmount>100.00</ram:BasisAmount>
-                <ram:CategoryCode>S</ram:CategoryCode>
-                <ram:RateApplicablePercent>42.00</ram:RateApplicablePercent>
-            </ram:ApplicableTradeTax>
-            <ram:SpecifiedTradePaymentTerms>
-                <ram:DueDateTime format="102">20250412</ram:DueDateTime>
-            </ram:SpecifiedTradePaymentTerms>
         </ram:ApplicableHeaderTradeSettlement>
     </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
