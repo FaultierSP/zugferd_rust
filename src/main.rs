@@ -113,6 +113,7 @@ fn main() {
                 scheme_id: IdentifierSchemeCode::GTIN,
             }),
             name: "Product 1",
+            description: None,
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,
@@ -133,6 +134,8 @@ fn main() {
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(100.0),
                 rate_applicable_percent: Some(19.0),
+                exemption_reason: None,
+                exemption_reason_code: None,
             },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: 119.0,
@@ -151,6 +154,7 @@ fn main() {
                 scheme_id: IdentifierSchemeCode::GTIN,
             }),
             name: "Product 2",
+            description: Some("This is an interesting second product."),
         },
         specified_line_trade_agreement:SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,
@@ -171,6 +175,8 @@ fn main() {
                 category_code: zugferd::VATCategoryCode::StandardRate,
                 basis_amount: Some(44.0),
                 rate_applicable_percent: Some(19.0),
+                exemption_reason: None,
+                exemption_reason_code: None,
             },
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: (44.0*1.19),

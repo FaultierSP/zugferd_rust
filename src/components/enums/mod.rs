@@ -5,3 +5,4 @@ pub mod currency_code;
 pub mod vat_category_code;
 pub mod identifier_scheme_code;
 pub mod unit_code;
+pub mod payment_means_code;

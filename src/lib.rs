@@ -90,14 +90,8 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if self.date_of_issue.is_none() {
             error_text += "Date of issue not set\n";
         }
-        if self.buyer_reference.is_none() {
-            error_text += "Buyer reference not set\n";
-        }
         if self.sellers_name.is_none() {
             error_text += "Seller's name not set\n";
-        }
-        if self.sellers_specified_legal_organization.is_none() {
-            error_text += "Seller's specified legal organization not set\n";
         }
         if self.sellers_postal_trade_address.country_id == CountryCode::NotSet {
             error_text += "Seller's postal trade address country code not set\n";
@@ -107,9 +101,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         }
         if self.buyers_name.is_none() {
             error_text += "Buyer's name not set\n";
-        }
-        if self.buyers_specified_legal_organization.is_none() {
-            error_text += "Buyer's specified legal organization not set\n";
         }
         if self.buyers_order_specified_document.is_none() {
             error_text += "Buyer's order specified document not set\n";
@@ -206,6 +197,18 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         if specification_level >= SpecificationLevel::Basic {
             if self.included_supply_chain_trade_line_items.is_empty() {
                 error_text += "No included supply chain trade line items set\n";
+            }
+        }
+
+        if specification_level >= SpecificationLevel::Extended {
+            if self.buyer_reference.is_none() {
+                error_text += "Buyer reference not set\n";
+            }
+            if self.sellers_specified_legal_organization.is_none() {
+                error_text += "Seller's specified legal organization not set\n";
+            }
+            if self.buyers_specified_legal_organization.is_none() {
+                error_text += "Buyer's specified legal organization not set\n";
             }
         }
 
@@ -499,10 +502,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
                     buyer_reference: self.buyer_reference,
                     seller_trade_party: SellerTradeParty {
+                        id: Vec::new(),
+                        global_id: Vec::new() ,
                         name: self.sellers_name.unwrap(),
-                        specified_legal_organization: SpecifiedLegalOrganization {
-                            id: LegalOrganizationID::new(self.sellers_specified_legal_organization.unwrap()),
-                        },
+                        specified_legal_organization: self.sellers_specified_legal_organization.map(|v|
+                            SpecifiedLegalOrganization {
+                                id: LegalOrganizationID::new(v),
+                            }
+                        ),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.sellers_postal_trade_address.country_id,
                             postcode_code: self.sellers_postal_trade_address.postcode_code,
@@ -511,9 +518,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             line_three: self.sellers_postal_trade_address.line_three,
                             city_name: self.sellers_postal_trade_address.city_name,
                         },
-                        specified_tax_registration: SpecifiedTaxRegistration {
-                            id: SpecifiedTaxRegistrationID::new(self.sellers_specified_tax_registration.unwrap()),
-                        },
+                        uri_universal_communication: None,
+                        specified_tax_registration: vec![
+                            SpecifiedTaxRegistration {
+                                id: SpecifiedTaxRegistrationID::new(self.sellers_specified_tax_registration.unwrap()),
+                            }
+                        ],
                     },
                     buyer_trade_party: BuyerTradeParty {
                         name: self.buyers_name.unwrap(),
@@ -529,9 +539,11 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             city_name: self.buyers_postal_trade_address.city_name,
                         },
                     },
-                    buyer_order_referenced_document: BuyerOrderReferencedDocument {
-                        issuer_assigned_id: self.buyers_order_specified_document.unwrap(),
-                    },
+                    buyer_order_referenced_document: self.buyers_order_specified_document.map(|v|
+                        BuyerOrderReferencedDocument {
+                            issuer_assigned_id: v,
+                        }
+                    ),
                 },
                 applicable_header_trade_delivery: ApplicableHeaderTradeDelivery {
                     actual_delivery_supply_chain_event: Some(ActualDeliverySupplyChainEvent {
@@ -544,6 +556,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 },
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code: self.invoice_currency_code.clone().unwrap(),
+                    specified_trade_settlement_payment_means: Vec::new(),
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
                     specified_trade_settlement_header_monetary_summation: self.monetary_summation.clone(),

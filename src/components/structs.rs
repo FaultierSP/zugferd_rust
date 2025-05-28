@@ -9,6 +9,7 @@ use crate::components::enums::{
     vat_category_code::VATCategoryCode,
     identifier_scheme_code::IdentifierSchemeCode,
     unit_code::UnitCode,
+    payment_means_code::PaymentMeansCode,
 };
 
 use crate::components::constants;
@@ -196,9 +197,11 @@ pub struct SpecifiedTradeProduct<'invoice> {
     /// BT-157
     pub global_id: Option<GlobalID<'invoice>>,
     #[serde(rename="ram:Name")]
+    /// BT-153
     pub name: &'invoice str,
-    //#[serde(rename="ram:Description")]
-    //pub description: &'invoice str,
+    #[serde(rename="ram:Description", skip_serializing_if = "Option::is_none")]
+    /// BT-154
+    pub description: Option<&'invoice str>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -284,20 +287,27 @@ pub struct ApplicableHeaderTradeAgreement<'invoice> {
     pub seller_trade_party: SellerTradeParty<'invoice>,
     #[serde(rename="ram:BuyerTradeParty")]
     pub buyer_trade_party: BuyerTradeParty<'invoice>,
-    #[serde(rename="ram:BuyerOrderReferencedDocument")]
-    pub buyer_order_referenced_document: BuyerOrderReferencedDocument<'invoice>,
+    #[serde(rename="ram:BuyerOrderReferencedDocument", skip_serializing_if = "Option::is_none")]
+    pub buyer_order_referenced_document: Option<BuyerOrderReferencedDocument<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SellerTradeParty<'invoice> {
+    #[serde(rename="ram:ID")]
+    pub id: Vec<&'invoice str>,
+    #[serde(rename="ram:GlobalID")]
+    pub global_id: Vec<GlobalID<'invoice>>,
     #[serde(rename="ram:Name")]
     pub name: &'invoice str,
-    #[serde(rename="ram:SpecifiedLegalOrganization")]
-    pub specified_legal_organization: SpecifiedLegalOrganization<'invoice>,
+    #[serde(rename="ram:SpecifiedLegalOrganization", skip_serializing_if = "Option::is_none")]
+    pub specified_legal_organization: Option<SpecifiedLegalOrganization<'invoice>>,
     #[serde(rename="ram:PostalTradeAddress")]
     pub postal_trade_address: PostalTradeAddress<'invoice>,
+    #[serde(rename="ram:URIUniversalCommunication", skip_serializing_if = "Option::is_none")]
+    /// BT-34-00
+    pub uri_universal_communication: Option<URIUniversalCommunication<'invoice>>,
     #[serde(rename="ram:SpecifiedTaxRegistration")]
-    pub specified_tax_registration: SpecifiedTaxRegistration<'invoice>,
+    pub specified_tax_registration: Vec<SpecifiedTaxRegistration<'invoice>>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -369,12 +379,32 @@ impl<'invoice> SpecifiedTaxRegistrationID<'invoice> {
             value,
         }
     }
+    pub fn new_fc(value: &'invoice str) -> Self {
+        Self {
+            scheme_id: "FC",
+            value,
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTaxRegistration<'invoice> {
     #[serde(rename="ram:ID")]
     pub id: SpecifiedTaxRegistrationID<'invoice>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct URIUniversalCommunication<'invoice> {
+    #[serde(rename="ram:URIID")]
+    pub uriid: UriId<'invoice>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct UriId<'invoice> {
+    #[serde(rename="@schemeID")]
+    pub scheme_id: &'invoice str,    
+    #[serde(rename="$value")]
+    pub value: &'invoice str,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -431,13 +461,59 @@ impl<'invoice> ApplicableHeaderTradeDelivery<'invoice> {
 pub struct ApplicableHeaderTradeSettlement <'invoice>{
     #[serde(rename="ram:InvoiceCurrencyCode")]
     pub invoice_currency_code: CurrencyCode,
+    #[serde(rename="ram:SpecifiedTradeSettlementPaymentMeans")]
+    pub specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice>>,
     #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
     pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
     #[serde(rename="ram:SpecifiedTradePaymentTerms", skip_serializing_if = "Option::is_none")]
     pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
     #[serde(rename="ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
     pub specified_trade_settlement_header_monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
-}   
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct SpecifiedTradeSettlementPaymentMeans<'invoice> {
+    #[serde(rename="ram:TypeCode")]
+    pub type_code: PaymentMeansCode<'invoice>,
+    #[serde(rename="ram:Information", skip_serializing_if = "Option::is_none")]
+    pub information: Option<&'invoice str>,
+    #[serde(rename="ram:Information", skip_serializing_if = "Option::is_none")]
+    pub applicable_trade_settlement_financial_card: Option<&'invoice str>,
+    #[serde(rename="ram:PayerPartyDebtorFinancialAccount", skip_serializing_if = "Option::is_none")]
+    pub payer_party_debtor_financial_account: Option<PayerPartyDebtorFinancialAccount<'invoice>>,
+    #[serde(rename="ram:PayeePartyCreditorFinancialAccount", skip_serializing_if = "Option::is_none")]
+    pub payee_party_creditor_financial_account: Option<PayeePartyCreditorFinancialAccount<'invoice>>,
+    #[serde(rename="ram:PayeeSpecifiedCreditorFinancialInstitution", skip_serializing_if = "Option::is_none")]
+    pub payee_specified_creditor_financial_institution: Option<PayeeSpecifiedCreditorFinancialInstitution<'invoice>>
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct ApplicableTradeSettlementFinancialCard<'invoice> {
+    pub id: &'invoice str, // TODO: should this be an enum?
+    pub cardholder_name: &'invoice str,
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct PayerPartyDebtorFinancialAccount<'invoice> {
+    #[serde(rename="ram:IBANID")]
+    pub ibanid: &'invoice str,
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct PayeePartyCreditorFinancialAccount<'invoice> {
+    #[serde(rename="ram:IBANID", skip_serializing_if = "Option::is_none")]
+    pub ibanid: Option<&'invoice str>, // TODO: should this be a custom type? Or the crate `iban`?
+    #[serde(rename="ram:AccountName", skip_serializing_if = "Option::is_none")]
+    pub account_name: Option<&'invoice str>, // TODO: should this be a custom type? Or the crate `iban`?
+    #[serde(rename="ram:ProprietaryID", skip_serializing_if = "Option::is_none")]
+    pub proprietary_id: Option<&'invoice str>,
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct PayeeSpecifiedCreditorFinancialInstitution<'invoice> {
+    #[serde(rename="ram:BICID")]
+    pub bicid: &'invoice str
+}
 
 #[derive(Serialize, Clone, Copy, Debug)]
 pub struct ApplicableTradeTax <'invoice> {
@@ -445,13 +521,16 @@ pub struct ApplicableTradeTax <'invoice> {
     pub calculated_amount: Option<f64>,
     #[serde(rename="ram:TypeCode")]
     pub type_code: &'invoice str,
+    #[serde(rename="ram:ExemptionReason", skip_serializing_if = "Option::is_none")]
+    pub exemption_reason: Option<&'invoice str>,
     #[serde(rename="ram:BasisAmount",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub basis_amount: Option<f64>,
     #[serde(rename="ram:CategoryCode")]
     pub category_code: VATCategoryCode,
+    #[serde(rename="ram:ExemptionReasonCode", skip_serializing_if = "Option::is_none")]
+    pub exemption_reason_code: Option<&'invoice str>,
     #[serde(rename="ram:RateApplicablePercent",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub rate_applicable_percent: Option<f64>,
-
 }
 
 impl<'invoice> Default for ApplicableTradeTax<'invoice> {
@@ -462,6 +541,8 @@ impl<'invoice> Default for ApplicableTradeTax<'invoice> {
             basis_amount: None,
             category_code: VATCategoryCode::StandardRate,
             rate_applicable_percent: None,
+            exemption_reason: None,
+            exemption_reason_code: None,
         }
     }
 }
