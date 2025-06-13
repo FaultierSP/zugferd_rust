@@ -2,14 +2,15 @@ use serde::{Serialize,Serializer};
 use chrono::NaiveDate;
 
 use crate::components::enums::{
-    specification_level::SpecificationLevel,
-    invoice_type_code::InvoiceTypeCode,
+    allowance_charge_reason_code::AllowanceChargeReasonCode,
     country_code::CountryCode,
     currency_code::CurrencyCode,
-    vat_category_code::VATCategoryCode,
     identifier_scheme_code::IdentifierSchemeCode,
+    invoice_type_code::InvoiceTypeCode,
+    specification_level::SpecificationLevel,
     unit_code::UnitCode,
     payment_means_code::PaymentMeansCode,
+    vat_category_code::VATCategoryCode,
 };
 
 use crate::components::constants;
@@ -271,6 +272,30 @@ pub struct SpecifiedLineTradeSettlement<'invoice> {
     pub applicable_trade_tax: ApplicableTradeTax<'invoice>,
     #[serde(rename="ram:SpecifiedTradeSettlementLineMonetarySummation")]
     pub specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation,
+    #[serde(rename="ram:SpecifiedTradeAllowanceCharge")]
+    pub specified_trade_allowance_charge: Vec<SpecifiedLineTradeAllowanceCharge<'invoice>>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct SpecifiedLineTradeAllowanceCharge<'invoice> {
+    #[serde(rename="ram:ChargeIndicator")]
+    pub charge_indicator: ChargeIndicator,
+    #[serde(rename="ram:CalculationPercent", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub calculation_percent: Option<f64>,
+    #[serde(rename="ram:BasisAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub basis_amount: Option<f64>,
+    #[serde(rename="ram:ActualAmount", serialize_with="f64_format")]
+    pub actual_amount: f64,
+    #[serde(rename="ram:ReasonCode", skip_serializing_if = "Option::is_none")]
+    pub reason_code: Option<AllowanceChargeReasonCode>,
+    #[serde(rename="ram:Reason", skip_serializing_if = "Option::is_none")]
+    pub reason: Option<&'invoice str>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct ChargeIndicator {
+    #[serde(rename="udt:Indicator")]
+    pub indicator: bool,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -465,10 +490,41 @@ pub struct ApplicableHeaderTradeSettlement <'invoice>{
     pub specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice>>,
     #[serde(rename="ram:ApplicableTradeTax", skip_serializing_if = "Option::is_none")]
     pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
+    #[serde(rename="ram:SpecifiedTradeAllowanceCharge")]
+    pub specified_trade_allowance_charge: Vec<SpecifiedTradeAllowanceCharge<'invoice>>,
     #[serde(rename="ram:SpecifiedTradePaymentTerms", skip_serializing_if = "Option::is_none")]
     pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
     #[serde(rename="ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
     pub specified_trade_settlement_header_monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct SpecifiedTradeAllowanceCharge<'invoice> {
+    #[serde(rename="ram:ChargeIndicator")]
+    pub charge_indicator: ChargeIndicator,
+    #[serde(rename="ram:CalculationPercent", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub calculation_percent: Option<f64>,
+    #[serde(rename="ram:BasisAmount", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub basis_amount: Option<f64>,
+    #[serde(rename="ram:ActualAmount", serialize_with="f64_format")]
+    pub actual_amount: f64,
+    #[serde(rename="ram:ReasonCode", skip_serializing_if = "Option::is_none")]
+    pub reason_code: Option<AllowanceChargeReasonCode>,
+    #[serde(rename="ram:Reason", skip_serializing_if = "Option::is_none")]
+    pub reason: Option<&'invoice str>,
+    #[serde(rename="ram:CategoryTradeTax")]
+    pub category_trade_tax: CategoryTradeTax<'invoice>
+    
+}
+
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct CategoryTradeTax<'invoice> {
+    #[serde(rename="ram:TypeCode")]
+    pub type_code: &'invoice str,
+    #[serde(rename="ram:CategoryCode")]
+    pub category_code: VATCategoryCode,
+    #[serde(rename="ram:RateApplicablePercent", serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
+    pub rate_applicable_percent: Option<f64>,
 }
 
 #[derive(Serialize, Clone, Copy, Debug)]
