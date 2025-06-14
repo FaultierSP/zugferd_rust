@@ -1,5 +1,5 @@
 use zugferd::components::enums::unit_code::UnitCode;
-use zugferd::{ApplicableTradeTax, BilledQuantity, CountryCode, CurrencyCode, InvoiceBuilder, InvoiceTypeCode, NetPriceProductTradePrice, SpecificationLevel, SpecifiedTradeSettlementLineMonetarySummation};
+use zugferd::{ApplicableTradeTax, BilledQuantity, ChargeIndicator, CountryCode, CurrencyCode, InvoiceBuilder, InvoiceTypeCode, NetPriceProductTradePrice, SpecificationLevel, SpecifiedLineTradeAllowanceCharge, SpecifiedTradeAllowanceCharge, SpecifiedTradeSettlementLineMonetarySummation};
 // For Basic specification
 use zugferd::{
     IncludedSupplyChainTradeLineItem,
@@ -140,6 +140,7 @@ fn main() {
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: 119.0,
             },
+            specified_trade_allowance_charge: Vec::new(),
         },
     });
 
@@ -181,6 +182,7 @@ fn main() {
             specified_trade_settlement_line_monetary_summation: SpecifiedTradeSettlementLineMonetarySummation {
                 line_total_amount: (44.0*1.19),
             },
+            specified_trade_allowance_charge: Vec::new(),
         },
     });
 
