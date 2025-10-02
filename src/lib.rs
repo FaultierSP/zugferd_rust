@@ -467,15 +467,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     pub fn to_xml_string(mut self,specification_level: SpecificationLevel) -> Result<String,String> {
         let built_invoice = self.build(specification_level)?;
 
-        match quick_xml::se::to_string(&built_invoice) {
-          Ok(xml_string) => Ok(
-            format!(
-              "<?xml version='1.0' encoding='UTF-8'?>{}",
-              xml_string
-            )
-          ),
-          Err(e) => Err(e.to_string()),  
-        }
+        built_invoice.to_xml_string()
     }
 
     //Build itself

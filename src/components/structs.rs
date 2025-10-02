@@ -87,6 +87,16 @@ impl<'invoice> Invoice<'invoice> {
             supply_chain_trade_transaction,
         }
     }
+
+    pub fn to_xml_string(&self) -> Result<String, String> {
+        match quick_xml::se::to_string(&self) {
+            Ok(xml_string) => Ok(format!(
+                "<?xml version='1.0' encoding='UTF-8'?>{}",
+                xml_string
+            )),
+            Err(e) => Err(e.to_string()),
+        }
+    }
 }
 
 #[derive(Serialize, Debug)]
