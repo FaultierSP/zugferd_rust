@@ -220,7 +220,18 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     }
 
     // Set functions
-    pub fn set_business_process <T: Into<&'invoice_builder str>> (&mut self, business_process: T) -> &mut Self {
+
+    /// Identifies the business process context in which the transaction appears,
+    /// to enable the Buyer to process the Invoice in an appropriate way.
+    ///
+    /// To be specified by the buyer
+    ///
+    /// The codes to be used are defined in the CHORUSPRO specifications:
+    /// A1 (invoice deposit), A2 (prepaid invoice deposit), ...
+    pub fn set_business_process<T: Into<&'invoice_builder str>>(
+        &mut self,
+        business_process: T,
+    ) -> &mut Self {
         self.business_process = Some(business_process.into());
         self
     }
@@ -251,7 +262,25 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn set_buyer_reference <T: Into<&'invoice_builder str>> (&mut self, buyer_reference: T) -> &mut Self {
+    ///Buyer reference
+    ///
+    ///An identifier assigned by the Buyer used for internal routing purposes.
+    ///
+    /// The identifier is defined by the Buyer (e.g. contact ID,
+    /// department, office id, project code), but provided by
+    /// the Seller in the Invoice.
+    ///
+    /// CHORUS PRO: for the public sector, it is the "Service Exécutant". It is mandatory for some buyers. It must
+    /// belong to the Chorus Pro repository. It is limited to 100 characters.
+    ///
+    /// - /rsm:CrossIndustryInvoice
+    /// - /rsm:SupplyChainTradeTransaction
+    /// - /ram:ApplicableHeaderTradeAgreement
+    /// - /ram:BuyerReference
+    pub fn set_buyer_reference<T: Into<&'invoice_builder str>>(
+        &mut self,
+        buyer_reference: T,
+    ) -> &mut Self {
         self.buyer_reference = Some(buyer_reference.into());
         self
     }
@@ -340,8 +369,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self.buyers_postal_trade_address.country_id = country_code;
         self
     }
-
-    pub fn set_buyers_order_specified_document <T: Into<&'invoice_builder str>> (&mut self, buyers_order_specified_document: T) -> &mut Self {
+    /// ## Buyer Order Referenced Document
+    /// An identifier of a referenced purchase order, issued by the Buyer.
+    ///
+    /// /ram:BuyerOrderReferencedDocument
+    pub fn set_buyers_order_specified_document<T: Into<&'invoice_builder str>>(
+        &mut self,
+        buyers_order_specified_document: T,
+    ) -> &mut Self {
         self.buyers_order_specified_document = Some(buyers_order_specified_document.into());
         self
     }
