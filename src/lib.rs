@@ -261,9 +261,9 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    ///Buyer reference
+    /// Buyer reference
     ///
-    ///An identifier assigned by the Buyer used for internal routing purposes.
+    /// An identifier assigned by the Buyer used for internal routing purposes.
     ///
     /// The identifier is defined by the Buyer (e.g. contact ID,
     /// department, office id, project code), but provided by
@@ -287,8 +287,13 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     pub fn set_sellers_name <T: Into<&'invoice_builder str>> (&mut self, sellers_name: T) -> &mut Self {
         self.sellers_name = Some(sellers_name.into());
         self
-    }
+    }  
 
+    /// An identifier issued by an official registrar that identifies the Seller as a legal entity or person. 
+    /// 
+    /// BT-30
+    /// 
+    /// ram:SpecifiedLegalOrganization -> ram:ID
     pub fn set_sellers_specified_legal_organization <T: Into<&'invoice_builder str>> (&mut self, sellers_specified_legal_organization: T) -> &mut Self {
         self.sellers_specified_legal_organization = Some(sellers_specified_legal_organization.into());
         self
@@ -334,6 +339,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
+
+    /// An identifier issued by an official registrar that identifies the Buyer as a legal entity or person.
+    /// 
+    /// BT-47
+    /// 
+    /// ram:SpecifiedLegalOrganization -> ram:ID
     pub fn set_buyers_specified_legal_organization <T: Into<&'invoice_builder str>> (&mut self, buyers_specified_legal_organization: T) -> &mut Self {
         self.buyers_specified_legal_organization = Some(buyers_specified_legal_organization.into());
         self
