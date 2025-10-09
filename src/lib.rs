@@ -1,4 +1,3 @@
-use quick_xml;
 use chrono::NaiveDate;
 use serde::Serialize;
 
