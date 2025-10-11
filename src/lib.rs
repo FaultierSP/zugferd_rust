@@ -1,4 +1,3 @@
-use quick_xml;
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -220,7 +219,18 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     }
 
     // Set functions
-    pub fn set_business_process <T: Into<&'invoice_builder str>> (&mut self, business_process: T) -> &mut Self {
+
+    /// Identifies the business process context in which the transaction appears,
+    /// to enable the Buyer to process the Invoice in an appropriate way.
+    ///
+    /// To be specified by the buyer
+    ///
+    /// The codes to be used are defined in the CHORUSPRO specifications:
+    /// A1 (invoice deposit), A2 (prepaid invoice deposit), ...
+    pub fn set_business_process<T: Into<&'invoice_builder str>>(
+        &mut self,
+        business_process: T,
+    ) -> &mut Self {
         self.business_process = Some(business_process.into());
         self
     }
@@ -251,7 +261,25 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn set_buyer_reference <T: Into<&'invoice_builder str>> (&mut self, buyer_reference: T) -> &mut Self {
+    ///Buyer reference
+    ///
+    ///An identifier assigned by the Buyer used for internal routing purposes.
+    ///
+    /// The identifier is defined by the Buyer (e.g. contact ID,
+    /// department, office id, project code), but provided by
+    /// the Seller in the Invoice.
+    ///
+    /// CHORUS PRO: for the public sector, it is the "Service Exécutant". It is mandatory for some buyers. It must
+    /// belong to the Chorus Pro repository. It is limited to 100 characters.
+    ///
+    /// - /rsm:CrossIndustryInvoice
+    /// - /rsm:SupplyChainTradeTransaction
+    /// - /ram:ApplicableHeaderTradeAgreement
+    /// - /ram:BuyerReference
+    pub fn set_buyer_reference<T: Into<&'invoice_builder str>>(
+        &mut self,
+        buyer_reference: T,
+    ) -> &mut Self {
         self.buyer_reference = Some(buyer_reference.into());
         self
     }
@@ -340,8 +368,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self.buyers_postal_trade_address.country_id = country_code;
         self
     }
-
-    pub fn set_buyers_order_specified_document <T: Into<&'invoice_builder str>> (&mut self, buyers_order_specified_document: T) -> &mut Self {
+    /// ## Buyer Order Referenced Document
+    /// An identifier of a referenced purchase order, issued by the Buyer.
+    ///
+    /// /ram:BuyerOrderReferencedDocument
+    pub fn set_buyers_order_specified_document<T: Into<&'invoice_builder str>>(
+        &mut self,
+        buyers_order_specified_document: T,
+    ) -> &mut Self {
         self.buyers_order_specified_document = Some(buyers_order_specified_document.into());
         self
     }
@@ -519,9 +553,11 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                     },
                     buyer_trade_party: BuyerTradeParty {
                         name: self.buyers_name.unwrap(),
-                        specified_legal_organization: Some(SpecifiedLegalOrganization {
-                            id: LegalOrganizationID::new(self.buyers_specified_legal_organization.unwrap()),
-                        }),
+                        specified_legal_organization: self.sellers_specified_legal_organization.map(|v|
+                            SpecifiedLegalOrganization {
+                                id: LegalOrganizationID::new(v),
+                            }
+                        ),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.buyers_postal_trade_address.country_id,
                             postcode_code: self.buyers_postal_trade_address.postcode_code,
@@ -556,5 +592,47 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 },
             },
         ))
+    }
+}
+
+#[cfg(test)]
+mod test{
+    use super::*;
+
+    #[test]
+    /// Tests if a minimum invoice can be built without specifying the legal organization
+    fn test_all_fields_are_set_legal_organization(){
+        
+        let specification_level = SpecificationLevel::Minimum;
+        
+        let sum_net: f64 = 100.0;
+        let tax: f64 = sum_net * 19.0 / 100.0;
+        let sum_gross: f64 = sum_net + tax;
+        let customer_paid_already: f64 = 50.0;
+
+        let mut invoice_builder = InvoiceBuilder::new();
+
+        invoice_builder
+            .set_business_process("process1")
+            .set_invoice_type_code(InvoiceTypeCode::CommercialInvoice)
+            .set_invoice_nr("INV-123456")
+            .set_date_of_issue(chrono::NaiveDate::from_ymd_opt(2024, 08, 10).unwrap())
+            .set_buyer_reference("BR-7890")
+            .set_sellers_name("Seller Corp.")
+            // .set_sellers_specified_legal_organization("LegalOrg-001")
+            .set_sellers_postal_trade_address_country_code(CountryCode::Germany)
+            .set_sellers_specified_tax_registration("DE123456789")
+            .set_buyers_name("Buyer Inc.")
+            // .set_buyers_specified_legal_organization("LegalOrg-002")
+            .set_buyers_order_specified_document("")
+            .set_invoice_currency_code(CurrencyCode::Euro)
+            .set_monetary_summation_tax_basis_total_amount(sum_net)
+            .set_monetary_summation_tax_total_amount(tax)
+            .set_monetary_summation_grand_total_amount(sum_gross)
+            .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
+
+        assert!(invoice_builder.all_fields_are_set(specification_level).is_ok());
+        assert!(invoice_builder.build(specification_level).is_ok());
+
     }
 }

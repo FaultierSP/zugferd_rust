@@ -1,5 +1,5 @@
 use zugferd::components::enums::unit_code::UnitCode;
-use zugferd::{ApplicableTradeTax, BilledQuantity, ChargeIndicator, CountryCode, CurrencyCode, InvoiceBuilder, InvoiceTypeCode, NetPriceProductTradePrice, SpecificationLevel, SpecifiedLineTradeAllowanceCharge, SpecifiedTradeAllowanceCharge, SpecifiedTradeSettlementLineMonetarySummation};
+use zugferd::{ApplicableTradeTax, BilledQuantity, CountryCode, CurrencyCode, InvoiceBuilder, InvoiceTypeCode, NetPriceProductTradePrice, SpecificationLevel, SpecifiedTradeSettlementLineMonetarySummation};
 // For Basic specification
 use zugferd::{
     IncludedSupplyChainTradeLineItem,
