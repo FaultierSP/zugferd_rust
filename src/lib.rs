@@ -299,31 +299,48 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
+    /// Postal code, zip code or similar
+    /// 
+    /// BT-38
     pub fn set_sellers_postal_trade_address_postcode_code <T:Into<&'invoice_builder str>> (&mut self, postcode_code:T) -> &mut Self {
         self.sellers_postal_trade_address.postcode_code = Some(postcode_code.into());
         self
     }
 
+    /// Usually streetname and house number or post-office box number
+    ///
+    /// BT-35
     pub fn set_sellers_postal_trade_address_line_one <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.sellers_postal_trade_address.line_one = Some(line.into());
         self
     }
 
+    /// Additional row to specify details or additions to line one
+    ///
+    /// BT-36
     pub fn set_sellers_postal_trade_address_line_two <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.sellers_postal_trade_address.line_two = Some(line.into());
         self
     }
 
+    /// Additional row to specify details or additions to line one
+    ///
+    /// BT-162
     pub fn set_sellers_postal_trade_address_line_three <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.sellers_postal_trade_address.line_three = Some(line.into());
         self
     }
 
+    /// Name of the city or community where the address is located
+    ///
+    /// BT-37
     pub fn set_sellers_postal_trade_address_city_name <T:Into<&'invoice_builder str>> (&mut self, city_name:T) -> &mut Self {
         self.sellers_postal_trade_address.city_name = Some(city_name.into());
-        self
     }
 
+    /// If there is no tax agent defined, the country where the sales tax is applied
+    ///
+    /// BT-40
     pub fn set_sellers_postal_trade_address_country_code (&mut self, country_code: CountryCode) -> &mut Self {
         self.sellers_postal_trade_address.country_id = country_code;
         self
@@ -350,35 +367,56 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
+    /// Postal code, zip code or similar
+    /// 
+    /// BT-53
     pub fn set_buyers_postal_trade_address_postcode_code <T:Into<&'invoice_builder str>> (&mut self, postcode_code:T) -> &mut Self {
         self.buyers_postal_trade_address.postcode_code = Some(postcode_code.into());
         self
     }
 
+    /// Usually streetname and house number or post-office box number
+    ///
+    /// BT-50
     pub fn set_buyers_postal_trade_address_line_one <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.buyers_postal_trade_address.line_one = Some(line.into());
         self
     }
 
+    /// Additional row to specify details or additions to line one
+    ///
+    /// BT-51
     pub fn set_buyers_postal_trade_address_line_two <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.buyers_postal_trade_address.line_two = Some(line.into());
         self
     }
 
+    /// Additional row to specify details or additions to line one
+    ///
+    /// BT-163
     pub fn set_buyers_postal_trade_address_line_three <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
         self.buyers_postal_trade_address.line_three = Some(line.into());
         self
     }
 
+    /// Name of the city or community where the address is located
+    ///
+    /// BT-52
     pub fn set_buyers_postal_trade_address_city_name <T:Into<&'invoice_builder str>> (&mut self, city_name:T) -> &mut Self {
         self.buyers_postal_trade_address.city_name = Some(city_name.into());
         self
     }
 
+    /// An identifier issued by an official registrar that identifies the Buyer as a legal entity or person.
+    /// 
+    /// BT-55
+    /// 
+    /// ram:SpecifiedLegalOrganization -> ram:ID
     pub fn set_buyers_postal_trade_address_country_code (&mut self, country_code: CountryCode) -> &mut Self {
         self.buyers_postal_trade_address.country_id = country_code;
         self
     }
+    
     /// ## Buyer Order Referenced Document
     /// An identifier of a referenced purchase order, issued by the Buyer.
     ///
@@ -396,6 +434,12 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
+
+
+    /// Tax amount that needs to be paid.
+    /// Calculated by multiplying the net total by the tax percentage
+    /// 
+    /// BT-117
     pub fn set_applicable_trade_tax_calculated_amount(&mut self, amount: f64) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
             applicable_trade_tax.calculated_amount = Some(amount);
@@ -407,7 +451,9 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
         self
     }
-
+    /// Sum of all net amounts of a single tax category
+    ///
+    /// BT-116
     pub fn set_applicable_trade_tax_basis_amount(&mut self, amount: f64) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
             applicable_trade_tax.basis_amount = Some(amount);
@@ -419,7 +465,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
         self
     }
-
+    
+    /// Category of the VAT that is applied. Choose from [`VatCategoryCode`](crate::components::enums::VatCategoryCode)
+    ///
+    /// BT-118
     pub fn set_applicable_trade_tax_category_code(&mut self, code: VATCategoryCode) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
             applicable_trade_tax.category_code = code;
@@ -431,7 +480,9 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
         self
     }
-
+    /// VAT Percentage for the given [`VatCategoryCode`](crate::components::enums::VatCategoryCode)
+    ///
+    /// BT-119 
     pub fn set_applicable_trade_tax_rate_applicable_percent(&mut self, amount: f64) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
             applicable_trade_tax.rate_applicable_percent = Some(amount);
