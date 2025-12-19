@@ -3,15 +3,12 @@ use serde::Serialize;
 
 pub mod components;
 
-pub use components::structs::*;
 pub use crate::components::enums::{
-    specification_level::SpecificationLevel,
-    invoice_type_code::InvoiceTypeCode,
-    country_code::CountryCode,
-    currency_code::CurrencyCode,
-    vat_category_code::VATCategoryCode,
+    country_code::CountryCode, currency_code::CurrencyCode, invoice_type_code::InvoiceTypeCode,
+    specification_level::SpecificationLevel, vat_category_code::VATCategoryCode,
 };
 pub use components::business_rules::validate as validate_business_rules;
+pub use components::structs::*;
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
@@ -45,7 +42,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
 }
 
-impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
+impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     pub fn new() -> Self {
         Self {
             business_process: None,
@@ -76,7 +73,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         }
     }
 
-    pub fn all_fields_are_set(&self, specification_level: SpecificationLevel) -> Result<(), String> {
+    pub fn all_fields_are_set(
+        &self,
+        specification_level: SpecificationLevel,
+    ) -> Result<(), String> {
         let mut error_text: String = String::new();
 
         // Check fields required for minimum specification
@@ -105,18 +105,21 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             error_text += "Buyer's order specified document not set\n";
         }
         if self.monetary_summation.tax_basis_total_amount.is_none() {
-            error_text += "Specified trade settlement monetary summation: Tax basis total amount not set\n";
+            error_text +=
+                "Specified trade settlement monetary summation: Tax basis total amount not set\n";
         }
         if self.monetary_summation.tax_total_amount.is_none() {
-            error_text += "Specified trade settlement monetary summation: Tax total amount not set\n";
+            error_text +=
+                "Specified trade settlement monetary summation: Tax total amount not set\n";
         }
         if self.monetary_summation.grand_total_amount.is_none() {
-            error_text += "Specified trade settlement monetary summation: Grand total amount not set\n";
+            error_text +=
+                "Specified trade settlement monetary summation: Grand total amount not set\n";
         }
         if self.monetary_summation.due_payable_amount.is_none() {
-            error_text += "Specified trade settlement monetary summation: Due payable amount not set\n";
+            error_text +=
+                "Specified trade settlement monetary summation: Due payable amount not set\n";
         }
-
 
         if self.invoice_currency_code.is_none() {
             error_text += "Invoice currency code not set\n";
@@ -124,7 +127,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
         // Additional checks for different specification levels
         if specification_level >= SpecificationLevel::BasicWithoutLines {
-
             if self.applicable_trade_tax.is_none() {
                 error_text += "Applicable trade tax not set\n";
             }
@@ -158,7 +160,6 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             }
 
             if let Some(applicable_trade_tax_checker) = self.applicable_trade_tax.as_ref() {
-                
                 if applicable_trade_tax_checker.calculated_amount.is_none() {
                     error_text += "Applicable trade tax: Calculated amount not set\n";
                 }
@@ -167,12 +168,13 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                     error_text += "Applicable trade tax: Basis amount not set\n";
                 }
 
-                if applicable_trade_tax_checker.rate_applicable_percent.is_none() {
+                if applicable_trade_tax_checker
+                    .rate_applicable_percent
+                    .is_none()
+                {
                     error_text += "Applicable trade tax: Applicable percent rate not set\n";
                 }
-
-            }
-            else {
+            } else {
                 error_text += "Applicable trade tax not set\n";
             }
 
@@ -181,11 +183,13 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
             }
 
             if self.monetary_summation.line_total_amount.is_none() {
-                error_text += "Specified trade settlement monetary summation: Line total amount not set\n";
+                error_text +=
+                    "Specified trade settlement monetary summation: Line total amount not set\n";
             }
 
             if self.monetary_summation.charge_total_amount.is_none() {
-                error_text += "Specified trade settlement monetary summation: Charge total amount not set\n";
+                error_text +=
+                    "Specified trade settlement monetary summation: Charge total amount not set\n";
             }
 
             if self.monetary_summation.allowance_total_amount.is_none() {
@@ -212,7 +216,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         }
 
         if !error_text.is_empty() {
-            return Err(format!("Errors for specification level {:?}:\n{}", specification_level, error_text));
+            return Err(format!(
+                "Errors for specification level {:?}:\n{}",
+                specification_level, error_text
+            ));
         }
 
         Ok(())
@@ -240,23 +247,27 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn set_invoice_nr <T: Into<&'invoice_builder str>> (&mut self, invoice_nr: T) -> &mut Self {
+    pub fn set_invoice_nr<T: Into<&'invoice_builder str>>(&mut self, invoice_nr: T) -> &mut Self {
         self.invoice_nr = Some(invoice_nr.into());
         self
     }
 
-    pub fn set_date_of_issue (&mut self, date_of_issue: NaiveDate) -> &mut Self {
+    pub fn set_date_of_issue(&mut self, date_of_issue: NaiveDate) -> &mut Self {
         self.date_of_issue = Some(DateTimeString::new(date_of_issue));
         self
     }
 
-    pub fn set_invoice_notes <S> (&mut self, notes: Vec<S>) -> &mut Self
-    where S: AsRef<str>
+    pub fn set_invoice_notes<S>(&mut self, notes: Vec<S>) -> &mut Self
+    where
+        S: AsRef<str>,
     {
         self.document_notes = Some(
-            notes.into_iter().map(|note| IncludedNote {
-                content: note.as_ref().to_string(),
-            }).collect()
+            notes
+                .into_iter()
+                .map(|note| IncludedNote {
+                    content: note.as_ref().to_string(),
+                })
+                .collect(),
         );
         self
     }
@@ -284,25 +295,35 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn set_sellers_name <T: Into<&'invoice_builder str>> (&mut self, sellers_name: T) -> &mut Self {
+    pub fn set_sellers_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        sellers_name: T,
+    ) -> &mut Self {
         self.sellers_name = Some(sellers_name.into());
         self
-    }  
+    }
 
-    /// An identifier issued by an official registrar that identifies the Seller as a legal entity or person. 
-    /// 
+    /// An identifier issued by an official registrar that identifies the Seller as a legal entity or person.
+    ///
     /// BT-30
-    /// 
+    ///
     /// ram:SpecifiedLegalOrganization -> ram:ID
-    pub fn set_sellers_specified_legal_organization <T: Into<&'invoice_builder str>> (&mut self, sellers_specified_legal_organization: T) -> &mut Self {
-        self.sellers_specified_legal_organization = Some(sellers_specified_legal_organization.into());
+    pub fn set_sellers_specified_legal_organization<T: Into<&'invoice_builder str>>(
+        &mut self,
+        sellers_specified_legal_organization: T,
+    ) -> &mut Self {
+        self.sellers_specified_legal_organization =
+            Some(sellers_specified_legal_organization.into());
         self
     }
 
     /// Postal code, zip code or similar
-    /// 
+    ///
     /// BT-38
-    pub fn set_sellers_postal_trade_address_postcode_code <T:Into<&'invoice_builder str>> (&mut self, postcode_code:T) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_postcode_code<T: Into<&'invoice_builder str>>(
+        &mut self,
+        postcode_code: T,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.postcode_code = Some(postcode_code.into());
         self
     }
@@ -310,7 +331,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Usually streetname and house number or post-office box number
     ///
     /// BT-35
-    pub fn set_sellers_postal_trade_address_line_one <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_line_one<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.line_one = Some(line.into());
         self
     }
@@ -318,7 +342,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Additional row to specify details or additions to line one
     ///
     /// BT-36
-    pub fn set_sellers_postal_trade_address_line_two <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_line_two<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.line_two = Some(line.into());
         self
     }
@@ -326,7 +353,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Additional row to specify details or additions to line one
     ///
     /// BT-162
-    pub fn set_sellers_postal_trade_address_line_three <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_line_three<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.line_three = Some(line.into());
         self
     }
@@ -334,43 +364,57 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Name of the city or community where the address is located
     ///
     /// BT-37
-    pub fn set_sellers_postal_trade_address_city_name <T:Into<&'invoice_builder str>> (&mut self, city_name:T) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_city_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        city_name: T,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.city_name = Some(city_name.into());
     }
 
     /// If there is no tax agent defined, the country where the sales tax is applied
     ///
     /// BT-40
-    pub fn set_sellers_postal_trade_address_country_code (&mut self, country_code: CountryCode) -> &mut Self {
+    pub fn set_sellers_postal_trade_address_country_code(
+        &mut self,
+        country_code: CountryCode,
+    ) -> &mut Self {
         self.sellers_postal_trade_address.country_id = country_code;
         self
     }
 
-    pub fn set_sellers_specified_tax_registration <T: Into<&'invoice_builder str>> (&mut self, sellers_specified_tax_registration: T) -> &mut Self {
+    pub fn set_sellers_specified_tax_registration<T: Into<&'invoice_builder str>>(
+        &mut self,
+        sellers_specified_tax_registration: T,
+    ) -> &mut Self {
         self.sellers_specified_tax_registration = Some(sellers_specified_tax_registration.into());
         self
     }
 
-    pub fn set_buyers_name <T: Into<&'invoice_builder str>> (&mut self, buyers_name: T) -> &mut Self {
+    pub fn set_buyers_name<T: Into<&'invoice_builder str>>(&mut self, buyers_name: T) -> &mut Self {
         self.buyers_name = Some(buyers_name.into());
         self
     }
 
-
     /// An identifier issued by an official registrar that identifies the Buyer as a legal entity or person.
-    /// 
+    ///
     /// BT-47
-    /// 
+    ///
     /// ram:SpecifiedLegalOrganization -> ram:ID
-    pub fn set_buyers_specified_legal_organization <T: Into<&'invoice_builder str>> (&mut self, buyers_specified_legal_organization: T) -> &mut Self {
+    pub fn set_buyers_specified_legal_organization<T: Into<&'invoice_builder str>>(
+        &mut self,
+        buyers_specified_legal_organization: T,
+    ) -> &mut Self {
         self.buyers_specified_legal_organization = Some(buyers_specified_legal_organization.into());
         self
     }
 
     /// Postal code, zip code or similar
-    /// 
+    ///
     /// BT-53
-    pub fn set_buyers_postal_trade_address_postcode_code <T:Into<&'invoice_builder str>> (&mut self, postcode_code:T) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_postcode_code<T: Into<&'invoice_builder str>>(
+        &mut self,
+        postcode_code: T,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.postcode_code = Some(postcode_code.into());
         self
     }
@@ -378,7 +422,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Usually streetname and house number or post-office box number
     ///
     /// BT-50
-    pub fn set_buyers_postal_trade_address_line_one <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_line_one<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.line_one = Some(line.into());
         self
     }
@@ -386,7 +433,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Additional row to specify details or additions to line one
     ///
     /// BT-51
-    pub fn set_buyers_postal_trade_address_line_two <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_line_two<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.line_two = Some(line.into());
         self
     }
@@ -394,7 +444,10 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Additional row to specify details or additions to line one
     ///
     /// BT-163
-    pub fn set_buyers_postal_trade_address_line_three <T:Into<&'invoice_builder str>> (&mut self, line:T) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_line_three<T: Into<&'invoice_builder str>>(
+        &mut self,
+        line: T,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.line_three = Some(line.into());
         self
     }
@@ -402,21 +455,27 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     /// Name of the city or community where the address is located
     ///
     /// BT-52
-    pub fn set_buyers_postal_trade_address_city_name <T:Into<&'invoice_builder str>> (&mut self, city_name:T) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_city_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        city_name: T,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.city_name = Some(city_name.into());
         self
     }
 
     /// An identifier issued by an official registrar that identifies the Buyer as a legal entity or person.
-    /// 
+    ///
     /// BT-55
-    /// 
+    ///
     /// ram:SpecifiedLegalOrganization -> ram:ID
-    pub fn set_buyers_postal_trade_address_country_code (&mut self, country_code: CountryCode) -> &mut Self {
+    pub fn set_buyers_postal_trade_address_country_code(
+        &mut self,
+        country_code: CountryCode,
+    ) -> &mut Self {
         self.buyers_postal_trade_address.country_id = country_code;
         self
     }
-    
+
     /// ## Buyer Order Referenced Document
     /// An identifier of a referenced purchase order, issued by the Buyer.
     ///
@@ -429,16 +488,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn set_occurrence_date (&mut self, date: NaiveDate) -> &mut Self {
+    pub fn set_occurrence_date(&mut self, date: NaiveDate) -> &mut Self {
         self.occurrence_date = Some(DateTimeString::new(date));
         self
     }
 
-
-
     /// Tax amount that needs to be paid.
     /// Calculated by multiplying the net total by the tax percentage
-    /// 
+    ///
     /// BT-117
     pub fn set_applicable_trade_tax_calculated_amount(&mut self, amount: f64) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
@@ -465,7 +522,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 
         self
     }
-    
+
     /// Category of the VAT that is applied. Choose from [`VatCategoryCode`](crate::components::enums::VatCategoryCode)
     ///
     /// BT-118
@@ -482,7 +539,7 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     }
     /// VAT Percentage for the given [`VatCategoryCode`](crate::components::enums::VatCategoryCode)
     ///
-    /// BT-119 
+    /// BT-119
     pub fn set_applicable_trade_tax_rate_applicable_percent(&mut self, amount: f64) -> &mut Self {
         if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
             applicable_trade_tax.rate_applicable_percent = Some(amount);
@@ -501,16 +558,15 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         };
         if let Some(specified_trade_payment_terms) = self.specified_trade_payment_terms.as_mut() {
             specified_trade_payment_terms.due_date_time = Some(due_date_time);
-        }
-        else {
-            let new_struct = SpecifiedTradePaymentTerms{
+        } else {
+            let new_struct = SpecifiedTradePaymentTerms {
                 description: None,
                 due_date_time: Some(due_date_time),
             };
 
             self.specified_trade_payment_terms = Some(new_struct);
         }
-        
+
         self
     }
 
@@ -540,7 +596,11 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
     }
 
     pub fn set_monetary_summation_tax_total_amount(&mut self, amount: f64) -> &mut Self {
-        self.monetary_summation.tax_total_amount = Some(TaxTotalAmount::new(self.invoice_currency_code.expect("Invoice currency not set."), amount));
+        self.monetary_summation.tax_total_amount = Some(TaxTotalAmount::new(
+            self.invoice_currency_code
+                .expect("Invoice currency not set."),
+            amount,
+        ));
         self
     }
 
@@ -554,20 +614,29 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         self
     }
 
-    pub fn add_supply_chain_trade_line_item(&mut self, line_item: IncludedSupplyChainTradeLineItem<'invoice_builder>) -> &mut Self {
+    pub fn add_supply_chain_trade_line_item(
+        &mut self,
+        line_item: IncludedSupplyChainTradeLineItem<'invoice_builder>,
+    ) -> &mut Self {
         self.included_supply_chain_trade_line_items.push(line_item);
         self
     }
 
     // What the whole crate is actually about
-    pub fn to_xml_string(mut self,specification_level: SpecificationLevel) -> Result<String,String> {
+    pub fn to_xml_string(
+        mut self,
+        specification_level: SpecificationLevel,
+    ) -> Result<String, String> {
         let built_invoice = self.build(specification_level)?;
 
         built_invoice.to_xml_string()
     }
 
     //Build itself
-    pub fn build(&mut self, specification_level: SpecificationLevel) -> Result<Invoice<'invoice_builder>, String> {
+    pub fn build(
+        &mut self,
+        specification_level: SpecificationLevel,
+    ) -> Result<Invoice<'invoice_builder>, String> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
 
@@ -575,7 +644,9 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
         Ok(Invoice::new(
             DocumentContext {
                 business_process: self.business_process.map(|id| BusinessProcess { id }),
-                guideline: Guideline { id: specification_level },
+                guideline: Guideline {
+                    id: specification_level,
+                },
             },
             Document {
                 id: self.invoice_nr.unwrap(),
@@ -586,18 +657,20 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                 included_note: Some(self.document_notes.clone().unwrap_or_default()),
             },
             SupplyChainTradeTransaction {
-                included_supply_chain_trade_line_items: self.included_supply_chain_trade_line_items.clone(),
+                included_supply_chain_trade_line_items: self
+                    .included_supply_chain_trade_line_items
+                    .clone(),
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
                     buyer_reference: self.buyer_reference,
                     seller_trade_party: SellerTradeParty {
                         id: Vec::new(),
-                        global_id: Vec::new() ,
+                        global_id: Vec::new(),
                         name: self.sellers_name.unwrap(),
-                        specified_legal_organization: self.sellers_specified_legal_organization.map(|v|
-                            SpecifiedLegalOrganization {
+                        specified_legal_organization: self
+                            .sellers_specified_legal_organization
+                            .map(|v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
-                            }
-                        ),
+                            }),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.sellers_postal_trade_address.country_id,
                             postcode_code: self.sellers_postal_trade_address.postcode_code,
@@ -607,19 +680,19 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             city_name: self.sellers_postal_trade_address.city_name,
                         },
                         uri_universal_communication: None,
-                        specified_tax_registration: vec![
-                            SpecifiedTaxRegistration {
-                                id: SpecifiedTaxRegistrationID::new(self.sellers_specified_tax_registration.unwrap()),
-                            }
-                        ],
+                        specified_tax_registration: vec![SpecifiedTaxRegistration {
+                            id: SpecifiedTaxRegistrationID::new(
+                                self.sellers_specified_tax_registration.unwrap(),
+                            ),
+                        }],
                     },
                     buyer_trade_party: BuyerTradeParty {
                         name: self.buyers_name.unwrap(),
-                        specified_legal_organization: self.sellers_specified_legal_organization.map(|v|
-                            SpecifiedLegalOrganization {
+                        specified_legal_organization: self
+                            .sellers_specified_legal_organization
+                            .map(|v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
-                            }
-                        ),
+                            }),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.buyers_postal_trade_address.country_id,
                             postcode_code: self.buyers_postal_trade_address.postcode_code,
@@ -629,18 +702,18 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                             city_name: self.buyers_postal_trade_address.city_name,
                         },
                     },
-                    buyer_order_referenced_document: self.buyers_order_specified_document.map(|v|
-                        BuyerOrderReferencedDocument {
+                    buyer_order_referenced_document: self.buyers_order_specified_document.map(
+                        |v| BuyerOrderReferencedDocument {
                             issuer_assigned_id: v,
-                        }
+                        },
                     ),
                 },
                 applicable_header_trade_delivery: ApplicableHeaderTradeDelivery {
                     actual_delivery_supply_chain_event: Some(ActualDeliverySupplyChainEvent {
-                        occurrence_date_time: self.occurrence_date.clone().map(|actual_delivery_date|
-                            OccurrenceDateTime {
+                        occurrence_date_time: self.occurrence_date.clone().map(
+                            |actual_delivery_date| OccurrenceDateTime {
                                 actual_delivery_date,
-                            }
+                            },
                         ),
                     }),
                 },
@@ -650,7 +723,9 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_allowance_charge: Vec::new(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
-                    specified_trade_settlement_header_monetary_summation: self.monetary_summation.clone(),
+                    specified_trade_settlement_header_monetary_summation: self
+                        .monetary_summation
+                        .clone(),
                 },
             },
         ))
@@ -658,15 +733,14 @@ impl<'invoice_builder> InvoiceBuilder <'invoice_builder> {
 }
 
 #[cfg(test)]
-mod test{
+mod test {
     use super::*;
 
     #[test]
     /// Tests if a minimum invoice can be built without specifying the legal organization
-    fn test_all_fields_are_set_legal_organization(){
-        
+    fn test_all_fields_are_set_legal_organization() {
         let specification_level = SpecificationLevel::Minimum;
-        
+
         let sum_net: f64 = 100.0;
         let tax: f64 = sum_net * 19.0 / 100.0;
         let sum_gross: f64 = sum_net + tax;
@@ -693,8 +767,9 @@ mod test{
             .set_monetary_summation_grand_total_amount(sum_gross)
             .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 
-        assert!(invoice_builder.all_fields_are_set(specification_level).is_ok());
+        assert!(invoice_builder
+            .all_fields_are_set(specification_level)
+            .is_ok());
         assert!(invoice_builder.build(specification_level).is_ok());
-
     }
 }
