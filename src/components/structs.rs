@@ -179,6 +179,10 @@ pub struct SupplyChainTradeTransaction<'invoice> {
     pub applicable_header_trade_settlement: ApplicableHeaderTradeSettlement<'invoice>,
 }
 
+
+/// Contains information about a sigle line item on the invoice
+///
+/// BG-25
 #[derive(Serialize, Clone, Debug)]
 pub struct IncludedSupplyChainTradeLineItem<'invoice> {
     #[serde(rename="ram:AssociatedDocumentLineDocument")]
@@ -193,25 +197,42 @@ pub struct IncludedSupplyChainTradeLineItem<'invoice> {
     pub specified_line_trade_settlement: SpecifiedLineTradeSettlement<'invoice>,
 }
 
+
+/// Groups general line item information
+///
+/// BT-126-00
 #[derive(Serialize, Clone, Debug)]
 pub struct AssociatedDocumentLineDocument<'invoice> {
+    /// A unique identifier for this line item in the invoice
+    ///
+    /// BT-126
     #[serde(rename="ram:LineID")]
     pub line_id: &'invoice str,
-    #[serde(rename="ram:IncludedNote", skip_serializing_if = "Option::is_none")]
+    /// Unstructured additional information that are relevant to this line item
+    ///
     /// BT-127-00
+    #[serde(rename="ram:IncludedNote", skip_serializing_if = "Option::is_none")]
     pub included_note: Option<&'invoice str>,
 }
 
+
+/// Groups information about the goods and services of this line item
+///
+/// BG-31
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradeProduct<'invoice> {
-    #[serde(rename="ram:GlobalID", skip_serializing_if = "Option::is_none")]
+    /// Identifier for this item that is valid across invoices
+    ///
     /// BT-157
+    #[serde(rename="ram:GlobalID", skip_serializing_if = "Option::is_none")]
     pub global_id: Option<GlobalID<'invoice>>,
-    #[serde(rename="ram:Name")]
+    /// Name of the article
+    ///
     /// BT-153
+    #[serde(rename="ram:Name")]
     pub name: &'invoice str,
-    #[serde(rename="ram:Description", skip_serializing_if = "Option::is_none")]
     /// BT-154
+    #[serde(rename="ram:Description", skip_serializing_if = "Option::is_none")]
     pub description: Option<&'invoice str>,
 }
 
@@ -232,6 +253,10 @@ impl <'invoice> GlobalID<'invoice> {
     }
 }
 
+
+/// Groups pricing information about the line item
+///
+/// BG-29
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeAgreement {
     #[serde(rename="ram:GrossPriceProductTradePrice", skip_serializing_if = "Option::is_none")]
@@ -240,28 +265,49 @@ pub struct SpecifiedLineTradeAgreement {
     pub net_price_product_trade_price: NetPriceProductTradePrice,
 }
 
+/// BT-148-00
 #[derive(Serialize, Clone, Debug)]
 pub struct GrossPriceProductTradePrice {
+    /// The item price without VAT before deductions
+    ///
+    /// BR-28
     #[serde(rename="ram:ChargeAmount",serialize_with="f64_format")]
     pub charge_amount: f64,
 }
 
+/// The item price without vat with deductions and charges
+///
+/// BT-146-00
 #[derive(Serialize, Clone, Debug)]
 pub struct NetPriceProductTradePrice {
+    /// Price of one item without VAT and after deductions
+    ///
+    /// BT-146
     #[serde(rename="ram:ChargeAmount",serialize_with="f64_format")]
     pub charge_amount: f64,
 }
 
+
+/// Groups delivery information about the line item
+///
+/// BT-129-00
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedLineTradeDelivery {
     #[serde(rename="ram:BilledQuantity")]
     pub billed_quantity: BilledQuantity,
 }
 
+/// amount of the articles that are invoiced
+///
+/// BT-129
 #[derive(Serialize, Clone, Debug)]
 pub struct BilledQuantity {
+    /// Unit of the quantity
+    ///
+    /// BT-130
     #[serde(rename="@unitCode")]
     pub unit_code: UnitCode,
+    /// Amount of the quantity
     #[serde(rename="$value",serialize_with="f64_format_with_precision_4")]
     pub value: f64,
 }
@@ -581,20 +627,45 @@ pub struct PayeeSpecifiedCreditorFinancialInstitution<'invoice> {
     pub bicid: &'invoice str
 }
 
+
+/// A set of financial information that contains information about the VAT in different categories, sets and exemption reasons
+///
+/// BG-23
 #[derive(Serialize, Clone, Copy, Debug)]
 pub struct ApplicableTradeTax <'invoice> {
+    /// The total amount of tax that has to be paid for this tax category
+    ///
+    /// BT-117
     #[serde(rename="ram:CalculatedAmount",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub calculated_amount: Option<f64>,
+    /// Should always be "VAT"
+    ///
+    /// BT-118-0
     #[serde(rename="ram:TypeCode")]
     pub type_code: &'invoice str,
+    /// Reason why this amount is excempt from VAT or why no VAT is calculated
+    ///
+    /// BT-120
     #[serde(rename="ram:ExemptionReason", skip_serializing_if = "Option::is_none")]
     pub exemption_reason: Option<&'invoice str>,
+    /// Sum of all netto amoounts
+    ///
+    /// BT-116
     #[serde(rename="ram:BasisAmount",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub basis_amount: Option<f64>,
+    /// Identifies a VAT category, has to match [Self::rate_applicable_percent]
+    ///
+    /// BT 118
     #[serde(rename="ram:CategoryCode")]
     pub category_code: VATCategoryCode,
+    /// Identifies the reason why VAT is not applied
+    ///
+    /// BT-121
     #[serde(rename="ram:ExemptionReasonCode", skip_serializing_if = "Option::is_none")]
     pub exemption_reason_code: Option<&'invoice str>,
+    /// VAT percentage, has to match [Self::category_code]
+    ///
+    /// BT-119
     #[serde(rename="ram:RateApplicablePercent",serialize_with="format_f64_option", skip_serializing_if = "Option::is_none")]
     pub rate_applicable_percent: Option<f64>,
 }
