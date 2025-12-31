@@ -5,7 +5,7 @@ This crate generates an XML with the ZUGFeRD specification that can be embedded 
 > [!WARNING]
 > This crate is pretty much work in progress.
 
-Although you can generate a minimum and basic wl level XML, this crate is more of a starting point and an invitation for feedback and collaboration. Breaking changes are not intended, but are not impossible either.
+Although you can generate a minimum and basic levels XML, this crate is more of a starting point and an invitation for feedback and collaboration. Breaking changes are not intended, but are not impossible either.
 
 ## Installation
 Add the crate:
@@ -39,7 +39,7 @@ invoice_builder.set_business_process("process1")
     .set_buyers_order_specified_document("OD-2024-001")
     .set_invoice_currency_code(CurrencyCode::Euro);
 ~~~
-You can always check if the provided data enough for the specified level. (At this stage only "minimum" is supported.)
+You can always check if the provided data enough for the specified level. (At this stage only "minimum", "basic wl" and "basic" are supported.)
 ~~~rs
 match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
     Ok(_) => {
