@@ -1,7 +1,8 @@
-use serde::{Serialize,Serializer};
+use serde::{Serialize, Serializer};
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub enum CountryCode {
+    #[default]
     NotSet,
 
     Afghanistan,
@@ -277,9 +278,297 @@ pub enum CountryCode {
 
     Zambia,
     Zimbabwe,
-    
+
     Kosovo,
     UnitedKingdomNorthernIreland,
+}
+
+impl TryFrom<&str> for CountryCode {
+    type Error = String;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "NotSet" => Ok(CountryCode::NotSet),
+            "AF" => Ok(CountryCode::Afghanistan),
+            "AX" => Ok(CountryCode::AlandIslands),
+            "AL" => Ok(CountryCode::Albania),
+            "DZ" => Ok(CountryCode::Algeria),
+            "AS" => Ok(CountryCode::AmericanSamoa),
+            "AD" => Ok(CountryCode::Andorra),
+            "AO" => Ok(CountryCode::Angola),
+            "AI" => Ok(CountryCode::Anguilla),
+            "AQ" => Ok(CountryCode::Antarctica),
+            "AG" => Ok(CountryCode::AntiguaAndBarbuda),
+            "AR" => Ok(CountryCode::Argentina),
+            "AM" => Ok(CountryCode::Armenia),
+            "AW" => Ok(CountryCode::Aruba),
+            "AU" => Ok(CountryCode::Australia),
+            "AT" => Ok(CountryCode::Austria),
+            "AZ" => Ok(CountryCode::Azerbaijan),
+
+            "BS" => Ok(CountryCode::Bahamas),
+            "BH" => Ok(CountryCode::Bahrain),
+            "BD" => Ok(CountryCode::Bangladesh),
+            "BB" => Ok(CountryCode::Barbados),
+            "BY" => Ok(CountryCode::Belarus),
+            "BE" => Ok(CountryCode::Belgium),
+            "BZ" => Ok(CountryCode::Belize),
+            "BJ" => Ok(CountryCode::Benin),
+            "BM" => Ok(CountryCode::Bermuda),
+            "BT" => Ok(CountryCode::Bhutan),
+            "BO" => Ok(CountryCode::Bolivia),
+            "BQ" => Ok(CountryCode::Bonaire),
+            "BA" => Ok(CountryCode::BosniaAndHerzegovina),
+            "BW" => Ok(CountryCode::Botswana),
+            "BV" => Ok(CountryCode::BouvetIsland),
+            "BR" => Ok(CountryCode::Brazil),
+            "IO" => Ok(CountryCode::BritishIndianOceanTerritory),
+            "BN" => Ok(CountryCode::BruneiDarussalam),
+            "BG" => Ok(CountryCode::Bulgaria),
+            "BF" => Ok(CountryCode::BurkinaFaso),
+            "BI" => Ok(CountryCode::Burundi),
+
+            "CV" => Ok(CountryCode::CaboVerde),
+            "KH" => Ok(CountryCode::Cambodia),
+            "CM" => Ok(CountryCode::Cameroon),
+            "CA" => Ok(CountryCode::Canada),
+            "KY" => Ok(CountryCode::CaymanIslands),
+            "CF" => Ok(CountryCode::CentralAfricanRepublic),
+            "TD" => Ok(CountryCode::Chad),
+            "CL" => Ok(CountryCode::Chile),
+            "CN" => Ok(CountryCode::China),
+            "CX" => Ok(CountryCode::ChristmasIsland),
+            "CC" => Ok(CountryCode::CocosIslands),
+            "CO" => Ok(CountryCode::Colombia),
+            "KM" => Ok(CountryCode::Comoros),
+            "CD" => Ok(CountryCode::CongoDemocraticRepublic),
+            "CG" => Ok(CountryCode::Congo),
+            "CK" => Ok(CountryCode::CookIslands),
+            "CR" => Ok(CountryCode::CostaRica),
+            "CI" => Ok(CountryCode::CoteDIvoire),
+            "HR" => Ok(CountryCode::Croatia),
+            "CU" => Ok(CountryCode::Cuba),
+            "CW" => Ok(CountryCode::Curacao),
+            "CY" => Ok(CountryCode::Cyprus),
+            "CZ" => Ok(CountryCode::Czechia),
+
+            "DK" => Ok(CountryCode::Denmark),
+            "DJ" => Ok(CountryCode::Djibouti),
+            "DM" => Ok(CountryCode::Dominica),
+            "DO" => Ok(CountryCode::DominicanRepublic),
+
+            "EC" => Ok(CountryCode::Ecuador),
+            "EG" => Ok(CountryCode::Egypt),
+            "SV" => Ok(CountryCode::ElSalvador),
+            "GQ" => Ok(CountryCode::EquatorialGuinea),
+            "ER" => Ok(CountryCode::Eritrea),
+            "EE" => Ok(CountryCode::Estonia),
+            "SZ" => Ok(CountryCode::Eswatini),
+            "ET" => Ok(CountryCode::Ethiopia),
+
+            "FK" => Ok(CountryCode::FalklandIslands),
+            "FO" => Ok(CountryCode::FaroeIslands),
+            "FJ" => Ok(CountryCode::Fiji),
+            "FI" => Ok(CountryCode::Finland),
+            "FR" => Ok(CountryCode::France),
+            "GF" => Ok(CountryCode::FrenchGuiana),
+            "PF" => Ok(CountryCode::FrenchPolynesia),
+            "TF" => Ok(CountryCode::FrenchSouthernTerritories),
+
+            "GA" => Ok(CountryCode::Gabon),
+            "GM" => Ok(CountryCode::Gambia),
+            "GE" => Ok(CountryCode::Georgia),
+            "DE" => Ok(CountryCode::Germany),
+            "GH" => Ok(CountryCode::Ghana),
+            "GI" => Ok(CountryCode::Gibraltar),
+            "EL" => Ok(CountryCode::Greece),
+            "GL" => Ok(CountryCode::Greenland),
+            "GD" => Ok(CountryCode::Grenada),
+            "GP" => Ok(CountryCode::Guadeloupe),
+            "GU" => Ok(CountryCode::Guam),
+            "GT" => Ok(CountryCode::Guatemala),
+            "GG" => Ok(CountryCode::Guernsey),
+            "GN" => Ok(CountryCode::Guinea),
+            "GW" => Ok(CountryCode::GuineaBissau),
+            "GY" => Ok(CountryCode::Guyana),
+
+            "HT" => Ok(CountryCode::Haiti),
+            "HM" => Ok(CountryCode::HeardIslandAndMcDonaldIslands),
+            "VA" => Ok(CountryCode::HolySee),
+            "HN" => Ok(CountryCode::Honduras),
+            "HK" => Ok(CountryCode::HongKong),
+            "HU" => Ok(CountryCode::Hungary),
+
+            "IS" => Ok(CountryCode::Iceland),
+            "IN" => Ok(CountryCode::India),
+            "ID" => Ok(CountryCode::Indonesia),
+            "IR" => Ok(CountryCode::Iran),
+            "IQ" => Ok(CountryCode::Iraq),
+            "IE" => Ok(CountryCode::Ireland),
+            "IM" => Ok(CountryCode::IsleOfMan),
+            "IL" => Ok(CountryCode::Israel),
+            "IT" => Ok(CountryCode::Italy),
+
+            "JM" => Ok(CountryCode::Jamaica),
+            "JP" => Ok(CountryCode::Japan),
+            "JE" => Ok(CountryCode::Jersey),
+            "JO" => Ok(CountryCode::Jordan),
+
+            "KZ" => Ok(CountryCode::Kazakhstan),
+            "KE" => Ok(CountryCode::Kenya),
+            "KI" => Ok(CountryCode::Kiribati),
+            "KP" => Ok(CountryCode::KoreaDemocraticPeoplesRepublic),
+            "KR" => Ok(CountryCode::KoreaRepublic),
+            "KW" => Ok(CountryCode::Kuwait),
+            "KG" => Ok(CountryCode::Kyrgyzstan),
+
+            "LA" => Ok(CountryCode::LaoPeoplesDemocraticRepublic),
+            "LV" => Ok(CountryCode::Latvia),
+            "LB" => Ok(CountryCode::Lebanon),
+            "LS" => Ok(CountryCode::Lesotho),
+            "LR" => Ok(CountryCode::Liberia),
+            "LY" => Ok(CountryCode::Libya),
+            "LI" => Ok(CountryCode::Liechtenstein),
+            "LT" => Ok(CountryCode::Lithuania),
+            "LU" => Ok(CountryCode::Luxembourg),
+
+            "MO" => Ok(CountryCode::Macao),
+            "MG" => Ok(CountryCode::Madagascar),
+            "MW" => Ok(CountryCode::Malawi),
+            "MY" => Ok(CountryCode::Malaysia),
+            "MV" => Ok(CountryCode::Maldives),
+            "ML" => Ok(CountryCode::Mali),
+            "MT" => Ok(CountryCode::Malta),
+            "MH" => Ok(CountryCode::MarshallIslands),
+            "MQ" => Ok(CountryCode::Martinique),
+            "MR" => Ok(CountryCode::Mauritania),
+            "MU" => Ok(CountryCode::Mauritius),
+            "YT" => Ok(CountryCode::Mayotte),
+            "MX" => Ok(CountryCode::Mexico),
+            "FM" => Ok(CountryCode::Micronesia),
+            "MD" => Ok(CountryCode::Moldova),
+            "MC" => Ok(CountryCode::Monaco),
+            "MN" => Ok(CountryCode::Mongolia),
+            "ME" => Ok(CountryCode::Montenegro),
+            "MS" => Ok(CountryCode::Montserrat),
+            "MA" => Ok(CountryCode::Morocco),
+            "MZ" => Ok(CountryCode::Mozambique),
+            "MM" => Ok(CountryCode::Myanmar),
+
+            "NA" => Ok(CountryCode::Namibia),
+            "NR" => Ok(CountryCode::Nauru),
+            "NP" => Ok(CountryCode::Nepal),
+            "NL" => Ok(CountryCode::Netherlands),
+            "NC" => Ok(CountryCode::NewCaledonia),
+            "NZ" => Ok(CountryCode::NewZealand),
+            "NI" => Ok(CountryCode::Nicaragua),
+            "NE" => Ok(CountryCode::Niger),
+            "NG" => Ok(CountryCode::Nigeria),
+            "NU" => Ok(CountryCode::Niue),
+            "NF" => Ok(CountryCode::NorfolkIsland),
+            "c" => Ok(CountryCode::NorthMacedonia),
+            "MP" => Ok(CountryCode::NorthernMarianaIslands),
+            "NO" => Ok(CountryCode::Norway),
+
+            "OM" => Ok(CountryCode::Oman),
+
+            "PK" => Ok(CountryCode::Pakistan),
+            "PW" => Ok(CountryCode::Palau),
+            "PS" => Ok(CountryCode::Palestine),
+            "PA" => Ok(CountryCode::Panama),
+            "PG" => Ok(CountryCode::PapuaNewGuinea),
+            "PY" => Ok(CountryCode::Paraguay),
+            "PE" => Ok(CountryCode::Peru),
+            "PH" => Ok(CountryCode::Philippines),
+            "PN" => Ok(CountryCode::Pitcairn),
+            "PL" => Ok(CountryCode::Poland),
+            "PT" => Ok(CountryCode::Portugal),
+            "PR" => Ok(CountryCode::PuertoRico),
+
+            "QA" => Ok(CountryCode::Qatar),
+
+            "RE" => Ok(CountryCode::Reunion),
+            "RO" => Ok(CountryCode::Romania),
+            "RU" => Ok(CountryCode::RussianFederation),
+            "RW" => Ok(CountryCode::Rwanda),
+
+            "BL" => Ok(CountryCode::SaintBarthelemy),
+            "SH" => Ok(CountryCode::SaintHelena),
+            "KN" => Ok(CountryCode::SaintKittsAndNevis),
+            "LC" => Ok(CountryCode::SaintLucia),
+            "MF" => Ok(CountryCode::SaintMartin),
+            "PM" => Ok(CountryCode::SaintPierreAndMiquelon),
+            "VC" => Ok(CountryCode::SaintVincentAndTheGrenadines),
+            "WS" => Ok(CountryCode::Samoa),
+            "SM" => Ok(CountryCode::SanMarino),
+            "ST" => Ok(CountryCode::SaoTomeAndPrincipe),
+            "SA" => Ok(CountryCode::SaudiArabia),
+            "SN" => Ok(CountryCode::Senegal),
+            "RS" => Ok(CountryCode::Serbia),
+            "SC" => Ok(CountryCode::Seychelles),
+            "SL" => Ok(CountryCode::SierraLeone),
+            "SG" => Ok(CountryCode::Singapore),
+            "SX" => Ok(CountryCode::SintMaarten),
+            "SK" => Ok(CountryCode::Slovakia),
+            "SI" => Ok(CountryCode::Slovenia),
+            "SB" => Ok(CountryCode::SolomonIslands),
+            "SO" => Ok(CountryCode::Somalia),
+            "ZA" => Ok(CountryCode::SouthAfrica),
+            "GS" => Ok(CountryCode::SouthGeorgiaAndTheSouthSandwichIslands),
+            "SS" => Ok(CountryCode::SouthSudan),
+            "ES" => Ok(CountryCode::Spain),
+            "LK" => Ok(CountryCode::SriLanka),
+            "SD" => Ok(CountryCode::Sudan),
+            "SR" => Ok(CountryCode::Suriname),
+            "SJ" => Ok(CountryCode::SvalbardAndJanMayen),
+            "SE" => Ok(CountryCode::Sweden),
+            "CH" => Ok(CountryCode::Switzerland),
+            "SY" => Ok(CountryCode::SyrianArabRepublic),
+
+            "TW" => Ok(CountryCode::Taiwan),
+            "TJ" => Ok(CountryCode::Tajikistan),
+            "TZ" => Ok(CountryCode::Tanzania),
+            "TH" => Ok(CountryCode::Thailand),
+            "TL" => Ok(CountryCode::TimorLeste),
+            "TG" => Ok(CountryCode::Togo),
+            "TK" => Ok(CountryCode::Tokelau),
+            "TO" => Ok(CountryCode::Tonga),
+            "TT" => Ok(CountryCode::TrinidadAndTobago),
+            "TN" => Ok(CountryCode::Tunisia),
+            "TR" => Ok(CountryCode::Turkey),
+            "TM" => Ok(CountryCode::Turkmenistan),
+            "TC" => Ok(CountryCode::TurksAndCaicosIslands),
+            "TV" => Ok(CountryCode::Tuvalu),
+
+            "UG" => Ok(CountryCode::Uganda),
+            "UA" => Ok(CountryCode::Ukraine),
+            "AE" => Ok(CountryCode::UnitedArabEmirates),
+            "GB" => Ok(CountryCode::UnitedKingdom),
+            "UM" => Ok(CountryCode::UnitedStatesMinorOutlyingIslands),
+            "US" => Ok(CountryCode::UnitedStates),
+            "UY" => Ok(CountryCode::Uruguay),
+            "UZ" => Ok(CountryCode::Uzbekistan),
+
+            "VU" => Ok(CountryCode::Vanuatu),
+            "VE" => Ok(CountryCode::Venezuela),
+            "VN" => Ok(CountryCode::VietNam),
+            "VG" => Ok(CountryCode::VirginIslandsBritish),
+            "VI" => Ok(CountryCode::VirginIslandsUS),
+
+            "WF" => Ok(CountryCode::WallisAndFutuna),
+            "EH" => Ok(CountryCode::WesternSahara),
+
+            "YE" => Ok(CountryCode::Yemen),
+
+            "ZM" => Ok(CountryCode::Zambia),
+            "ZW" => Ok(CountryCode::Zimbabwe),
+
+            "1A" => Ok(CountryCode::Kosovo),
+            "XI" => Ok(CountryCode::UnitedKingdomNorthernIreland),
+
+            _ => Err("Country code not detected".into()),
+        }
+    }
 }
 
 impl CountryCode {
@@ -521,7 +810,7 @@ impl CountryCode {
             CountryCode::Sweden => "SE",
             CountryCode::Switzerland => "CH",
             CountryCode::SyrianArabRepublic => "SY",
-            
+
             CountryCode::Taiwan => "TW",
             CountryCode::Tajikistan => "TJ",
             CountryCode::Tanzania => "TZ",
@@ -575,8 +864,17 @@ impl Serialize for CountryCode {
     }
 }
 
-impl Default for CountryCode {
-    fn default() -> Self {
-        CountryCode::NotSet
+#[cfg(test)]
+mod tests {
+    use crate::CountryCode;
+
+    #[test]
+    fn test_try_from() {
+        let code = CountryCode::Ukraine;
+
+        let string_repr = code.as_str().to_owned();
+        let parsed_code = CountryCode::try_from(string_repr.as_str()).unwrap();
+        debug_assert_eq!(parsed_code, code);
+        panic!("wtf")
     }
 }
