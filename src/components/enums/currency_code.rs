@@ -36,7 +36,7 @@ pub enum CurrencyCode {
     UnidadDeFomento,                                  // CLF
     ChileanPeso,                                      // CLP
     YuanRenminbi,                                     // CNY
-    RenminbiOffshore,                                 // CNH (offshore)
+    RenminbiOffshore,                                 // CNH
     ColombianPeso,                                    // COP
     UnidadDeValorReal,                                // COU
     CostaRicanColon,                                  // CRC
