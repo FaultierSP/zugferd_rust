@@ -58,6 +58,8 @@
 //!
 //! ```
 
+use std::fmt;
+
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -69,6 +71,24 @@ pub use crate::components::enums::{
 };
 pub use components::business_rules::validate as validate_business_rules;
 pub use components::structs::*;
+
+// Error Handling
+
+#[derive(Debug)]
+pub enum InvoiceBuilderError {
+    MissingField(String),
+}
+
+impl fmt::Display for InvoiceBuilderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            InvoiceBuilderError::MissingField(field) => write!(f, "Missing field: {}", field),
+        }
+    }
+}
+
+impl std::error::Error for InvoiceBuilderError {}
+
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
@@ -725,7 +745,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         mut self,
         specification_level: SpecificationLevel,
     ) -> Result<String, String> {
-        let built_invoice = self.build(specification_level)?;
+        let built_invoice = self.build(specification_level).map_err(|e| e.to_string())?;
 
         built_invoice.to_xml_string()
     }
@@ -747,10 +767,20 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 },
             },
             Document {
-                id: self.invoice_nr.unwrap(),
-                type_code: self.invoice_type_code.unwrap(),
+                id: self
+                    .invoice_nr
+                    .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_nr".to_string()))
+                    .map_err(|error| error.to_string())?,
+                type_code: self
+                    .invoice_type_code
+                    .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_type_code".to_string()))
+                    .map_err(|error| error.to_string())?,
                 issue_date_time: IssueDateTime {
-                    date_time_string: self.date_of_issue.clone().unwrap(),
+                    date_time_string: self
+                        .date_of_issue
+                        .clone()
+                        .ok_or_else(|| InvoiceBuilderError::MissingField("date_of_issue".to_string()))
+                        .map_err(|error| error.to_string())?,
                 },
                 included_note: Some(self.document_notes.clone().unwrap_or_default()),
             },
@@ -763,7 +793,10 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     seller_trade_party: SellerTradeParty {
                         id: Vec::new(),
                         global_id: Vec::new(),
-                        name: self.sellers_name.unwrap(),
+                        name: self
+                            .sellers_name
+                            .ok_or_else(|| InvoiceBuilderError::MissingField("sellers_name".to_string()))
+                            .map_err(|error| error.to_string())?,
                         specified_legal_organization: self
                             .sellers_specified_legal_organization
                             .map(|v| SpecifiedLegalOrganization {
@@ -780,7 +813,13 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         uri_universal_communication: None,
                         specified_tax_registration: vec![SpecifiedTaxRegistration {
                             id: SpecifiedTaxRegistrationID::new(
-                                self.sellers_specified_tax_registration.unwrap(),
+                                self.sellers_specified_tax_registration
+                                    .ok_or_else(|| {
+                                        InvoiceBuilderError::MissingField(
+                                            "sellers_specified_tax_registration".to_string(),
+                                        )
+                                    })
+                                    .map_err(|error| error.to_string())?,
                             ),
                         }],
                     },
