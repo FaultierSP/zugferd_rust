@@ -1,5 +1,7 @@
 # Generator of ZUGFeRD XML
+
 ## Summary
+
 This crate generates an XML with the ZUGFeRD specification that can be embedded in PDF to generate E-invoice compliant with the EU regulations.
 
 > [!WARNING]
@@ -8,12 +10,16 @@ This crate generates an XML with the ZUGFeRD specification that can be embedded 
 Although you can generate a minimum and basic levels XML, this crate is more of a starting point and an invitation for feedback and collaboration. Breaking changes are not intended, but are not impossible either.
 
 ## Installation
+
 Add the crate:
-~~~
+
+~~~bash
 cargo add zugferd
 ~~~
+
 Import the crate:
-~~~rs
+
+~~~rust
 use zugferd::{InvoiceBuilder,InvoiceTypeCode,CountryCode,CurrencyCode,SpecificationLevel};
 ~~~
 
@@ -22,7 +28,7 @@ use zugferd::{InvoiceBuilder,InvoiceTypeCode,CountryCode,CurrencyCode,Specificat
 
 Initialize and pass first data:
 
-~~~rs
+~~~rust
 let mut invoice_builder = InvoiceBuilder::new();
 
 invoice_builder.set_business_process("process1")
@@ -39,8 +45,10 @@ invoice_builder.set_business_process("process1")
     .set_buyers_order_specified_document("OD-2024-001")
     .set_invoice_currency_code(CurrencyCode::Euro);
 ~~~
+
 You can always check if the provided data enough for the specified level. (At this stage only "minimum", "basic wl" and "basic" are supported.)
-~~~rs
+
+~~~rust
 match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
     Ok(_) => {
         //Carry on
@@ -52,27 +60,35 @@ match invoice_builder.all_fields_are_set(SpecificationLevel::Minimum) {
     }
 }
 ~~~
+
 Or simply
-~~~rs
+
+~~~rust
 invoice_builder.all_fields_are_set(SpecificationLevel::Minimum)?;
 ~~~
+
 Calculate your data further, for example:
-~~~rs
+
+~~~rust
 let sum_net: f64 = 100.0;
 let tax: f64 = sum_net * 19.0 /100.0;
 let sum_gross: f64 = sum_net + tax;
 let customer_paid_already: f64 = 50.0;
 ~~~
+
 Pass missing data to the instance:
-~~~rs
+
+~~~rust
 invoice_builder
     .set_monetary_summation_tax_basis_total_amount(sum_net)
     .set_monetary_summation_tax_total_amount(tax)
     .set_monetary_summation_grand_total_amount(sum_gross)
     .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 ~~~
+
 Generate XML:
-~~~rs
+
+~~~rust
 let mut xml_string: String = String::new();
 
 match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
@@ -86,8 +102,11 @@ match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
 
 println!("Generated ZUGFeRD XML: {}",xml_string);
 ~~~
+
 Please check `main.rs` for further examples.
+
 ## Roadmap
+
 - [x] generation of minimum level
 - [x] generation of basic level without lines
 - [x] generation of basic level
@@ -96,6 +115,7 @@ Please check `main.rs` for further examples.
 - [ ] validation of all levels
 - [ ] parsing of all levels
 - [ ] embedding the generated XML into PDF/A-3 files
+
 ## Further reading
 
 ZUGFeRD 2.4 specification: in [German](https://www.ferd-net.de/publikationen-produkte/publikationen/detailseite/zugferd-24-deutsch) and [English](https://www.ferd-net.de/en/downloads/publications/details/zugferd-24-english)
