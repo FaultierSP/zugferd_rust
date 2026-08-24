@@ -1,6 +1,6 @@
-use serde::{Serialize,Serializer};
+use serde::{Serialize, Serializer};
 
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
 pub enum IdentifierSchemeCode {
     GTIN,

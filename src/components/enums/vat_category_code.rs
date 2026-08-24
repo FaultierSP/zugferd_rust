@@ -1,4 +1,4 @@
-use serde::{Serialize,Serializer};
+use serde::{Serialize, Serializer};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum VATCategoryCode {

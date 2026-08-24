@@ -264,9 +264,10 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         }
 
         if specification_level >= SpecificationLevel::Basic
-            && self.included_supply_chain_trade_line_items.is_empty() {
-                error_text += "No included supply chain trade line items set\n";
-            }
+            && self.included_supply_chain_trade_line_items.is_empty()
+        {
+            error_text += "No included supply chain trade line items set\n";
+        }
 
         if specification_level >= SpecificationLevel::Extended {
             if self.buyer_reference.is_none() {
