@@ -1,6 +1,6 @@
-use serde::{Serialize,Serializer};
+use serde::{Serialize, Serializer};
 
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum CurrencyCode {
     Euro,
     BritishPound,

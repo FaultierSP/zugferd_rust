@@ -1,1 +1,1 @@
-pub static DATE_TIME_FORMAT_102:&str="%Y%m%d";
+pub static DATE_TIME_FORMAT_102: &str = "%Y%m%d";

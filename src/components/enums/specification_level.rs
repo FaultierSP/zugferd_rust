@@ -15,10 +15,16 @@ impl SpecificationLevel {
         match self {
             SpecificationLevel::Minimum => "urn:factur-x.eu:1p0:minimum",
             SpecificationLevel::BasicWithoutLines => "urn:factur-x.eu:1p0:basicwl",
-            SpecificationLevel::Basic => "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic",
+            SpecificationLevel::Basic => {
+                "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic"
+            }
             SpecificationLevel::En16931 => "urn:cen.eu:en16931:2017",
-            SpecificationLevel::Extended => "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended",
-            SpecificationLevel::XRechnung => "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"
+            SpecificationLevel::Extended => {
+                "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"
+            }
+            SpecificationLevel::XRechnung => {
+                "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0"
+            }
         }
     }
 }
