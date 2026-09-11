@@ -12,35 +12,87 @@ use crate::components::enums::{
 
 use crate::components::constants;
 
+mod sealed_trait {
+    use rust_decimal::Decimal;
+    pub trait RoundingStrategyTrait {
+        fn round(v: Decimal, n: u32) -> Decimal;
+    }
+}
+
+macro_rules! impl_decimal_rounding_strategies {
+    (
+        $( $variant:ident ),+ $(,)?
+    ) => {
+        $(
+            pub struct $variant;
+
+            impl sealed_trait::RoundingStrategyTrait for $variant {
+                fn round(value: Decimal, n: u32) -> Decimal {
+                    value.round_dp_with_strategy(
+                        n,
+                        RoundingStrategy::$variant,
+                    )
+                }
+            }
+        )+
+    };
+}
+
+impl_decimal_rounding_strategies!(
+    MidpointNearestEven,
+    MidpointAwayFromZero,
+    MidpointTowardZero,
+    ToZero,
+    AwayFromZero,
+    ToNegativeInfinity,
+    ToPositiveInfinity,
+);
+
+/// This allows us to construct Fixed values with a rounding strategy and accept any combination of rounding rules in the same place.
+/// Use non-naive values and deref them where NaiveFixed is needed
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Fixed<const N: u32>(Decimal);
+pub struct NaiveFixed<const N: u32>(Decimal);
 
-impl<const N: u32> Fixed<N> {
-    pub fn new(d: Decimal) -> Self {
-        Self(
-            d.round_dp_with_strategy(N, RoundingStrategy::MidpointAwayFromZero)
-                .trunc_with_scale(N),
-        )
-    }
-
-    //Banker's rounding
-    pub fn new_bankers(d: Decimal) -> Self {
-        Self(
-            d.round_dp_with_strategy(N, RoundingStrategy::MidpointNearestEven)
-                .trunc_with_scale(N),
-        )
-    }
-}
-
-impl<const N: u32> Serialize for Fixed<N> {
+impl<const N: u32> Serialize for NaiveFixed<N> {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
-        s.collect_str(&self.0)
+        let d: usize = N as usize;
+        s.collect_str(&format_args!("{:.d$}", self.0))
     }
 }
 
-pub type Amount = Fixed<2>;
-pub type Percent = Fixed<2>;
-pub type UnitPrice = Fixed<4>;
+pub type NaiveAmount = NaiveFixed<2>;
+pub type NaivePercent = NaiveFixed<2>;
+pub type NaiveUnitPrice = NaiveFixed<4>;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Fixed<const N: u32, R: sealed_trait::RoundingStrategyTrait>(
+    NaiveFixed<N>,
+    std::marker::PhantomData<R>,
+);
+
+impl<const N: u32, R: sealed_trait::RoundingStrategyTrait> From<Decimal> for Fixed<N, R> {
+    fn from(value: Decimal) -> Self {
+        Self(
+            NaiveFixed(R::round(value, N)),
+            std::marker::PhantomData::<R>,
+        )
+    }
+}
+
+// <https://doc.rust-lang.org/std/ops/trait.Deref.html#when-to-implement-deref-or-derefmut>
+//
+// I believe this is a good use of Deref because we actually want the type to behave like/become a Naive version of itself
+// but since it is a bit of a hot topic, I'd be fine removing this impl
+impl<const N: u32, R: sealed_trait::RoundingStrategyTrait> std::ops::Deref for Fixed<N, R> {
+    type Target = NaiveFixed<N>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+pub type Amount<RoundingStrategy> = Fixed<2, RoundingStrategy>;
+pub type Percent<RoundingStrategy> = Fixed<2, RoundingStrategy>;
+pub type UnitPrice<RoundingStrategy> = Fixed<4, RoundingStrategy>;
 
 //Formatting and serializing functions
 fn f64_format<S>(value: &f64, serializer: S) -> Result<S::Ok, S::Error>
@@ -307,7 +359,7 @@ pub struct GrossPriceProductTradePrice {
     ///
     /// BR-28
     #[serde(rename = "ram:ChargeAmount")]
-    pub charge_amount: Amount,
+    pub charge_amount: NaiveAmount,
 }
 
 /// The item price without vat with deductions and charges
@@ -319,7 +371,7 @@ pub struct NetPriceProductTradePrice {
     ///
     /// BT-146
     #[serde(rename = "ram:ChargeAmount")]
-    pub charge_amount: Amount,
+    pub charge_amount: NaiveAmount,
 }
 
 /// Groups delivery information about the line item

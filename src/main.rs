@@ -11,7 +11,15 @@ use zugferd::{
     SpecifiedTradeProduct,
 };
 
+use rust_decimal::Decimal;
+
+type BankersAmount = zugferd::Amount<zugferd::components::structs::MidpointNearestEven>;
+type ElementaryAmount = zugferd::Amount<zugferd::components::structs::MidpointAwayFromZero>;
+
 fn main() {
+    let amount_1 = Decimal::from_str_exact("100.0").expect("Static value should parse");
+    let amount_2 = Decimal::from_str_exact("1.0").expect("Static values should not fail");
+
     //Initialize and pass first data
     let mut invoice_builder = InvoiceBuilder::new();
 
@@ -117,7 +125,7 @@ fn main() {
         specified_line_trade_agreement: SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,
             net_price_product_trade_price: NetPriceProductTradePrice {
-                charge_amount: 100.0,
+                charge_amount: *BankersAmount::from(amount_1),
             },
         },
         specified_line_trade_delivery: SpecifiedLineTradeDelivery {
@@ -159,7 +167,9 @@ fn main() {
         },
         specified_line_trade_agreement: SpecifiedLineTradeAgreement {
             gross_price_product_trade_price: None,
-            net_price_product_trade_price: NetPriceProductTradePrice { charge_amount: 1.0 },
+            net_price_product_trade_price: NetPriceProductTradePrice {
+                charge_amount: *ElementaryAmount::from(amount_2),
+            },
         },
         specified_line_trade_delivery: SpecifiedLineTradeDelivery {
             billed_quantity: BilledQuantity {
