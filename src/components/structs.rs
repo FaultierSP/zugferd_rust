@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use rust_decimal::{Decimal, RoundingStrategy};
 use serde::{Serialize, Serializer};
 
 use crate::components::enums::{
@@ -10,6 +11,36 @@ use crate::components::enums::{
 };
 
 use crate::components::constants;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Fixed<const N: u32>(Decimal);
+
+impl<const N: u32> Fixed<N> {
+    pub fn new(d: Decimal) -> Self {
+        Self(
+            d.round_dp_with_strategy(N, RoundingStrategy::MidpointAwayFromZero)
+                .trunc_with_scale(N),
+        )
+    }
+
+    //Banker's rounding
+    pub fn new_bankers(d: Decimal) -> Self {
+        Self(
+            d.round_dp_with_strategy(N, RoundingStrategy::MidpointNearestEven)
+                .trunc_with_scale(N),
+        )
+    }
+}
+
+impl<const N: u32> Serialize for Fixed<N> {
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.collect_str(&self.0)
+    }
+}
+
+pub type Amount = Fixed<2>;
+pub type Percent = Fixed<2>;
+pub type UnitPrice = Fixed<4>;
 
 //Formatting and serializing functions
 fn f64_format<S>(value: &f64, serializer: S) -> Result<S::Ok, S::Error>
@@ -275,8 +306,8 @@ pub struct GrossPriceProductTradePrice {
     /// The item price without VAT before deductions
     ///
     /// BR-28
-    #[serde(rename = "ram:ChargeAmount", serialize_with = "f64_format")]
-    pub charge_amount: f64,
+    #[serde(rename = "ram:ChargeAmount")]
+    pub charge_amount: Amount,
 }
 
 /// The item price without vat with deductions and charges
@@ -287,8 +318,8 @@ pub struct NetPriceProductTradePrice {
     /// Price of one item without VAT and after deductions
     ///
     /// BT-146
-    #[serde(rename = "ram:ChargeAmount", serialize_with = "f64_format")]
-    pub charge_amount: f64,
+    #[serde(rename = "ram:ChargeAmount")]
+    pub charge_amount: Amount,
 }
 
 /// Groups delivery information about the line item
