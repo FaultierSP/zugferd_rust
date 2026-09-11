@@ -635,7 +635,10 @@ pub struct SpecifiedTradeSettlementPaymentMeans<'invoice> {
     pub type_code: PaymentMeansCode<'invoice>,
     #[serde(rename = "ram:Information", skip_serializing_if = "Option::is_none")]
     pub information: Option<&'invoice str>,
-    #[serde(rename = "ram:Information", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "ram:ApplicableTradeSettlementFinancialCard",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub applicable_trade_settlement_financial_card: Option<&'invoice str>,
     #[serde(
         rename = "ram:PayerPartyDebtorFinancialAccount",
