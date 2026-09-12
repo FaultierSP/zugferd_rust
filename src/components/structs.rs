@@ -230,14 +230,17 @@ pub struct SpecifiedTradeProduct<'invoice> {
     ///
     /// BT-157
     #[serde(rename = "ram:GlobalID", skip_serializing_if = "Option::is_none")]
+    /// A unique identifier for this item that is valid across invoices
     pub global_id: Option<GlobalID<'invoice>>,
     /// Name of the article
     ///
     /// BT-153
     #[serde(rename = "ram:Name")]
+    /// The name of the article
     pub name: &'invoice str,
     /// BT-154
     #[serde(rename = "ram:Description", skip_serializing_if = "Option::is_none")]
+    /// A description of the article
     pub description: Option<&'invoice str>,
 }
 
