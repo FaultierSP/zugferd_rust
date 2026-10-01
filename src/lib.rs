@@ -824,7 +824,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         }],
                     },
                     buyer_trade_party: BuyerTradeParty {
-                        name: self.buyers_name.unwrap(),
+                        name: self
+                            .buyers_name
+                            .ok_or_else(|| {
+                                InvoiceBuilderError::MissingField("buyers_name".to_string())
+                            })
+                            .map_err(|error| error.to_string())?,
                         specified_legal_organization: self.buyers_specified_legal_organization.map(
                             |v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
