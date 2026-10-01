@@ -860,7 +860,14 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     }),
                 },
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
-                    invoice_currency_code: self.invoice_currency_code.unwrap(),
+
+                    invoice_currency_code: self
+                        .invoice_currency_code
+                        .clone()
+                        .ok_or_else(|| {
+                            InvoiceBuilderError::MissingField("invoice_currency_code".to_string())
+                        })
+                        .map_err(|error| error.to_string())?,
                     specified_trade_settlement_payment_means: Vec::new(),
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_allowance_charge: Vec::new(),
