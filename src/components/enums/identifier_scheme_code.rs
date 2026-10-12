@@ -235,13 +235,13 @@ pub enum IdentifierSchemeCode {
     UaeTin,                       // 0235 - UAE Tax Identification Number (TIN)
     ToimipaikkaId,                // 0236 - ToimipaikkalD
     CprDenmark,                   // 0237 - CPR (Danish person civil registration number)
-    PlatformeFacturation,         // 0238 - Plateforme(s) agréée(s) à la facturation électronique (PPF/PDP)
-    Eaeu,                         // 0239 - EAEU
-    RegisterLegalPersons,         // 0240 - Register of legal persons (Répertoire des personnes morales)
-    NameUnknown0241,              // 0241 - Name unknown
-    OpenPeppolSpis,               // 0242 - OpenPeppol Service Provider Identification Scheme (SPIS)
-    NameUnknown0243,              // 0243 - Name unknown
-    TaxIdNigeria,                 // 0244 - Tax Identification (Tax ID), Nigeria
+    PlatformeFacturation, // 0238 - Plateforme(s) agréée(s) à la facturation électronique (PPF/PDP)
+    Eaeu,                 // 0239 - EAEU
+    RegisterLegalPersons, // 0240 - Register of legal persons (Répertoire des personnes morales)
+    NameUnknown0241,      // 0241 - Name unknown
+    OpenPeppolSpis,       // 0242 - OpenPeppol Service Provider Identification Scheme (SPIS)
+    NameUnknown0243,      // 0243 - Name unknown
+    TaxIdNigeria,         // 0244 - Tax Identification (Tax ID), Nigeria
 }
 
 impl IdentifierSchemeCode {

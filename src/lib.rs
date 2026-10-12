@@ -89,7 +89,6 @@ impl fmt::Display for InvoiceBuilderError {
 
 impl std::error::Error for InvoiceBuilderError {}
 
-
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
     //Minimal specification
@@ -773,13 +772,17 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     .map_err(|error| error.to_string())?,
                 type_code: self
                     .invoice_type_code
-                    .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_type_code".to_string()))
+                    .ok_or_else(|| {
+                        InvoiceBuilderError::MissingField("invoice_type_code".to_string())
+                    })
                     .map_err(|error| error.to_string())?,
                 issue_date_time: IssueDateTime {
                     date_time_string: self
                         .date_of_issue
                         .clone()
-                        .ok_or_else(|| InvoiceBuilderError::MissingField("date_of_issue".to_string()))
+                        .ok_or_else(|| {
+                            InvoiceBuilderError::MissingField("date_of_issue".to_string())
+                        })
                         .map_err(|error| error.to_string())?,
                 },
                 included_note: Some(self.document_notes.clone().unwrap_or_default()),
@@ -795,7 +798,9 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         global_id: Vec::new(),
                         name: self
                             .sellers_name
-                            .ok_or_else(|| InvoiceBuilderError::MissingField("sellers_name".to_string()))
+                            .ok_or_else(|| {
+                                InvoiceBuilderError::MissingField("sellers_name".to_string())
+                            })
                             .map_err(|error| error.to_string())?,
                         specified_legal_organization: self
                             .sellers_specified_legal_organization
@@ -860,7 +865,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     }),
                 },
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
-
                     invoice_currency_code: self
                         .invoice_currency_code
                         .clone()
