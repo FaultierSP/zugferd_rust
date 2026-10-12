@@ -381,7 +381,7 @@ impl TryFrom<&str> for CountryCode {
             "DE" => Ok(CountryCode::Germany),
             "GH" => Ok(CountryCode::Ghana),
             "GI" => Ok(CountryCode::Gibraltar),
-            "EL" => Ok(CountryCode::Greece),
+            "GR" => Ok(CountryCode::Greece),
             "GL" => Ok(CountryCode::Greenland),
             "GD" => Ok(CountryCode::Grenada),
             "GP" => Ok(CountryCode::Guadeloupe),
