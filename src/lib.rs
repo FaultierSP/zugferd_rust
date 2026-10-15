@@ -867,7 +867,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code: self
                         .invoice_currency_code
-                        .clone()
                         .ok_or_else(|| {
                             InvoiceBuilderError::MissingField("invoice_currency_code".to_string())
                         })
