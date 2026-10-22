@@ -87,7 +87,13 @@ impl fmt::Display for InvoiceBuilderError {
     }
 }
 
-impl std::error::Error for InvoiceBuilderError {}
+impl std::error::Error for InvoiceBuilderError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            InvoiceBuilderError::MissingField(_) => None,
+        }
+    }
+}
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
@@ -106,6 +112,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     buyers_order_specified_document: Option<&'invoice_builder str>,
     occurrence_date: Option<DateTimeString<'invoice_builder>>,
     invoice_currency_code: Option<CurrencyCode>,
+    tax_total_amount: Option<f64>,
     monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 
     //Basic WL specification
@@ -144,6 +151,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             buyers_order_specified_document: None,
             occurrence_date: None,
             invoice_currency_code: None,
+            tax_total_amount: None,
             monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation::default(),
 
             applicable_trade_tax: None,
@@ -193,7 +201,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text +=
                 "Specified trade settlement monetary summation: Tax basis total amount not set\n";
         }
-        if self.monetary_summation.tax_total_amount.is_none() {
+        if self.tax_total_amount.is_none() {
             error_text +=
                 "Specified trade settlement monetary summation: Tax total amount not set\n";
         }
@@ -705,11 +713,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ///
     /// BT-110
     pub fn set_monetary_summation_tax_total_amount(&mut self, amount: f64) -> &mut Self {
-        self.monetary_summation.tax_total_amount = Some(TaxTotalAmount::new(
-            self.invoice_currency_code
-                .expect("Invoice currency not set."),
-            amount,
-        ));
+        self.tax_total_amount = Some(amount);
         self
     }
 
@@ -756,6 +760,18 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> Result<Invoice<'invoice_builder>, String> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
+
+        let invoice_currency_code = self
+            .invoice_currency_code
+            .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_currency_code".to_string()))
+            .map_err(|error| error.to_string())?;
+        let tax_total_amount = self
+            .tax_total_amount
+            .ok_or_else(|| InvoiceBuilderError::MissingField("tax_total_amount".to_string()))
+            .map_err(|error| error.to_string())?;
+        let mut monetary_summation = self.monetary_summation.clone();
+        monetary_summation.tax_total_amount =
+            Some(TaxTotalAmount::new(invoice_currency_code, tax_total_amount));
 
         // Build the invoice structure
         Ok(Invoice::new(
@@ -865,19 +881,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     }),
                 },
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
-                    invoice_currency_code: self
-                        .invoice_currency_code
-                        .ok_or_else(|| {
-                            InvoiceBuilderError::MissingField("invoice_currency_code".to_string())
-                        })
-                        .map_err(|error| error.to_string())?,
+                    invoice_currency_code,
                     specified_trade_settlement_payment_means: Vec::new(),
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_allowance_charge: Vec::new(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
-                    specified_trade_settlement_header_monetary_summation: self
-                        .monetary_summation
-                        .clone(),
+                    specified_trade_settlement_header_monetary_summation: monetary_summation,
                 },
             },
         ))
