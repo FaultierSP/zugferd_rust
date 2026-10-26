@@ -871,15 +871,9 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         },
                     ),
                 },
-                applicable_header_trade_delivery: ApplicableHeaderTradeDelivery {
-                    actual_delivery_supply_chain_event: Some(ActualDeliverySupplyChainEvent {
-                        occurrence_date_time: self.occurrence_date.clone().map(
-                            |actual_delivery_date| OccurrenceDateTime {
-                                actual_delivery_date,
-                            },
-                        ),
-                    }),
-                },
+                applicable_header_trade_delivery: ApplicableHeaderTradeDelivery::new_with_event(
+                    self.occurrence_date.clone(),
+                ),
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code,
                     specified_trade_settlement_payment_means: Vec::new(),
