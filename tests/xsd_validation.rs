@@ -2,7 +2,7 @@
 //!
 //! The schemas are not shipped with this repository. Download the specification
 //! package from <https://www.ferd-net.de> and unpack its XSDs (the per-profile
-//! folders with all their imported `.xsd` files) below `tests/xsd/`, or point
+//! folders with all their imported `.xsd` files) below `tests/Schema/`, or point
 //! `ZUGFERD_XSD_DIR` at the folder. Each profile's entry schema is found by its
 //! file name suffix, e.g. `FACTUR-X_MINIMUM.xsd`.
 //!
@@ -36,7 +36,7 @@ fn require_xsd() -> bool {
 fn xsd_root() -> PathBuf {
     std::env::var_os("ZUGFERD_XSD_DIR")
         .map(PathBuf::from)
-        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/xsd"))
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/Schema"))
 }
 
 /// Finds the entry schema of a profile: a `.xsd` whose stem ends in `_<suffix>`.
