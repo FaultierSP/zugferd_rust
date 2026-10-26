@@ -3,7 +3,7 @@ set dotenv-load
 
 # Folder with the unpacked ZUGFeRD schema package (one sub-folder per profile).
 # Set ZUGFERD_XSD_DIR, or override per call: `just xsd_dir=/path/to/Schema test-schema`
-xsd_dir := env("ZUGFERD_XSD_DIR", justfile_directory() / "tests/xsd")
+xsd_dir := env("ZUGFERD_XSD_DIR", justfile_directory() / "tests/Schema")
 
 export ZUGFERD_XSD_DIR := xsd_dir
 
