@@ -511,13 +511,13 @@ pub struct UriId<'invoice> {
 pub struct BuyerTradeParty<'invoice> {
     #[serde(rename = "ram:Name")]
     pub name: &'invoice str,
-    #[serde(rename = "ram:PostalTradeAddress")]
-    pub postal_trade_address: PostalTradeAddress<'invoice>,
     #[serde(
         rename = "ram:SpecifiedLegalOrganization",
         skip_serializing_if = "Option::is_none"
     )]
     pub specified_legal_organization: Option<SpecifiedLegalOrganization<'invoice>>,
+    #[serde(rename = "ram:PostalTradeAddress")]
+    pub postal_trade_address: PostalTradeAddress<'invoice>,
 }
 
 #[derive(Serialize, Clone, Debug)]

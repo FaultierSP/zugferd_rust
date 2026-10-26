@@ -58,6 +58,8 @@
 //!
 //! ```
 
+use std::fmt;
+
 use chrono::NaiveDate;
 use serde::Serialize;
 
@@ -69,6 +71,29 @@ pub use crate::components::enums::{
 };
 pub use components::business_rules::validate as validate_business_rules;
 pub use components::structs::*;
+
+// Error Handling
+
+#[derive(Debug)]
+pub enum InvoiceBuilderError {
+    MissingField(String),
+}
+
+impl fmt::Display for InvoiceBuilderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            InvoiceBuilderError::MissingField(field) => write!(f, "Missing field: {}", field),
+        }
+    }
+}
+
+impl std::error::Error for InvoiceBuilderError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            InvoiceBuilderError::MissingField(_) => None,
+        }
+    }
+}
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
@@ -87,6 +112,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     buyers_order_specified_document: Option<&'invoice_builder str>,
     occurrence_date: Option<DateTimeString<'invoice_builder>>,
     invoice_currency_code: Option<CurrencyCode>,
+    tax_total_amount: Option<f64>,
     monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 
     //Basic WL specification
@@ -125,6 +151,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             buyers_order_specified_document: None,
             occurrence_date: None,
             invoice_currency_code: None,
+            tax_total_amount: None,
             monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation::default(),
 
             applicable_trade_tax: None,
@@ -174,7 +201,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text +=
                 "Specified trade settlement monetary summation: Tax basis total amount not set\n";
         }
-        if self.monetary_summation.tax_total_amount.is_none() {
+        if self.tax_total_amount.is_none() {
             error_text +=
                 "Specified trade settlement monetary summation: Tax total amount not set\n";
         }
@@ -686,11 +713,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ///
     /// BT-110
     pub fn set_monetary_summation_tax_total_amount(&mut self, amount: f64) -> &mut Self {
-        self.monetary_summation.tax_total_amount = Some(TaxTotalAmount::new(
-            self.invoice_currency_code
-                .expect("Invoice currency not set."),
-            amount,
-        ));
+        self.tax_total_amount = Some(amount);
         self
     }
 
@@ -725,7 +748,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         mut self,
         specification_level: SpecificationLevel,
     ) -> Result<String, String> {
-        let built_invoice = self.build(specification_level)?;
+        let built_invoice = self.build(specification_level).map_err(|e| e.to_string())?;
 
         built_invoice.to_xml_string()
     }
@@ -738,6 +761,18 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
 
+        let invoice_currency_code = self
+            .invoice_currency_code
+            .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_currency_code".to_string()))
+            .map_err(|error| error.to_string())?;
+        let tax_total_amount = self
+            .tax_total_amount
+            .ok_or_else(|| InvoiceBuilderError::MissingField("tax_total_amount".to_string()))
+            .map_err(|error| error.to_string())?;
+        let mut monetary_summation = self.monetary_summation.clone();
+        monetary_summation.tax_total_amount =
+            Some(TaxTotalAmount::new(invoice_currency_code, tax_total_amount));
+
         // Build the invoice structure
         Ok(Invoice::new(
             DocumentContext {
@@ -747,10 +782,24 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 },
             },
             Document {
-                id: self.invoice_nr.unwrap(),
-                type_code: self.invoice_type_code.unwrap(),
+                id: self
+                    .invoice_nr
+                    .ok_or_else(|| InvoiceBuilderError::MissingField("invoice_nr".to_string()))
+                    .map_err(|error| error.to_string())?,
+                type_code: self
+                    .invoice_type_code
+                    .ok_or_else(|| {
+                        InvoiceBuilderError::MissingField("invoice_type_code".to_string())
+                    })
+                    .map_err(|error| error.to_string())?,
                 issue_date_time: IssueDateTime {
-                    date_time_string: self.date_of_issue.clone().unwrap(),
+                    date_time_string: self
+                        .date_of_issue
+                        .clone()
+                        .ok_or_else(|| {
+                            InvoiceBuilderError::MissingField("date_of_issue".to_string())
+                        })
+                        .map_err(|error| error.to_string())?,
                 },
                 included_note: Some(self.document_notes.clone().unwrap_or_default()),
             },
@@ -763,7 +812,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     seller_trade_party: SellerTradeParty {
                         id: Vec::new(),
                         global_id: Vec::new(),
-                        name: self.sellers_name.unwrap(),
+                        name: self
+                            .sellers_name
+                            .ok_or_else(|| {
+                                InvoiceBuilderError::MissingField("sellers_name".to_string())
+                            })
+                            .map_err(|error| error.to_string())?,
                         specified_legal_organization: self
                             .sellers_specified_legal_organization
                             .map(|v| SpecifiedLegalOrganization {
@@ -780,12 +834,23 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         uri_universal_communication: None,
                         specified_tax_registration: vec![SpecifiedTaxRegistration {
                             id: SpecifiedTaxRegistrationID::new(
-                                self.sellers_specified_tax_registration.unwrap(),
+                                self.sellers_specified_tax_registration
+                                    .ok_or_else(|| {
+                                        InvoiceBuilderError::MissingField(
+                                            "sellers_specified_tax_registration".to_string(),
+                                        )
+                                    })
+                                    .map_err(|error| error.to_string())?,
                             ),
                         }],
                     },
                     buyer_trade_party: BuyerTradeParty {
-                        name: self.buyers_name.unwrap(),
+                        name: self
+                            .buyers_name
+                            .ok_or_else(|| {
+                                InvoiceBuilderError::MissingField("buyers_name".to_string())
+                            })
+                            .map_err(|error| error.to_string())?,
                         specified_legal_organization: self.buyers_specified_legal_organization.map(
                             |v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
@@ -806,24 +871,16 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         },
                     ),
                 },
-                applicable_header_trade_delivery: ApplicableHeaderTradeDelivery {
-                    actual_delivery_supply_chain_event: Some(ActualDeliverySupplyChainEvent {
-                        occurrence_date_time: self.occurrence_date.clone().map(
-                            |actual_delivery_date| OccurrenceDateTime {
-                                actual_delivery_date,
-                            },
-                        ),
-                    }),
-                },
+                applicable_header_trade_delivery: ApplicableHeaderTradeDelivery::new_with_event(
+                    self.occurrence_date.clone(),
+                ),
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
-                    invoice_currency_code: self.invoice_currency_code.unwrap(),
+                    invoice_currency_code,
                     specified_trade_settlement_payment_means: Vec::new(),
                     applicable_trade_tax: self.applicable_trade_tax,
                     specified_trade_allowance_charge: Vec::new(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
-                    specified_trade_settlement_header_monetary_summation: self
-                        .monetary_summation
-                        .clone(),
+                    specified_trade_settlement_header_monetary_summation: monetary_summation,
                 },
             },
         ))

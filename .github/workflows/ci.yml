@@ -28,3 +28,10 @@ jobs:
         run: cargo clippy --all-targets -- -D warnings
       - name: Test
         run: cargo test
+      - name: Ensure xmllint
+        run: command -v xmllint || (sudo apt-get update && sudo apt-get install -y libxml2-utils)
+      - name: Schema validation (XSD)
+        # Fails instead of skipping if the schemas in tests/Schema or xmllint are missing
+        env:
+          ZUGFERD_REQUIRE_XSD: "1"
+        run: cargo test --test xsd_validation
