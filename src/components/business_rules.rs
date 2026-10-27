@@ -356,15 +356,20 @@ fn br_co_16(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
 /// BR-CO-17: VAT category tax amount (BT-117) = VAT category taxable amount (BT-116) x (VAT category rate (BT-119) / 100), rounded to two decimals
 fn br_co_17(invoice: &Invoice) -> Result<(), BusinessRuleViolation> {
     let rule = ("BR-CO-17", "VAT category tax amount (BT-117) = VAT category taxable amount (BT-116) x (VAT category rate (BT-119) / 100), rounded to two decimals");
-    let bg_23 = invoice
+    let bg_23_entries = &invoice
         .supply_chain_trade_transaction
         .applicable_header_trade_settlement
-        .applicable_trade_tax
-        .check(rule, "BG-23")?;
-    let bt_117 = bg_23.calculated_amount.check(rule, "BT-117")?;
-    let bt_116 = bg_23.basis_amount.check(rule, "BT-116")?;
-    let bt_119 = bg_23.rate_applicable_percent.check(rule, "BT-119")?;
-    check_float_eq!(rule; bt_117, bt_116 * (bt_119 / 100.0); bt_117, bt_116, bt_119)
+        .applicable_trade_tax;
+    if bg_23_entries.is_empty() {
+        None::<()>.check(rule, "BG-23")?;
+    }
+    for bg_23 in bg_23_entries {
+        let bt_117 = bg_23.calculated_amount.check(rule, "BT-117")?;
+        let bt_116 = bg_23.basis_amount.check(rule, "BT-116")?;
+        let bt_119 = bg_23.rate_applicable_percent.check(rule, "BT-119")?;
+        check_float_eq!(rule; bt_117, bt_116 * (bt_119 / 100.0); bt_117, bt_116, bt_119)?;
+    }
+    Ok(())
 }
 
 /// BR-CO-25: In case the Amount due for payment (BT-115) is positive, either the Payment due date (BT-9) or the Payment terms (BT-20) shall be present.

@@ -43,8 +43,8 @@ fn main() {
     }
 
     //Do your computations
-    let sum_net: f64 = 100.0;
-    let tax: f64 = sum_net * 19.0 / 100.0;
+    let sum_net: f64 = 144.0;
+    let tax: f64 = 100.0 * 19.0 / 100.0;
     let sum_gross: f64 = sum_net + tax;
     let customer_paid_already: f64 = 50.0;
 
@@ -86,17 +86,30 @@ fn main() {
 
     invoice_builder.set_occurrence_date(chrono::NaiveDate::from_ymd_opt(2024, 7, 6).unwrap());
 
+    //One entry per VAT category in use
     invoice_builder
-        .set_applicable_trade_tax_basis_amount(sum_net)
-        .set_applicable_trade_tax_calculated_amount(12.44)
-        .set_applicable_trade_tax_rate_applicable_percent(42.0);
+        .add_applicable_trade_tax(ApplicableTradeTax {
+            basis_amount: Some(100.0),
+            calculated_amount: Some(19.0),
+            rate_applicable_percent: Some(19.0),
+            category_code: zugferd::VATCategoryCode::StandardRate,
+            ..Default::default()
+        })
+        .add_applicable_trade_tax(ApplicableTradeTax {
+            basis_amount: Some(44.0),
+            calculated_amount: Some(0.0),
+            rate_applicable_percent: Some(0.0),
+            category_code: zugferd::VATCategoryCode::ExemptFromTax,
+            exemption_reason: Some("Tax-exempt service"),
+            ..Default::default()
+        });
 
     invoice_builder.set_specified_trade_payment_terms_due_date(
         chrono::NaiveDate::from_ymd_opt(2025, 4, 12).unwrap(),
     );
 
     invoice_builder
-        .set_monetary_summation_line_total_amount(16.90)
+        .set_monetary_summation_line_total_amount(sum_net)
         .set_monetary_summation_charge_total_amount(0.0)
         .set_monetary_summation_allowance_total_amount(0.0);
 
@@ -169,17 +182,17 @@ fn main() {
         },
         specified_line_trade_settlement: SpecifiedLineTradeSettlement {
             applicable_trade_tax: ApplicableTradeTax {
-                calculated_amount: Some(0.44 * 19.0),
+                calculated_amount: Some(0.0),
                 type_code: "VAT",
-                category_code: zugferd::VATCategoryCode::StandardRate,
+                category_code: zugferd::VATCategoryCode::ExemptFromTax,
                 basis_amount: Some(44.0),
-                rate_applicable_percent: Some(19.0),
-                exemption_reason: None,
+                rate_applicable_percent: Some(0.0),
+                exemption_reason: Some("Tax-exempt service"),
                 exemption_reason_code: None,
             },
             specified_trade_settlement_line_monetary_summation:
                 SpecifiedTradeSettlementLineMonetarySummation {
-                    line_total_amount: (44.0 * 1.19),
+                    line_total_amount: 44.0,
                 },
             specified_trade_allowance_charge: Vec::new(),
         },

@@ -577,9 +577,9 @@ pub struct ApplicableHeaderTradeSettlement<'invoice> {
         Vec<SpecifiedTradeSettlementPaymentMeans<'invoice>>,
     #[serde(
         rename = "ram:ApplicableTradeTax",
-        skip_serializing_if = "Option::is_none"
+        skip_serializing_if = "Vec::is_empty"
     )]
-    pub applicable_trade_tax: Option<ApplicableTradeTax<'invoice>>,
+    pub applicable_trade_tax: Vec<ApplicableTradeTax<'invoice>>,
     #[serde(rename = "ram:SpecifiedTradeAllowanceCharge")]
     pub specified_trade_allowance_charge: Vec<SpecifiedTradeAllowanceCharge<'invoice>>,
     #[serde(
