@@ -197,9 +197,12 @@ fn builder_for(level: SpecificationLevel) -> InvoiceBuilder<'static> {
             .set_buyers_postal_trade_address_postcode_code("77777")
             .set_buyers_postal_trade_address_city_name("Springfield")
             .set_occurrence_date(date(2024, 7, 6))
-            .set_applicable_trade_tax_basis_amount(net)
-            .set_applicable_trade_tax_calculated_amount(tax)
-            .set_applicable_trade_tax_rate_applicable_percent(19.0)
+            .add_applicable_trade_tax(ApplicableTradeTax {
+                basis_amount: Some(net),
+                calculated_amount: Some(tax),
+                rate_applicable_percent: Some(19.0),
+                ..Default::default()
+            })
             .set_specified_trade_payment_terms_due_date(date(2025, 4, 12))
             .set_monetary_summation_line_total_amount(net)
             .set_monetary_summation_charge_total_amount(0.0)
@@ -237,4 +240,38 @@ fn basic_wl_validates_against_xsd() {
 #[test]
 fn basic_validates_against_xsd() {
     check(SpecificationLevel::Basic, "BASIC");
+}
+
+#[test]
+fn basic_wl_with_two_vat_categories_validates_against_xsd() {
+    let level = SpecificationLevel::BasicWithoutLines;
+    let mut b = builder_for(level);
+    b.add_applicable_trade_tax(ApplicableTradeTax {
+        basis_amount: Some(44.0),
+        calculated_amount: Some(0.0),
+        rate_applicable_percent: Some(0.0),
+        category_code: zugferd::VATCategoryCode::ExemptFromTax,
+        exemption_reason: Some("Tax-exempt service"),
+        ..Default::default()
+    });
+    let xml = b.to_xml_string(level).expect("invoice should build");
+    assert_eq!(xml.matches("<ram:ApplicableTradeTax>").count(), 2);
+    validate(&xml, "BASIC-WL");
+}
+
+#[test]
+fn minimum_omits_applicable_trade_tax() {
+    let level = SpecificationLevel::Minimum;
+    let xml = builder_for(level).to_xml_string(level).unwrap();
+    assert!(!xml.contains("ApplicableTradeTax"));
+}
+
+#[test]
+fn basic_wl_without_applicable_trade_tax_is_rejected() {
+    let b = InvoiceBuilder::new();
+    let err = b
+        .all_fields_are_set(SpecificationLevel::BasicWithoutLines)
+        .unwrap_err()
+        .to_string();
+    assert!(err.contains("Applicable trade tax not set"));
 }

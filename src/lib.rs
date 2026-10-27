@@ -116,7 +116,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 
     //Basic WL specification
-    applicable_trade_tax: Option<ApplicableTradeTax<'invoice_builder>>,
+    applicable_trade_tax: Vec<ApplicableTradeTax<'invoice_builder>>,
     sellers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
     buyers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
     monetary_summation_line_total_amount: Option<f64>,
@@ -154,7 +154,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             tax_total_amount: None,
             monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation::default(),
 
-            applicable_trade_tax: None,
+            applicable_trade_tax: Vec::new(),
             sellers_postal_trade_address: PostalTradeAddress::default(),
             buyers_postal_trade_address: PostalTradeAddress::default(),
             monetary_summation_line_total_amount: None,
@@ -220,10 +220,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
 
         // Additional checks for different specification levels
         if specification_level >= SpecificationLevel::BasicWithoutLines {
-            if self.applicable_trade_tax.is_none() {
-                error_text += "Applicable trade tax not set\n";
-            }
-
             if self.sellers_postal_trade_address.postcode_code.is_none() {
                 error_text += "Sellers postal trade address: Postcode not set\n";
             }
@@ -252,23 +248,29 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 error_text += "Occurrence date not set\n";
             }
 
-            if let Some(applicable_trade_tax_checker) = self.applicable_trade_tax.as_ref() {
+            if self.applicable_trade_tax.is_empty() {
+                error_text += "Applicable trade tax not set\n";
+            }
+            for (index, applicable_trade_tax_checker) in
+                self.applicable_trade_tax.iter().enumerate()
+            {
+                let nr = index + 1;
                 if applicable_trade_tax_checker.calculated_amount.is_none() {
-                    error_text += "Applicable trade tax: Calculated amount not set\n";
+                    error_text +=
+                        &format!("Applicable trade tax #{nr}: Calculated amount not set\n");
                 }
 
                 if applicable_trade_tax_checker.basis_amount.is_none() {
-                    error_text += "Applicable trade tax: Basis amount not set\n";
+                    error_text += &format!("Applicable trade tax #{nr}: Basis amount not set\n");
                 }
 
                 if applicable_trade_tax_checker
                     .rate_applicable_percent
                     .is_none()
                 {
-                    error_text += "Applicable trade tax: Applicable percent rate not set\n";
+                    error_text +=
+                        &format!("Applicable trade tax #{nr}: Applicable percent rate not set\n");
                 }
-            } else {
-                error_text += "Applicable trade tax not set\n";
             }
 
             if self.specified_trade_payment_terms.is_none() {
@@ -590,65 +592,14 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
-    /// Tax amount that needs to be paid.
-    /// Calculated by multiplying the net total by the tax percentage
+    /// Adds a VAT breakdown entry. Add one entry for each VAT category / rate in use.
     ///
-    /// BT-117
-    pub fn set_applicable_trade_tax_calculated_amount(&mut self, amount: f64) -> &mut Self {
-        if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
-            applicable_trade_tax.calculated_amount = Some(amount);
-        } else {
-            self.applicable_trade_tax = Some(ApplicableTradeTax {
-                calculated_amount: Some(amount),
-                ..Default::default()
-            });
-        }
-
-        self
-    }
-    /// Sum of all net amounts of a single tax category
-    ///
-    /// BT-116
-    pub fn set_applicable_trade_tax_basis_amount(&mut self, amount: f64) -> &mut Self {
-        if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
-            applicable_trade_tax.basis_amount = Some(amount);
-        } else {
-            self.applicable_trade_tax = Some(ApplicableTradeTax {
-                basis_amount: Some(amount),
-                ..Default::default()
-            });
-        }
-
-        self
-    }
-
-    /// Category of the VAT that is applied. Choose from [`VATCategoryCode`]
-    ///
-    /// BT-118
-    pub fn set_applicable_trade_tax_category_code(&mut self, code: VATCategoryCode) -> &mut Self {
-        if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
-            applicable_trade_tax.category_code = code;
-        } else {
-            self.applicable_trade_tax = Some(ApplicableTradeTax {
-                category_code: code,
-                ..Default::default()
-            });
-        }
-
-        self
-    }
-    /// VAT Percentage for the given [`VATCategoryCode`]
-    ///
-    /// BT-119
-    pub fn set_applicable_trade_tax_rate_applicable_percent(&mut self, amount: f64) -> &mut Self {
-        if let Some(applicable_trade_tax) = self.applicable_trade_tax.as_mut() {
-            applicable_trade_tax.rate_applicable_percent = Some(amount);
-        } else {
-            self.applicable_trade_tax = Some(ApplicableTradeTax {
-                rate_applicable_percent: Some(amount),
-                ..Default::default()
-            });
-        }
+    /// BG-23 (BT-116, BT-117, BT-118, BT-119)
+    pub fn add_applicable_trade_tax(
+        &mut self,
+        applicable_trade_tax: ApplicableTradeTax<'invoice_builder>,
+    ) -> &mut Self {
+        self.applicable_trade_tax.push(applicable_trade_tax);
 
         self
     }
@@ -877,7 +828,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code,
                     specified_trade_settlement_payment_means: Vec::new(),
-                    applicable_trade_tax: self.applicable_trade_tax,
+                    applicable_trade_tax: self.applicable_trade_tax.clone(),
                     specified_trade_allowance_charge: Vec::new(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
                     specified_trade_settlement_header_monetary_summation: monetary_summation,
