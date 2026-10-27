@@ -1,6 +1,7 @@
 [package]
 name = "zugferd"
-version = "0.2.1"
+<<<<<<< HEAD
+version = "0.3.0"
 edition = "2021"
 authors = ["FaultierSP <faultiersp@decreation.org>"]
 description = "Generate a ZUGFeRD XML for European e-invoices."
