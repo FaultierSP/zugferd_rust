@@ -114,7 +114,6 @@ Please check `main.rs` for further examples.
 - [ ] generation of extended level
 - [ ] validation of all levels
 - [ ] parsing of all levels
-- [ ] embedding the generated XML into PDF/A-3 files
 
 ## Further reading
 
