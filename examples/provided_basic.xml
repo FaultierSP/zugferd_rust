@@ -1,10 +1,11 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!-- English disclaimer below.-->
-<!--Nutzungsrechte 
-ZUGFeRD Datenformat Version 2.3.0, 18.09.2024
-Beispiel Version 18.09.2024
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
  
-Zweck des Forums elektronisch Rechnung Deutschland, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
 wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
 für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
 Technologien („ZUGFeRD Datenformat“).
@@ -18,7 +19,7 @@ Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in i
 abrufbar unter www.ferd-net.de.
  
 Im Einzelnen schließt die Nutzungsgewährung ein: 
-=====================================
+================================================
  
 FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
 geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
@@ -41,10 +42,11 @@ Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet F
 Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
 Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
 beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
-Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.-->
- 
- <!--Right of use 
-ZUGFeRD Data format version 2.3.0, September 18th, 2024
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
  
 The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
 umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
@@ -83,8 +85,8 @@ Except in the case of intentional fault or gross negligence, FeRD is not liable 
 Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
 damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
 incidental, indirect, punitive or consequential damages, even if the possibility of 
-costs, losses or damages could normally have been foreseen.-->
-
+costs, losses or damages could normally have been foreseen.
+-->
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:GuidelineSpecifiedDocumentContextParameter>
@@ -95,10 +97,10 @@ costs, losses or damages could normally have been foreseen.-->
     <ram:ID>471102</ram:ID>
     <ram:TypeCode>380</ram:TypeCode>
     <ram:IssueDateTime>
-      <udt:DateTimeString format="102">20241115</udt:DateTimeString>
+      <udt:DateTimeString format="102">20260305</udt:DateTimeString>
     </ram:IssueDateTime>
     <ram:IncludedNote>
-      <ram:Content>Rechnung gemäß Bestellung vom 01.11.2024.</ram:Content>
+      <ram:Content>Rechnung gemäß Bestellung vom 01.03.2026.</ram:Content>
     </ram:IncludedNote>
     <ram:IncludedNote>
       <ram:Content>Lieferant GmbH				
@@ -108,15 +110,7 @@ Deutschland
 Geschäftsführer: Hans Muster
 Handelsregisternummer: H A 123
       </ram:Content>
-    </ram:IncludedNote>
-    <ram:IncludedNote>
-      <ram:Content>Unsere GLN: 4000001123452
-Ihre GLN: 4000001987658
-Ihre Kundennummer: GE2020211
-
-
-Zahlbar innerhalb 30 Tagen netto bis 25.12.2024, 3% Skonto innerhalb 10 Tagen bis 25.11.2024.
-      </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
     </ram:IncludedNote>
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
@@ -126,13 +120,9 @@ Zahlbar innerhalb 30 Tagen netto bis 25.12.2024, 3% Skonto innerhalb 10 Tagen bi
       </ram:AssociatedDocumentLineDocument>
       <ram:SpecifiedTradeProduct>
         <ram:GlobalID schemeID="0160">4012345001235</ram:GlobalID>
-
-        <ram:Name>GTIN: 4012345001235
-Unsere Art.-Nr.: TB100A4
-Trennblätter A4
-        </ram:Name>
+        <ram:Name>Unsere Art.-Nr.: TB100A4 Trennblätter A4</ram:Name>
       </ram:SpecifiedTradeProduct>
-	        <ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeAgreement>
         <ram:NetPriceProductTradePrice>
           <ram:ChargeAmount>9.90</ram:ChargeAmount>
         </ram:NetPriceProductTradePrice>
@@ -141,9 +131,9 @@ Trennblätter A4
         <ram:BilledQuantity unitCode="H87">20.0000</ram:BilledQuantity>
       </ram:SpecifiedLineTradeDelivery>
       <ram:SpecifiedLineTradeSettlement>
-	   <ram:ApplicableTradeTax>
-       <ram:TypeCode>VAT</ram:TypeCode>
-       <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
           <ram:RateApplicablePercent>19</ram:RateApplicablePercent>
         </ram:ApplicableTradeTax>
         <ram:SpecifiedTradeSettlementLineMonetarySummation>
@@ -153,6 +143,7 @@ Trennblätter A4
     </ram:IncludedSupplyChainTradeLineItem>
     <ram:ApplicableHeaderTradeAgreement>
       <ram:SellerTradeParty>
+        <ram:GlobalID schemeID="0088">4000001123452</ram:GlobalID>
         <ram:Name>Lieferant GmbH</ram:Name>
         <ram:PostalTradeAddress>
           <ram:PostcodeCode>80333</ram:PostcodeCode>
@@ -168,6 +159,8 @@ Trennblätter A4
         </ram:SpecifiedTaxRegistration>
       </ram:SellerTradeParty>
       <ram:BuyerTradeParty>
+        <ram:ID>GE2020211</ram:ID>
+        <ram:GlobalID schemeID="0088">4000001987658</ram:GlobalID>
         <ram:Name>Kunden AG Mitte</ram:Name>
         <ram:PostalTradeAddress>
           <ram:PostcodeCode>69876</ram:PostcodeCode>
@@ -181,7 +174,7 @@ Trennblätter A4
     <ram:ApplicableHeaderTradeDelivery>
       <ram:ActualDeliverySupplyChainEvent>
         <ram:OccurrenceDateTime>
-          <udt:DateTimeString format="102">20241114</udt:DateTimeString>
+          <udt:DateTimeString format="102">20260305</udt:DateTimeString>
         </ram:OccurrenceDateTime>
       </ram:ActualDeliverySupplyChainEvent>
     </ram:ApplicableHeaderTradeDelivery>
@@ -191,12 +184,13 @@ Trennblätter A4
         <ram:CalculatedAmount>37.62</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
         <ram:BasisAmount>198.00</ram:BasisAmount>
-		<ram:CategoryCode>S</ram:CategoryCode>
+        <ram:CategoryCode>S</ram:CategoryCode>
         <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>
-	  <ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Zahlbar innerhalb 30 Tagen netto bis 04.04.2026, 3% Skonto innerhalb 10 Tagen bis 15.03.2026.</ram:Description>
         <ram:DueDateDateTime>
-          <udt:DateTimeString format="102">20241215</udt:DateTimeString>
+          <udt:DateTimeString format="102">20260404</udt:DateTimeString>
         </ram:DueDateDateTime>
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
@@ -204,9 +198,9 @@ Trennblätter A4
         <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
         <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
         <ram:TaxBasisTotalAmount>198.00</ram:TaxBasisTotalAmount>
-		<ram:TaxTotalAmount currencyID="EUR">37.62</ram:TaxTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">37.62</ram:TaxTotalAmount>
         <ram:GrandTotalAmount>235.62</ram:GrandTotalAmount>
-		<ram:DuePayableAmount>235.62</ram:DuePayableAmount>
+        <ram:DuePayableAmount>235.62</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
