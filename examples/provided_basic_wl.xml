@@ -1,8 +1,9 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!-- English disclaimer below.-->
-<!--Nutzungsrechte 
-ZUGFeRD Datenformat Version 2.3.0, 18.09.2024
-Beispiel Version 18.09.2024
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.4.0, 29.10.2025
+Beispiel Version 29.10.2025
  
 Zweck des Forums elektronisch Rechnung Deutschland, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
 wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
@@ -41,10 +42,11 @@ Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet F
 Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
 Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
 beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
-Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.-->
- 
- <!--Right of use 
-ZUGFeRD Data format version 2.3.0, September 18th, 2024
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.4.0, October 29th, 2025
  
 The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
 umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
@@ -83,8 +85,8 @@ Except in the case of intentional fault or gross negligence, FeRD is not liable 
 Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
 damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
 incidental, indirect, punitive or consequential damages, even if the possibility of 
-costs, losses or damages could normally have been foreseen.-->
-
+costs, losses or damages could normally have been foreseen.
+-->
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:GuidelineSpecifiedDocumentContextParameter>
@@ -95,10 +97,10 @@ costs, losses or damages could normally have been foreseen.-->
     <ram:ID>TX-471102</ram:ID>
     <ram:TypeCode>380</ram:TypeCode>
     <ram:IssueDateTime>
-      <udt:DateTimeString format="102">20241115</udt:DateTimeString>
+      <udt:DateTimeString format="102">20191030</udt:DateTimeString>
     </ram:IssueDateTime>
     <ram:IncludedNote>
-      <ram:Content>Rechnung gemäß Taxifahrt vom 14.11.2024</ram:Content>
+      <ram:Content>Rechnung gemäß Taxifahrt vom 29.10.2019</ram:Content>
     </ram:IncludedNote>
     <ram:IncludedNote>
       <ram:Content>Taxiunternehmen TX GmbH				
@@ -144,7 +146,7 @@ Ihre Kundennummer: GE2020211
     <ram:ApplicableHeaderTradeDelivery>
       <ram:ActualDeliverySupplyChainEvent>
         <ram:OccurrenceDateTime>
-          <udt:DateTimeString format="102">20240919</udt:DateTimeString>
+          <udt:DateTimeString format="102">20191029</udt:DateTimeString>
         </ram:OccurrenceDateTime>
       </ram:ActualDeliverySupplyChainEvent>
     </ram:ApplicableHeaderTradeDelivery>
@@ -154,12 +156,12 @@ Ihre Kundennummer: GE2020211
         <ram:CalculatedAmount>1.18</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
         <ram:BasisAmount>16.90</ram:BasisAmount>
-		<ram:CategoryCode>S</ram:CategoryCode>
+        <ram:CategoryCode>S</ram:CategoryCode>
         <ram:RateApplicablePercent>7</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>
       <ram:SpecifiedTradePaymentTerms>
         <ram:DueDateDateTime>
-          <udt:DateTimeString format="102">20241215</udt:DateTimeString>
+          <udt:DateTimeString format="102">20191129</udt:DateTimeString>
         </ram:DueDateDateTime>
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
@@ -167,9 +169,9 @@ Ihre Kundennummer: GE2020211
         <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
         <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
         <ram:TaxBasisTotalAmount>16.90</ram:TaxBasisTotalAmount>
-		<ram:TaxTotalAmount currencyID="EUR">1.18</ram:TaxTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">1.18</ram:TaxTotalAmount>
         <ram:GrandTotalAmount>18.08</ram:GrandTotalAmount>
-		<ram:DuePayableAmount>18.08</ram:DuePayableAmount>
+        <ram:DuePayableAmount>18.08</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
