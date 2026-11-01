@@ -211,37 +211,41 @@ pub enum IdentifierSchemeCode {
     PARTITA_IVA,
     Finnish_Organization_Identifier,
     Finnish_Organization_VAT,
-    Tradeplace,                   // 0214 - Tradeplace TradePI Standard
-    NetServiceId,                 // 0215 - Net service ID
-    OVTcode,                      // 0216 - OVTcode
-    NetherlandsChamber,           // 0217 - Netherlands Chamber of Commerce establishment number
-    UnifiedRegistrationLatvia,    // 0218 - Unified registration number (Latvia)
-    TaxpayerRegistrationLatvia,   // 0219 - Taxpayer registration code (Latvia)
+    Tradeplace,                            // 0214 - Tradeplace TradePI Standard
+    NetServiceId,                          // 0215 - Net service ID
+    OVTcode,                               // 0216 - OVTcode
+    NetherlandsChamber, // 0217 - Netherlands Chamber of Commerce establishment number
+    UnifiedRegistrationLatvia, // 0218 - Unified registration number (Latvia)
+    TaxpayerRegistrationLatvia, // 0219 - Taxpayer registration code (Latvia)
     RegisterNaturalPersonsLatvia, // 0220 - The Register of Natural Persons (Latvia)
-    QualifiedInvoiceIssuer,       // 0221 - Registered number of the qualified invoice issuer
-    MetadataRegistrySupport,      // 0222 - Metadata Registry Support
-    EuBasedCompany,               // 0223 - EU based company
-    FtctcCodeRoutage,             // 0224 - FTCTC CODE ROUTAGE
-    FrctcElectronicAddress,       // 0225 - FRCTC ELECTRONIC ADDRESS
-    FrctcParticulier,             // 0226 - FRCTC Particulier
-    NonEuBasedCompany,            // 0227 - NON-EU based company
-    Ridet,                        // 0228 - Répertoire des Entreprises et des Etablissements (RIDET)
-    Tahiti,                       // 0229 - T.A.H.I.T.I
-    NationalEInvoicing,           // 0230 - National e-Invoicing Framework
-    SingleTaxableFrance,          // 0231 - Single taxable company (France)
-    NobbProductNumber,            // 0232 - NOBB product number
-    Elnummer,                     // 0233 - Elnummer
-    ToimitusosoiteId,             // 0234 - Toimitusosoite ID
-    UaeTin,                       // 0235 - UAE Tax Identification Number (TIN)
-    ToimipaikkaId,                // 0236 - ToimipaikkalD
-    CprDenmark,                   // 0237 - CPR (Danish person civil registration number)
+    QualifiedInvoiceIssuer, // 0221 - Registered number of the qualified invoice issuer
+    MetadataRegistrySupport, // 0222 - Metadata Registry Support
+    EuBasedCompany,     // 0223 - EU based company
+    FtctcCodeRoutage,   // 0224 - FTCTC CODE ROUTAGE
+    FrctcElectronicAddress, // 0225 - FRCTC ELECTRONIC ADDRESS
+    FrctcParticulier,   // 0226 - FRCTC Particulier
+    NonEuBasedCompany,  // 0227 - NON-EU based company
+    Ridet,              // 0228 - Répertoire des Entreprises et des Etablissements (RIDET)
+    Tahiti,             // 0229 - T.A.H.I.T.I
+    NationalEInvoicing, // 0230 - National e-Invoicing Framework
+    SingleTaxableFrance, // 0231 - Single taxable company (France)
+    NobbProductNumber,  // 0232 - NOBB product number
+    Elnummer,           // 0233 - Elnummer
+    ToimitusosoiteId,   // 0234 - Toimitusosoite ID
+    UaeTin,             // 0235 - UAE Tax Identification Number (TIN)
+    ToimipaikkaId,      // 0236 - ToimipaikkalD
+    CprDenmark,         // 0237 - CPR (Danish person civil registration number)
     PlatformeFacturation, // 0238 - Plateforme(s) agréée(s) à la facturation électronique (PPF/PDP)
-    Eaeu,                 // 0239 - EAEU
+    Eaeu,               // 0239 - EAEU
     RegisterLegalPersons, // 0240 - Register of legal persons (Répertoire des personnes morales)
-    NameUnknown0241,      // 0241 - Name unknown
-    OpenPeppolSpis,       // 0242 - OpenPeppol Service Provider Identification Scheme (SPIS)
-    NameUnknown0243,      // 0243 - Name unknown
-    TaxIdNigeria,         // 0244 - Tax Identification (Tax ID), Nigeria
+    NameUnknown0241,    // 0241 - Name unknown
+    OpenPeppolSpis,     // 0242 - OpenPeppol Service Provider Identification Scheme (SPIS)
+    NameUnknown0243,    // 0243 - Name unknown
+    TaxIdNigeria,       // 0244 - Tax Identification (Tax ID), Nigeria
+    TaxIdentificationSlovakia, // 0245
+    GermanElectronicBusinessAddress, // 0246
+    NameUnknown,        // 0247
+    OmanValueAddedTaxIdentificationNumber, // 0248
 }
 
 impl IdentifierSchemeCode {
@@ -486,6 +490,10 @@ impl IdentifierSchemeCode {
             IdentifierSchemeCode::OpenPeppolSpis => "0242",
             IdentifierSchemeCode::NameUnknown0243 => "0243",
             IdentifierSchemeCode::TaxIdNigeria => "0244",
+            IdentifierSchemeCode::TaxIdentificationSlovakia => "0245",
+            IdentifierSchemeCode::GermanElectronicBusinessAddress => "0246",
+            IdentifierSchemeCode::NameUnknown => "0247",
+            IdentifierSchemeCode::OmanValueAddedTaxIdentificationNumber => "0248",
         }
     }
 }
