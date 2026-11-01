@@ -97,6 +97,7 @@ const BUSINESS_RULES: &[BusinessRule] = &[
     // br_co_24,
     br_co_25,
     // br_co_26,
+    // cii_sr_470,
 ];
 
 /// Validate the business rules of a ZUGFeRD invoice
