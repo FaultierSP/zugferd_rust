@@ -6,7 +6,6 @@ pub enum CurrencyCode {
     Afghani,                                // AFN
     Lek,                                    // ALL
     ArmenianDram,                           // AMD
-    NetherlandsAntilleanGuilder,            // ANG
     Kwanza,                                 // AOA
     ArgentinePeso,                          // ARS
     AustralianDollar,                       // AUD
@@ -15,7 +14,6 @@ pub enum CurrencyCode {
     ConvertibleMark,                        // BAM
     BarbadosDollar,                         // BBD
     Taka,                                   // BDT
-    BulgarianLev,                           // BGN
     BahrainiDinar,                          // BHD
     BurundiFranc,                           // BIF
     BermudianDollar,                        // BMD
@@ -168,6 +166,7 @@ pub enum CurrencyCode {
     BondMarketsUnitEuropeanUnitOfAccount9,  // XBC
     BondMarketsUnitEuropeanUnitOfAccount17, // XBD
     EastCaribbeanDollar,                    // XCD
+    CaribbeanGuilder,                       // XCG
     Sdr,                                    // XDR
     CfaFrancBceao,                          // XOF
     Palladium,                              // XPD
@@ -190,7 +189,6 @@ impl CurrencyCode {
             CurrencyCode::Afghani => "AFN",
             CurrencyCode::Lek => "ALL",
             CurrencyCode::ArmenianDram => "AMD",
-            CurrencyCode::NetherlandsAntilleanGuilder => "ANG",
             CurrencyCode::Kwanza => "AOA",
             CurrencyCode::ArgentinePeso => "ARS",
             CurrencyCode::AustralianDollar => "AUD",
@@ -199,7 +197,6 @@ impl CurrencyCode {
             CurrencyCode::ConvertibleMark => "BAM",
             CurrencyCode::BarbadosDollar => "BBD",
             CurrencyCode::Taka => "BDT",
-            CurrencyCode::BulgarianLev => "BGN",
             CurrencyCode::BahrainiDinar => "BHD",
             CurrencyCode::BurundiFranc => "BIF",
             CurrencyCode::BermudianDollar => "BMD",
@@ -214,6 +211,7 @@ impl CurrencyCode {
             CurrencyCode::BelizeDollar => "BZD",
             CurrencyCode::CanadianDollar => "CAD",
             CurrencyCode::CongoleseFranc => "CDF",
+            CurrencyCode::CaribbeanGuilder => "XCG",
             CurrencyCode::WirEuro => "CHE",
             CurrencyCode::SwissFranc => "CHF",
             CurrencyCode::WirFranc => "CHW",
