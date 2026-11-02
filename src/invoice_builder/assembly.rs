@@ -2,6 +2,11 @@ use super::{InvoiceBuilder, InvoiceBuilderError};
 use crate::components::enums::specification_level::SpecificationLevel;
 use crate::components::structs::*;
 
+/// Treats empty or whitespace-only strings as absent so they are omitted from the XML.
+fn non_empty(value: Option<&str>) -> Option<&str> {
+    value.filter(|v| !v.trim().is_empty())
+}
+
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     // What the whole crate is actually about
     pub fn to_xml_string(
@@ -61,14 +66,14 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         })
                         .map_err(|error| error.to_string())?,
                 },
-                included_note: Some(self.document_notes.clone().unwrap_or_default()),
+                included_note: self.document_notes.clone().filter(|notes| !notes.is_empty()),
             },
             SupplyChainTradeTransaction {
                 included_supply_chain_trade_line_items: self
                     .included_supply_chain_trade_line_items
                     .clone(),
                 applicable_header_trade_agreement: ApplicableHeaderTradeAgreement {
-                    buyer_reference: self.buyer_reference,
+                    buyer_reference: non_empty(self.buyer_reference),
                     seller_trade_party: SellerTradeParty {
                         id: Vec::new(),
                         global_id: Vec::new(),
@@ -78,18 +83,17 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                                 InvoiceBuilderError::MissingField("sellers_name".to_string())
                             })
                             .map_err(|error| error.to_string())?,
-                        specified_legal_organization: self
-                            .sellers_specified_legal_organization
+                        specified_legal_organization: non_empty(self.sellers_specified_legal_organization)
                             .map(|v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
                             }),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.sellers_postal_trade_address.country_id,
-                            postcode_code: self.sellers_postal_trade_address.postcode_code,
-                            line_one: self.sellers_postal_trade_address.line_one,
-                            line_two: self.sellers_postal_trade_address.line_two,
-                            line_three: self.sellers_postal_trade_address.line_three,
-                            city_name: self.sellers_postal_trade_address.city_name,
+                            postcode_code: non_empty(self.sellers_postal_trade_address.postcode_code),
+                            line_one: non_empty(self.sellers_postal_trade_address.line_one),
+                            line_two: non_empty(self.sellers_postal_trade_address.line_two),
+                            line_three: non_empty(self.sellers_postal_trade_address.line_three),
+                            city_name: non_empty(self.sellers_postal_trade_address.city_name),
                         },
                         uri_universal_communication: None,
                         specified_tax_registration: vec![SpecifiedTaxRegistration {
@@ -111,21 +115,21 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                                 InvoiceBuilderError::MissingField("buyers_name".to_string())
                             })
                             .map_err(|error| error.to_string())?,
-                        specified_legal_organization: self.buyers_specified_legal_organization.map(
+                        specified_legal_organization: non_empty(self.buyers_specified_legal_organization).map(
                             |v| SpecifiedLegalOrganization {
                                 id: LegalOrganizationID::new(v),
                             },
                         ),
                         postal_trade_address: PostalTradeAddress {
                             country_id: self.buyers_postal_trade_address.country_id,
-                            postcode_code: self.buyers_postal_trade_address.postcode_code,
-                            line_one: self.buyers_postal_trade_address.line_one,
-                            line_two: self.buyers_postal_trade_address.line_two,
-                            line_three: self.buyers_postal_trade_address.line_three,
-                            city_name: self.buyers_postal_trade_address.city_name,
+                            postcode_code: non_empty(self.buyers_postal_trade_address.postcode_code),
+                            line_one: non_empty(self.buyers_postal_trade_address.line_one),
+                            line_two: non_empty(self.buyers_postal_trade_address.line_two),
+                            line_three: non_empty(self.buyers_postal_trade_address.line_three),
+                            city_name: non_empty(self.buyers_postal_trade_address.city_name),
                         },
                     },
-                    buyer_order_referenced_document: self.buyers_order_specified_document.map(
+                    buyer_order_referenced_document: non_empty(self.buyers_order_specified_document).map(
                         |v| BuyerOrderReferencedDocument {
                             issuer_assigned_id: v,
                         },
