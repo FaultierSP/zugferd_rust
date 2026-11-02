@@ -117,4 +117,4 @@ Please check `main.rs` for further examples.
 
 ## Further reading
 
-ZUGFeRD 2.4 specification: in [German](https://www.ferd-net.de/publikationen-produkte/publikationen/detailseite/zugferd-24-deutsch) and [English](https://www.ferd-net.de/en/downloads/publications/details/zugferd-24-english)
+ZUGFeRD 2.5.2 specification: in [German](https://www.ferd-net.de/publikationen-produkte/publikationen/detailseite/zugferd-252-deutsch) and [English](https://www.ferd-net.de/en/downloads/publications/details/zugferd-252-english)
