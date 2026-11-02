@@ -38,25 +38,40 @@ impl std::error::Error for InvoiceBuilderError {
 
 #[derive(Serialize, Clone)]
 pub struct InvoiceBuilder<'invoice_builder> {
-    //Minimal specification
+    //Minimum specification
+    // BT-23
     business_process: Option<&'invoice_builder str>,
+    // BT-24
     invoice_type_code: Option<InvoiceTypeCode>,
+    // BT-1
     invoice_nr: Option<&'invoice_builder str>,
+    // BT-2
     date_of_issue: Option<DateTimeString<'invoice_builder>>,
+    // BT-
     document_notes: Option<Vec<IncludedNote>>,
+    // BT-10
     buyer_reference: Option<&'invoice_builder str>,
+    // BT-27
     sellers_name: Option<&'invoice_builder str>,
+    // BT-30
     sellers_specified_legal_organization: Option<&'invoice_builder str>,
+    // BT-31
     sellers_specified_tax_registration: Option<&'invoice_builder str>,
+    // BT-40 --- Laendercode des Verkäufers - nicht explizit
+    // BT-44
     buyers_name: Option<&'invoice_builder str>,
+    // BT-47
     buyers_specified_legal_organization: Option<&'invoice_builder str>,
     buyers_order_specified_document: Option<&'invoice_builder str>,
     occurrence_date: Option<DateTimeString<'invoice_builder>>,
     invoice_currency_code: Option<CurrencyCode>,
+    // BT-110
     tax_total_amount: Option<f64>,
+    // BT-115
     monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation,
 
     //Basic WL specification
+    
     applicable_trade_tax: Option<ApplicableTradeTax<'invoice_builder>>,
     sellers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
     buyers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
