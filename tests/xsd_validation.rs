@@ -110,6 +110,47 @@ fn validate(xml: &str, schema_suffix: &str) -> bool {
     true
 }
 
+fn assert_xml_rejected(xml: &str) {
+    let spawned = Command::new("xmllint")
+        .arg("--noout")
+        .arg("-")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn();
+    let mut child = match spawned {
+        Ok(child) => child,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+            assert!(!require_xsd(), "xmllint is required but not available: {e}");
+            eprintln!("SKIPPED: xmllint not available: {e}");
+            return;
+        }
+        Err(e) => panic!("failed to start xmllint: {e}"),
+    };
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(xml.as_bytes())
+        .unwrap();
+    let output = child.wait_with_output().unwrap();
+
+    assert!(
+        !output.status.success(),
+        "xmllint accepted malformed XML:\n{xml}"
+    );
+}
+
+#[test]
+fn rejects_unclosed_opening_element() {
+    assert_xml_rejected("<root>");
+}
+
+#[test]
+fn rejects_unmatched_closing_element() {
+    assert_xml_rejected("</root>");
+}
+
 fn line_item(
     line_id: &'static str,
     gtin: &'static str,
