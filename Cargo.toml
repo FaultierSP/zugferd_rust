@@ -1,6 +1,5 @@
 [package]
 name = "zugferd"
-<<<<<<< HEAD
 version = "0.3.0"
 edition = "2021"
 authors = ["FaultierSP <faultiersp@decreation.org>"]

@@ -72,7 +72,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
 
     //Basic WL specification
     
-    applicable_trade_tax: Option<ApplicableTradeTax<'invoice_builder>>,
+    applicable_trade_tax: Vec<ApplicableTradeTax<'invoice_builder>>,
     sellers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
     buyers_postal_trade_address: PostalTradeAddress<'invoice_builder>,
     monetary_summation_line_total_amount: Option<f64>,
@@ -110,7 +110,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             tax_total_amount: None,
             monetary_summation: SpecifiedTradeSettlementHeaderMonetarySummation::default(),
 
-            applicable_trade_tax: None,
+            applicable_trade_tax: Vec::new(),
             sellers_postal_trade_address: PostalTradeAddress::default(),
             buyers_postal_trade_address: PostalTradeAddress::default(),
             monetary_summation_line_total_amount: None,

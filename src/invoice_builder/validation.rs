@@ -58,7 +58,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
 
         // Additional checks for different specification levels
         if specification_level >= SpecificationLevel::BasicWithoutLines {
-            if self.applicable_trade_tax.is_none() {
+            if self.applicable_trade_tax.is_empty() {
                 error_text += "Applicable trade tax not set\n";
             }
 
@@ -90,7 +90,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 error_text += "Occurrence date not set\n";
             }
 
-            if let Some(applicable_trade_tax_checker) = self.applicable_trade_tax.as_ref() {
+            for applicable_trade_tax_checker in &self.applicable_trade_tax {
                 if applicable_trade_tax_checker.calculated_amount.is_none() {
                     error_text += "Applicable trade tax: Calculated amount not set\n";
                 }
@@ -105,8 +105,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 {
                     error_text += "Applicable trade tax: Applicable percent rate not set\n";
                 }
-            } else {
-                error_text += "Applicable trade tax not set\n";
             }
 
             if self.specified_trade_payment_terms.is_none() {
