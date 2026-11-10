@@ -275,7 +275,7 @@ fn minimum_validates_against_xsd() {
 
 #[test]
 fn basic_wl_validates_against_xsd() {
-    check(SpecificationLevel::BasicWithoutLines, "BASIC-WL");
+    check(SpecificationLevel::BasicWithoutLines, "BASICWL");
 }
 
 #[test]
@@ -297,7 +297,7 @@ fn basic_wl_with_two_vat_categories_validates_against_xsd() {
     });
     let xml = b.to_xml_string(level).expect("invoice should build");
     assert_eq!(xml.matches("<ram:ApplicableTradeTax>").count(), 2);
-    validate(&xml, "BASIC-WL");
+    validate(&xml, "BASICWL");
 }
 
 #[test]
