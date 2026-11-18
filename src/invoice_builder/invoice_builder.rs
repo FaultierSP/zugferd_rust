@@ -82,6 +82,15 @@ pub struct InvoiceBuilder<'invoice_builder> {
 
     //Basic specification
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
+
+    //EN 16931 specification
+
+    // noch offen
+
+
+
+
+
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {

@@ -25,6 +25,9 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+    /// BT-27
+    ///
+    /// ram:SpecifiedTradeParty -> ram:Name
     pub fn set_sellers_name<T: Into<&'invoice_builder str>>(
         &mut self,
         sellers_name: T,
