@@ -12,7 +12,8 @@ pub struct SpecifiedTradeSettlementPaymentMeans<'invoice> {
         rename = "ram:ApplicableTradeSettlementFinancialCard",
         skip_serializing_if = "Option::is_none"
     )]
-    pub applicable_trade_settlement_financial_card: Option<&'invoice str>,
+    pub applicable_trade_settlement_financial_card:
+        Option<ApplicableTradeSettlementFinancialCard<'invoice>>,
     #[serde(
         rename = "ram:PayerPartyDebtorFinancialAccount",
         skip_serializing_if = "Option::is_none"
@@ -34,8 +35,10 @@ pub struct SpecifiedTradeSettlementPaymentMeans<'invoice> {
 
 #[derive(Serialize, Clone, Copy, Debug)]
 pub struct ApplicableTradeSettlementFinancialCard<'invoice> {
+    #[serde(rename = "ram:ID")]
     pub id: &'invoice str, // TODO: should this be an enum?
-    pub cardholder_name: &'invoice str,
+    #[serde(rename = "ram:CardholderName", skip_serializing_if = "Option::is_none")]
+    pub cardholder_name: Option<&'invoice str>,
 }
 
 #[derive(Serialize, Clone, Copy, Debug)]

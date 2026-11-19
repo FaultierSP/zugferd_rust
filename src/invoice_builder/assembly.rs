@@ -1,4 +1,5 @@
 use super::{InvoiceBuilder, InvoiceBuilderError};
+use crate::components::enums::payment_means_code::PaymentMeansCode;
 use crate::components::enums::specification_level::SpecificationLevel;
 use crate::components::structs::*;
 
@@ -25,6 +26,104 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> Result<Invoice<'invoice_builder>, String> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
+
+        if self.payer_party_debtor_financial_account_ibanid.is_some()
+            || self.payer_payee_creditor_financial_account_ibanid.is_some()
+            || self
+                .payee_party_creditor_financial_account_name
+                .is_some()
+            || self
+                .payee_party_creditor_financial_account_proprietary_id
+                .is_some()
+            || self
+                .payee_specified_creditor_financial_institution_bicid
+                .is_some()
+            || self
+                .specified_trade_settlement_payment_means_type_code
+                .is_some()
+            || self
+                .specified_trade_settlement_payment_means_information
+                .is_some()
+            || self.applicable_settlement_financial_card_id.is_some()
+            || self
+                .applicable_settlement_financial_card_cardholder_name
+                .is_some()
+        {
+            if self.specified_trade_settlement_payment_means.is_empty() {
+                self.specified_trade_settlement_payment_means
+                    .push(SpecifiedTradeSettlementPaymentMeans {
+                        type_code: self
+                            .specified_trade_settlement_payment_means_type_code
+                            .map(PaymentMeansCode::MutuallyDefined)
+                            .unwrap_or(PaymentMeansCode::CreditTransfer),
+                        information: non_empty(
+                            self.specified_trade_settlement_payment_means_information,
+                        ),
+                        applicable_trade_settlement_financial_card: None,
+                        payer_party_debtor_financial_account: None,
+                        payee_party_creditor_financial_account: None,
+                        payee_specified_creditor_financial_institution: None,
+                    });
+            }
+            let payment_means = &mut self.specified_trade_settlement_payment_means[0];
+            payment_means.type_code = self
+                .specified_trade_settlement_payment_means_type_code
+                .map(PaymentMeansCode::MutuallyDefined)
+                .unwrap_or(PaymentMeansCode::CreditTransfer);
+            payment_means.information =
+                non_empty(self.specified_trade_settlement_payment_means_information);
+            if let Some(card_id) = self.applicable_settlement_financial_card_id {
+                payment_means.applicable_trade_settlement_financial_card =
+                    Some(ApplicableTradeSettlementFinancialCard {
+                        id: card_id,
+                        cardholder_name: non_empty(
+                            self.applicable_settlement_financial_card_cardholder_name,
+                        ),
+                    });
+            }
+            if let Some(ibanid) = self.payer_party_debtor_financial_account_ibanid {
+                payment_means.payer_party_debtor_financial_account =
+                    Some(PayerPartyDebtorFinancialAccount { ibanid });
+            }
+            if let Some(account_name) =
+                self.payee_party_creditor_financial_account_name
+            {
+                let payee_account = payment_means
+                    .payee_party_creditor_financial_account
+                    .get_or_insert(PayeePartyCreditorFinancialAccount {
+                        ibanid: None,
+                        account_name: None,
+                        proprietary_id: None,
+                    });
+                payee_account.account_name = Some(account_name);
+            }
+            if let Some(proprietary_id) =
+                self.payee_party_creditor_financial_account_proprietary_id
+            {
+                let payee_account = payment_means
+                    .payee_party_creditor_financial_account
+                    .get_or_insert(PayeePartyCreditorFinancialAccount {
+                        ibanid: None,
+                        account_name: None,
+                        proprietary_id: None,
+                    });
+                payee_account.proprietary_id = Some(proprietary_id);
+            }
+            if let Some(ibanid) = self.payer_payee_creditor_financial_account_ibanid {
+                let payee_account = payment_means
+                    .payee_party_creditor_financial_account
+                    .get_or_insert(PayeePartyCreditorFinancialAccount {
+                        ibanid: None,
+                        account_name: None,
+                        proprietary_id: None,
+                    });
+                payee_account.ibanid = Some(ibanid);
+            }
+            if let Some(bicid) = self.payee_specified_creditor_financial_institution_bicid {
+                payment_means.payee_specified_creditor_financial_institution =
+                    Some(PayeeSpecifiedCreditorFinancialInstitution { bicid });
+            }
+        }
 
         let invoice_currency_code = self
             .invoice_currency_code
@@ -140,7 +239,9 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 ),
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code,
-                    specified_trade_settlement_payment_means: Vec::new(),
+                    specified_trade_settlement_payment_means: self
+                        .specified_trade_settlement_payment_means
+                        .clone(),
                     applicable_trade_tax: self.applicable_trade_tax.clone(),
                     specified_trade_allowance_charge: Vec::new(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),

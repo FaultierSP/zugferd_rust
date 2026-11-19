@@ -7,6 +7,85 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+    /// payments
+    
+    // type_code gemaess Codeliste UNTDID 4461
+    pub fn set_specified_trade_settlement_payment_means_type_code(
+        &mut self,
+        type_code: &'invoice_builder str,
+    ) -> &mut Self {
+        self.specified_trade_settlement_payment_means_type_code = Some(type_code);
+        self
+    }
+    
+    pub fn set_specified_trade_settlement_payment_means_information(
+        &mut self,
+        information: &'invoice_builder str,
+    ) -> &mut Self {
+        self.specified_trade_settlement_payment_means_information = Some(information);
+        self
+    }
+
+    /// Sets the required card identifier when card payment details are provided.
+    pub fn set_applicable_settlement_financial_card_id(
+        &mut self,
+        card_id: &'invoice_builder str,
+    ) -> &mut Self {
+        self.applicable_settlement_financial_card_id = Some(card_id);
+        self
+    }
+
+    /// Sets the optional cardholder name; the card identifier is still required.
+    pub fn set_applicable_settlement_financial_card_cardholder_name(
+        &mut self,
+        cardholder_name: &'invoice_builder str,
+    ) -> &mut Self {
+        self.applicable_settlement_financial_card_cardholder_name = Some(cardholder_name);
+        self
+    }       
+
+
+    pub fn set_payer_party_debtor_financial_account_ibanid(
+        &mut self,
+        ibanid: &'invoice_builder str,
+    ) -> &mut Self {
+        self.payer_party_debtor_financial_account_ibanid = Some(ibanid);
+        self
+    }
+
+    pub fn set_payer_payee_creditor_financial_account_ibanid(
+        &mut self,
+        ibanid: &'invoice_builder str,
+    ) -> &mut Self {
+        self.payer_payee_creditor_financial_account_ibanid = Some(ibanid);
+        self
+    }
+
+    pub fn set_payee_party_creditor_financial_account_name(
+        &mut self,
+        account_name: &'invoice_builder str,
+    ) -> &mut Self {
+        self.payee_party_creditor_financial_account_name = Some(account_name);
+        self
+    }
+
+    pub fn set_payee_party_creditor_financial_account_proprietary_id(
+        &mut self,
+        proprietary_id: &'invoice_builder str,
+    ) -> &mut Self {
+        self.payee_party_creditor_financial_account_proprietary_id = Some(proprietary_id);
+        self
+    }
+
+    pub fn set_payee_party_creditor_financial_account_payee_specified_creditor_financial_institution_bicid(
+        &mut self,
+        bicid: &'invoice_builder str,
+    ) -> &mut Self {
+        self.payee_specified_creditor_financial_institution_bicid = Some(bicid);
+        self
+    }
+
+
     /// Sum of all net amounts
     ///
     /// BT-106
