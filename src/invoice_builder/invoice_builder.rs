@@ -78,6 +78,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation_line_total_amount: Option<f64>,
     monetary_summation_charge_total_amount: Option<f64>,
     monetary_summation_allowance_total_amount: Option<f64>,
+    specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice_builder>>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
 
     //Basic specification
@@ -125,6 +126,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             monetary_summation_line_total_amount: None,
             monetary_summation_charge_total_amount: None,
             monetary_summation_allowance_total_amount: None,
+            specified_trade_settlement_payment_means: Vec::new(),
             specified_trade_payment_terms: None,
 
             included_supply_chain_trade_line_items: Vec::new(),

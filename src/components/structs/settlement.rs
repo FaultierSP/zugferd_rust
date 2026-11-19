@@ -12,21 +12,26 @@ use serde::Serialize;
 pub struct ApplicableHeaderTradeSettlement<'invoice> {
     #[serde(rename = "ram:InvoiceCurrencyCode")]
     pub invoice_currency_code: CurrencyCode,
+    
     #[serde(rename = "ram:SpecifiedTradeSettlementPaymentMeans")]
     pub specified_trade_settlement_payment_means:
         Vec<SpecifiedTradeSettlementPaymentMeans<'invoice>>,
+    
     #[serde(
         rename = "ram:ApplicableTradeTax",
         skip_serializing_if = "Vec::is_empty"
     )]
     pub applicable_trade_tax: Vec<ApplicableTradeTax<'invoice>>,
+    
     #[serde(rename = "ram:SpecifiedTradeAllowanceCharge")]
     pub specified_trade_allowance_charge: Vec<SpecifiedTradeAllowanceCharge<'invoice>>,
+    
     #[serde(
         rename = "ram:SpecifiedTradePaymentTerms",
         skip_serializing_if = "Option::is_none"
     )]
     pub specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice>>,
+    
     #[serde(rename = "ram:SpecifiedTradeSettlementHeaderMonetarySummation")]
     pub specified_trade_settlement_header_monetary_summation:
         SpecifiedTradeSettlementHeaderMonetarySummation,
