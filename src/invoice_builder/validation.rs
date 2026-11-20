@@ -66,7 +66,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         if card_selected
             && self
                 .applicable_settlement_financial_card_id
-                .map_or(true, |id| id.trim().is_empty())
+                .is_none_or(|id| id.trim().is_empty())
         {
             error_text += "Applicable trade settlement financial card: ID not set\n";
         }
