@@ -89,13 +89,12 @@ pub struct InvoiceBuilder<'invoice_builder> {
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
 
     //EN 16931 specification
-    // Payment information according to EN 16931 specification
+    //Payment information according to EN 16931 specification
     specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
     applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
     applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
     payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
     payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
-
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
