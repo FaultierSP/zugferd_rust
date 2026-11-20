@@ -7,8 +7,8 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
-    /// payments
-    
+    // payments
+
     // type_code gemaess Codeliste UNTDID 4461
     pub fn set_specified_trade_settlement_payment_means_type_code(
         &mut self,
