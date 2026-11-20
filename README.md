@@ -103,14 +103,14 @@ match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
 println!("Generated ZUGFeRD XML: {}",xml_string);
 ~~~
 
-Please check `main.rs` for further examples.
+// Please check `main.rs` for further examples.
 
 ## Roadmap
 
 - [x] generation of minimum level
 - [x] generation of basic level without lines
 - [x] generation of basic level
-- [ ] generation of EN 16931 level
+- [x] generation of EN 16931 level
 - [ ] generation of extended level
 - [ ] validation of all levels
 - [ ] parsing of all levels

@@ -78,10 +78,23 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation_line_total_amount: Option<f64>,
     monetary_summation_charge_total_amount: Option<f64>,
     monetary_summation_allowance_total_amount: Option<f64>,
+    specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice_builder>>,
+    specified_trade_settlement_payment_means_type_code: Option<&'invoice_builder str>,
+    payer_party_debtor_financial_account_ibanid: Option<&'invoice_builder str>,
+    payer_payee_creditor_financial_account_ibanid: Option<&'invoice_builder str>,
+    payee_party_creditor_financial_account_proprietary_id: Option<&'invoice_builder str>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
 
     //Basic specification
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
+
+    //EN 16931 specification
+    //Payment information according to EN 16931 specification
+    specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
+    applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
+    applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
+    payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
+    payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
@@ -93,6 +106,8 @@ impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     pub fn new() -> Self {
         Self {
+            // ??????
+            specified_trade_settlement_payment_means: Vec::new(),
             business_process: None,
             invoice_type_code: None,
             invoice_nr: None,
@@ -116,6 +131,15 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             monetary_summation_line_total_amount: None,
             monetary_summation_charge_total_amount: None,
             monetary_summation_allowance_total_amount: None,
+            specified_trade_settlement_payment_means_type_code: None,
+            specified_trade_settlement_payment_means_information: None,
+            applicable_settlement_financial_card_id: None,
+            applicable_settlement_financial_card_cardholder_name: None,
+            payer_party_debtor_financial_account_ibanid: None,
+            payer_payee_creditor_financial_account_ibanid: None,
+            payee_party_creditor_financial_account_name: None,
+            payee_party_creditor_financial_account_proprietary_id: None,
+            payee_specified_creditor_financial_institution_bicid: None,
             specified_trade_payment_terms: None,
 
             included_supply_chain_trade_line_items: Vec::new(),
@@ -164,5 +188,82 @@ mod test {
             .all_fields_are_set(specification_level)
             .is_ok());
         assert!(invoice_builder.build(specification_level).is_ok());
+    }
+
+    #[test]
+    fn test_payment_account_details_are_emitted() {
+        let specification_level =
+            crate::components::enums::specification_level::SpecificationLevel::Minimum;
+
+        let sum_net = 100.0;
+        let tax = sum_net * 19.0 / 100.0;
+        let sum_gross = sum_net + tax;
+
+        let mut invoice_builder = InvoiceBuilder::new();
+        invoice_builder
+            .set_business_process("process1")
+            .set_invoice_type_code(InvoiceTypeCode::CommercialInvoice)
+            .set_invoice_nr("INV-123456")
+            .set_date_of_issue(chrono::NaiveDate::from_ymd_opt(2024, 8, 10).unwrap())
+            .set_buyer_reference("BR-7890")
+            .set_sellers_name("Seller Corp.")
+            .set_sellers_postal_trade_address_country_code(CountryCode::Germany)
+            .set_sellers_specified_tax_registration("DE123456789")
+            .set_buyers_name("Buyer Inc.")
+            .set_buyers_order_specified_document("")
+            .set_invoice_currency_code(CurrencyCode::Euro)
+            .set_monetary_summation_tax_basis_total_amount(sum_net)
+            .set_monetary_summation_tax_total_amount(tax)
+            .set_monetary_summation_grand_total_amount(sum_gross)
+            .set_monetary_summation_due_payable_amount(sum_gross)
+            .set_payer_party_debtor_financial_account_ibanid("DE89370400440532013000")
+            .set_payer_payee_creditor_financial_account_ibanid("DE02120300000000202051")
+            .set_payee_party_creditor_financial_account_name("Someone's Account")
+            .set_payee_party_creditor_financial_account_proprietary_id("ACC-123")
+            .set_payee_party_creditor_financial_account_payee_specified_creditor_financial_institution_bicid(
+                "COBADEFFXXX",
+            );
+        let xml = invoice_builder.to_xml_string(specification_level).unwrap();
+
+        assert!(xml.contains("<ram:TypeCode>30</ram:TypeCode>"));
+        assert!(xml.contains("<ram:IBANID>DE89370400440532013000</ram:IBANID>"));
+        assert!(xml.contains("<ram:IBANID>DE02120300000000202051</ram:IBANID>"));
+        assert!(xml.contains("<ram:AccountName>Someone's Account</ram:AccountName>"));
+        assert!(xml.contains("<ram:ProprietaryID>ACC-123</ram:ProprietaryID>"));
+        assert!(xml.contains("<ram:BICID>COBADEFFXXX</ram:BICID>"));
+    }
+
+    #[test]
+    fn test_payment_means_fields_are_emitted_without_account_details() {
+        let specification_level =
+            crate::components::enums::specification_level::SpecificationLevel::Minimum;
+
+        let mut invoice_builder = InvoiceBuilder::new();
+        invoice_builder
+            .set_business_process("process1")
+            .set_invoice_type_code(InvoiceTypeCode::CommercialInvoice)
+            .set_invoice_nr("INV-123456")
+            .set_date_of_issue(chrono::NaiveDate::from_ymd_opt(2024, 8, 10).unwrap())
+            .set_buyer_reference("BR-7890")
+            .set_sellers_name("Seller Corp.")
+            .set_sellers_postal_trade_address_country_code(CountryCode::Germany)
+            .set_sellers_specified_tax_registration("DE123456789")
+            .set_buyers_name("Buyer Inc.")
+            .set_buyers_order_specified_document("")
+            .set_invoice_currency_code(CurrencyCode::Euro)
+            .set_monetary_summation_tax_basis_total_amount(100.0)
+            .set_monetary_summation_tax_total_amount(19.0)
+            .set_monetary_summation_grand_total_amount(119.0)
+            .set_monetary_summation_due_payable_amount(119.0)
+            .set_specified_trade_settlement_payment_means_type_code("58")
+            .set_specified_trade_settlement_payment_means_information("SEPA transfer")
+            .set_applicable_settlement_financial_card_id("CARD-123")
+            .set_applicable_settlement_financial_card_cardholder_name("Invoice Buyer");
+
+        let xml = invoice_builder.to_xml_string(specification_level).unwrap();
+        assert!(xml.contains("<ram:TypeCode>58</ram:TypeCode>"));
+        assert!(xml.contains("<ram:Information>SEPA transfer</ram:Information>"));
+        assert!(xml.contains("<ram:ID>CARD-123</ram:ID>"));
+        assert!(xml.contains("<ram:CardholderName>Invoice Buyer</ram:CardholderName>"));
     }
 }

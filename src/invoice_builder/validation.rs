@@ -56,6 +56,21 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text += "Invoice currency code not set\n";
         }
 
+        let card_selected = matches!(
+            self.specified_trade_settlement_payment_means_type_code,
+            Some("48" | "54" | "55")
+        ) || self.applicable_settlement_financial_card_id.is_some()
+            || self
+                .applicable_settlement_financial_card_cardholder_name
+                .is_some();
+        if card_selected
+            && self
+                .applicable_settlement_financial_card_id
+                .is_none_or(|id| id.trim().is_empty())
+        {
+            error_text += "Applicable trade settlement financial card: ID not set\n";
+        }
+
         // Additional checks for different specification levels
         if specification_level >= SpecificationLevel::BasicWithoutLines {
             if self.applicable_trade_tax.is_empty() {

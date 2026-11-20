@@ -58,6 +58,44 @@ fn non_empty_strings_are_kept() {
     assert!(xml.contains("LegalOrg-001"), "{xml}");
 }
 
+#[test]
+fn payment_card_id_is_emitted_without_cardholder_name() {
+    let mut builder = minimum_builder("", "");
+    builder
+        .set_specified_trade_settlement_payment_means_type_code("54")
+        .set_applicable_settlement_financial_card_id("CARD-123");
+
+    let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+    assert!(
+        xml.contains("<ram:ApplicableTradeSettlementFinancialCard><ram:ID>CARD-123</ram:ID></ram:ApplicableTradeSettlementFinancialCard>"),
+        "{xml}"
+    );
+    assert!(!xml.contains("CardholderName"), "{xml}");
+}
+
+#[test]
+fn payment_card_requires_nonempty_id() {
+    for code in ["48", "54", "55"] {
+        let mut builder = minimum_builder("", "");
+        builder.set_specified_trade_settlement_payment_means_type_code(code);
+        let error = builder.build(SpecificationLevel::Minimum).unwrap_err();
+        assert!(error.contains("financial card: ID not set"), "{error}");
+
+        builder.set_applicable_settlement_financial_card_id("  ");
+        let error = builder
+            .to_xml_string(SpecificationLevel::Minimum)
+            .unwrap_err();
+        assert!(error.contains("financial card: ID not set"), "{error}");
+    }
+
+    let mut builder = minimum_builder("", "");
+    builder.set_applicable_settlement_financial_card_cardholder_name("Invoice Buyer");
+    let error = builder
+        .to_xml_string(SpecificationLevel::Minimum)
+        .unwrap_err();
+    assert!(error.contains("financial card: ID not set"), "{error}");
+}
+
 /// Full invoice as required from BASIC WL upwards, with empty optional values mixed in.
 fn full_builder<'a>() -> InvoiceBuilder<'a> {
     let mut b = minimum_builder("", "");
