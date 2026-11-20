@@ -82,13 +82,17 @@ fn payment_card_requires_nonempty_id() {
         assert!(error.contains("financial card: ID not set"), "{error}");
 
         builder.set_applicable_settlement_financial_card_id("  ");
-        let error = builder.to_xml_string(SpecificationLevel::Minimum).unwrap_err();
+        let error = builder
+            .to_xml_string(SpecificationLevel::Minimum)
+            .unwrap_err();
         assert!(error.contains("financial card: ID not set"), "{error}");
     }
 
     let mut builder = minimum_builder("", "");
     builder.set_applicable_settlement_financial_card_cardholder_name("Invoice Buyer");
-    let error = builder.to_xml_string(SpecificationLevel::Minimum).unwrap_err();
+    let error = builder
+        .to_xml_string(SpecificationLevel::Minimum)
+        .unwrap_err();
     assert!(error.contains("financial card: ID not set"), "{error}");
 }
 

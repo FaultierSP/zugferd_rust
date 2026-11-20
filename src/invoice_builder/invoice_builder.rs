@@ -80,26 +80,21 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation_allowance_total_amount: Option<f64>,
     specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice_builder>>,
     specified_trade_settlement_payment_means_type_code: Option<&'invoice_builder str>,
-    specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
-    applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
-    applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
     payer_party_debtor_financial_account_ibanid: Option<&'invoice_builder str>,
     payer_payee_creditor_financial_account_ibanid: Option<&'invoice_builder str>,
-    payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
     payee_party_creditor_financial_account_proprietary_id: Option<&'invoice_builder str>,
-    payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
 
     //Basic specification
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
 
     //EN 16931 specification
-
-    // noch offen
-
-
-
-
+    // payment
+    specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
+    applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
+    applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
+    payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
+    payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
 
 }
 
