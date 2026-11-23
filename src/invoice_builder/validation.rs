@@ -177,6 +177,24 @@ if specification_level >= SpecificationLevel::En16931 {
     if self.buyers_defined_trade_contact_complete_number.is_none() {
         error_text += "Buyer's defined trade contact complete number not set\n";
     }
+
+    if self.sellers_description.is_none() {
+        error_text += "Seller's description not set\n";
+    }   
+
+    if self.seller_trade_party_trading_business_name.is_none() {    
+        error_text += "Seller trade party trading business name not set\n";
+    }
+    if self.sellers_defined_trade_contact_person_name.is_none() {
+        error_text += "Seller's defined trade contact person name not set\n";
+    }
+    if self.sellers_defined_trade_contact_department_name.is_none() {
+        error_text += "Seller's defined trade contact department name not set\n";
+    }
+    if self.sellers_defined_trade_contact_complete_number.is_none() {
+        error_text += "Seller's defined trade contact complete number not set\n";
+    }   
+        
 }
 
         if specification_level >= SpecificationLevel::Extended {

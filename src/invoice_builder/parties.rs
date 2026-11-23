@@ -36,6 +36,28 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+    /// BT-33
+    ///
+    pub fn set_sellers_description<T: Into<&'invoice_builder str>>(
+        &mut self,
+        description: T,
+    ) -> &mut Self {
+        self.sellers_description = Some(description.into());
+        self
+    }   
+
+    /// Seller trade party trading business name
+    ///
+    /// BT-28
+    ///
+    /// ram:SpecifiedTradeParty -> ram:Name
+    pub fn set_seller_trade_party_trading_business_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        name: T,
+    ) -> &mut Self {
+        self.seller_trade_party_trading_business_name = Some(name.into());
+        self
+    }
     /// An identifier issued by an official registrar that identifies the Seller as a legal entity or person.
     ///
     /// BT-30

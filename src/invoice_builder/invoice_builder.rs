@@ -101,7 +101,11 @@ pub struct InvoiceBuilder<'invoice_builder> {
     buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_complete_number: Option<&'invoice_builder str>,
-
+    sellers_description: Option<&'invoice_builder str>,
+    seller_trade_party_trading_business_name: Option<&'invoice_builder str>,
+    sellers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
+    sellers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
+    sellers_defined_trade_contact_complete_number: Option<&'invoice_builder str>,
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
@@ -154,7 +158,11 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             buyers_defined_trade_contact_person_name: None,
             buyers_defined_trade_contact_department_name: None,
             buyers_defined_trade_contact_complete_number: None,
-
+            sellers_description: None,
+            seller_trade_party_trading_business_name: None,
+            sellers_defined_trade_contact_person_name: None,
+            sellers_defined_trade_contact_department_name: None,
+            sellers_defined_trade_contact_complete_number: None,
 
         }
     }
