@@ -147,6 +147,32 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text += "No included supply chain trade line items set\n";
         }
 
+if specification_level >= SpecificationLevel::En16931 {
+    
+    if self.specified_trade_settlement_payment_means_information.is_none() {
+        error_text += "Specified trade settlement payment means information not set\n";
+    }
+    if self.applicable_settlement_financial_card_id.is_none() {
+        error_text += "Applicable settlement financial card ID not set\n";
+    }
+    if self.applicable_settlement_financial_card_cardholder_name.is_none() {
+        error_text += "Applicable settlement financial card cardholder name not set\n";
+    }
+    if self.payee_party_creditor_financial_account_name.is_none() {
+        error_text += "Payee party creditor financial account name not set\n";
+    }
+    if self.payee_specified_creditor_financial_institution_bicid.is_none() {
+        error_text += "Payee specified creditor financial institution BICID not set\n";
+    }   
+
+    if self.buyer_trade_party_trading_business_name.is_none() {
+        error_text += "Buyer trade party trading business name not set\n";
+    }
+    if self.buyers_defined_trade_contact_person_name.is_none() {
+        error_text += "Buyer's defined trade contact person name not set\n";
+    }
+}
+
         if specification_level >= SpecificationLevel::Extended {
             if self.buyer_reference.is_none() {
                 error_text += "Buyer reference not set\n";

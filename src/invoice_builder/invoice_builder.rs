@@ -58,6 +58,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     // BT-31
     sellers_specified_tax_registration: Option<&'invoice_builder str>,
     // BT-40 --- Laendercode des Verkäufers - nicht explizit
+    //buyer information
     // BT-44
     buyers_name: Option<&'invoice_builder str>,
     // BT-47
@@ -95,6 +96,11 @@ pub struct InvoiceBuilder<'invoice_builder> {
     applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
     payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
     payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
+    // parties according to EN 16931 specification
+    // BT-45
+    buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
+    buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
+
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
@@ -143,6 +149,8 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             specified_trade_payment_terms: None,
 
             included_supply_chain_trade_line_items: Vec::new(),
+            buyer_trade_party_trading_business_name: None,
+            buyers_defined_trade_contact_person_name: None,
         }
     }
 }

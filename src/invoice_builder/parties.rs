@@ -130,7 +130,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     }
 
     /// An identifier issued by an official registrar that identifies the Buyer as a legal entity or person.
-    ///
     /// BT-47
     ///
     /// ram:SpecifiedLegalOrganization -> ram:ID
@@ -139,6 +138,30 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         buyers_specified_legal_organization: T,
     ) -> &mut Self {
         self.buyers_specified_legal_organization = Some(buyers_specified_legal_organization.into());
+        self
+    }
+
+    /// 
+    /// schemeID for the buyers specified legal organization is missing
+
+
+    ///BT-45
+    /// The trading business name of the buyer.
+    pub fn set_buyer_trade_party_trading_business_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        trading_business_name: T,
+    ) -> &mut Self {
+        self.buyer_trade_party_trading_business_name = Some(trading_business_name.into());
+        self
+    }
+    
+    /// Defined Trade Contact for the buyer.
+    /// BT-56
+    pub fn set_buyers_definedtrade_contact_person_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        contact_person_name: T,
+    ) -> &mut Self {
+        self.buyers_defined_trade_contact_person_name = Some(contact_person_name.into());
         self
     }
 
