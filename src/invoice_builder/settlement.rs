@@ -1,9 +1,20 @@
 use super::InvoiceBuilder;
 use crate::components::enums::currency_code::CurrencyCode;
+use crate::components::structs::SpecifiedTradeAllowanceCharge;
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     pub fn set_invoice_currency_code(&mut self, invoice_currency_code: CurrencyCode) -> &mut Self {
         self.invoice_currency_code = Some(invoice_currency_code);
+        self
+    }
+
+    /// Adds a document level allowance or charge (BG-20 / BG-21).
+    /// Can be called multiple times to add several entries.
+    pub fn add_specified_trade_allowance_charge(
+        &mut self,
+        allowance_charge: SpecifiedTradeAllowanceCharge<'invoice_builder>,
+    ) -> &mut Self {
+        self.specified_trade_allowance_charge.push(allowance_charge);
         self
     }
 
