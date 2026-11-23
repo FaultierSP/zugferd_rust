@@ -165,6 +165,29 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+/// Define Trade Contact Department name for the buyer
+/// BT-56-0
+pub fn set_buyers_definedtrade_contact_department_name<T: Into<&'invoice_builder str>>(
+    &mut self,
+    department_name: T,
+) -> &mut Self {
+    self.buyers_defined_trade_contact_department_name = Some(department_name.into());
+    self
+}   
+
+/// Define Trade Contact telephone universal communication type for the buyer
+/// BT-57-00
+/// 
+/// Define Trade Contact complete number for the buyer
+/// BT-57
+pub fn set_buyers_definedtrade_contact_complete_number<T: Into<&'invoice_builder str>>(
+    &mut self,
+    department_name: T,
+) -> &mut Self {
+    self.buyers_defined_trade_contact_complete_number = Some(department_name.into());
+    self
+}   
+
     /// Postal code, zip code or similar
     ///
     /// BT-53

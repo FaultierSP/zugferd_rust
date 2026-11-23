@@ -171,6 +171,12 @@ if specification_level >= SpecificationLevel::En16931 {
     if self.buyers_defined_trade_contact_person_name.is_none() {
         error_text += "Buyer's defined trade contact person name not set\n";
     }
+    if self.buyers_defined_trade_contact_department_name.is_none() {
+        error_text += "Buyer's defined trade contact department name not set\n";
+    }
+    if self.buyers_defined_trade_contact_complete_number.is_none() {
+        error_text += "Buyer's defined trade contact complete number not set\n";
+    }
 }
 
         if specification_level >= SpecificationLevel::Extended {

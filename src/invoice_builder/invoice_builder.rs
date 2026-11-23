@@ -100,6 +100,8 @@ pub struct InvoiceBuilder<'invoice_builder> {
     // BT-45
     buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
+    buyers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
+    buyers_defined_trade_contact_complete_number: Option<&'invoice_builder str>,
 
 }
 
@@ -151,6 +153,8 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             included_supply_chain_trade_line_items: Vec::new(),
             buyer_trade_party_trading_business_name: None,
             buyers_defined_trade_contact_person_name: None,
+            buyers_defined_trade_contact_department_name: None,
+            buyers_defined_trade_contact_complete_number: None,
         }
     }
 }
