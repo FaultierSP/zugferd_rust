@@ -143,8 +143,6 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
 
     /// 
     /// schemeID for the buyers specified legal organization is missing
-
-
     ///BT-45
     /// The trading business name of the buyer.
     pub fn set_buyer_trade_party_trading_business_name<T: Into<&'invoice_builder str>>(

@@ -97,7 +97,6 @@ pub struct InvoiceBuilder<'invoice_builder> {
     payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
     payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
     // parties according to EN 16931 specification
-    // BT-45
     buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
@@ -155,6 +154,8 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             buyers_defined_trade_contact_person_name: None,
             buyers_defined_trade_contact_department_name: None,
             buyers_defined_trade_contact_complete_number: None,
+
+
         }
     }
 }
