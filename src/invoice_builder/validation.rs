@@ -105,6 +105,14 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 error_text += "Occurrence date not set\n";
             }
 
+            if self.payer_financial_account_ibanid.is_none() {
+                error_text += "Payer financial account IBAN not set\n";
+            }
+
+            if self.payee_account_ibanid.is_none() {
+                error_text += "Payee account IBAN not set\n";
+            }
+
             for applicable_trade_tax_checker in &self.applicable_trade_tax {
                 if applicable_trade_tax_checker.calculated_amount.is_none() {
                     error_text += "Applicable trade tax: Calculated amount not set\n";
@@ -158,11 +166,11 @@ if specification_level >= SpecificationLevel::En16931 {
     if self.applicable_settlement_financial_card_cardholder_name.is_none() {
         error_text += "Applicable settlement financial card cardholder name not set\n";
     }
-    if self.payee_party_creditor_financial_account_name.is_none() {
-        error_text += "Payee party creditor financial account name not set\n";
+    if self.payee_creditor_account_name.is_none() {
+        error_text += "Payee creditor account name not set\n";
     }
-    if self.payee_specified_creditor_financial_institution_bicid.is_none() {
-        error_text += "Payee specified creditor financial institution BICID not set\n";
+    if self.payee_creditor_bic_id.is_none() {
+        error_text += "Payee creditor BIC ID not set\n";
     }   
 
     if self.buyer_trade_party_trading_business_name.is_none() {

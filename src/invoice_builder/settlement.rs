@@ -44,44 +44,44 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }       
 
-
-    pub fn set_payer_party_debtor_financial_account_ibanid(
+    pub fn set_payer_financial_account_ibanid(
         &mut self,
         ibanid: &'invoice_builder str,
     ) -> &mut Self {
-        self.payer_party_debtor_financial_account_ibanid = Some(ibanid);
+        self.payer_financial_account_ibanid = Some(ibanid);
         self
     }
 
-    pub fn set_payer_payee_creditor_financial_account_ibanid(
+    pub fn set_payee_account_ibanid(
         &mut self,
         ibanid: &'invoice_builder str,
     ) -> &mut Self {
-        self.payer_payee_creditor_financial_account_ibanid = Some(ibanid);
+        self.payee_account_ibanid = Some(ibanid);
         self
     }
 
-    pub fn set_payee_party_creditor_financial_account_name(
+
+    pub fn set_payee_creditor_account_name(
         &mut self,
         account_name: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_party_creditor_financial_account_name = Some(account_name);
+        self.payee_creditor_account_name = Some(account_name);
         self
     }
 
-    pub fn set_payee_party_creditor_financial_account_proprietary_id(
+    pub fn set_payee_financial_account_proprietary_id(
         &mut self,
         proprietary_id: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_party_creditor_financial_account_proprietary_id = Some(proprietary_id);
+        self.payee_financial_account_proprietary_id = Some(proprietary_id);
         self
     }
 
-    pub fn set_payee_party_creditor_financial_account_payee_specified_creditor_financial_institution_bicid(
+    pub fn set_payee_creditor_bic_id(
         &mut self,
         bicid: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_specified_creditor_financial_institution_bicid = Some(bicid);
+        self.payee_creditor_bic_id = Some(bicid);
         self
     }
 

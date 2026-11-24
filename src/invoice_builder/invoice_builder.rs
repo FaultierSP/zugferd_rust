@@ -81,9 +81,9 @@ pub struct InvoiceBuilder<'invoice_builder> {
     monetary_summation_allowance_total_amount: Option<f64>,
     specified_trade_settlement_payment_means: Vec<SpecifiedTradeSettlementPaymentMeans<'invoice_builder>>,
     specified_trade_settlement_payment_means_type_code: Option<&'invoice_builder str>,
-    payer_party_debtor_financial_account_ibanid: Option<&'invoice_builder str>,
-    payer_payee_creditor_financial_account_ibanid: Option<&'invoice_builder str>,
-    payee_party_creditor_financial_account_proprietary_id: Option<&'invoice_builder str>,
+    payer_financial_account_ibanid: Option<&'invoice_builder str>,
+    payee_account_ibanid: Option<&'invoice_builder str>,
+    payee_financial_account_proprietary_id: Option<&'invoice_builder str>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
 
     //Basic specification
@@ -94,8 +94,8 @@ pub struct InvoiceBuilder<'invoice_builder> {
     specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
     applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
     applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
-    payee_party_creditor_financial_account_name: Option<&'invoice_builder str>,
-    payee_specified_creditor_financial_institution_bicid: Option<&'invoice_builder str>,
+    payee_creditor_account_name: Option<&'invoice_builder str>,
+    payee_creditor_bic_id: Option<&'invoice_builder str>,
     // parties according to EN 16931 specification
     buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
     buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
@@ -146,11 +146,11 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             specified_trade_settlement_payment_means_information: None,
             applicable_settlement_financial_card_id: None,
             applicable_settlement_financial_card_cardholder_name: None,
-            payer_party_debtor_financial_account_ibanid: None,
-            payer_payee_creditor_financial_account_ibanid: None,
-            payee_party_creditor_financial_account_name: None,
-            payee_party_creditor_financial_account_proprietary_id: None,
-            payee_specified_creditor_financial_institution_bicid: None,
+            payer_financial_account_ibanid: None,
+            payee_account_ibanid: None,
+            payee_creditor_account_name: None,
+            payee_financial_account_proprietary_id: None,
+            payee_creditor_bic_id: None,
             specified_trade_payment_terms: None,
 
             included_supply_chain_trade_line_items: Vec::new(),
@@ -237,13 +237,11 @@ mod test {
             .set_monetary_summation_tax_total_amount(tax)
             .set_monetary_summation_grand_total_amount(sum_gross)
             .set_monetary_summation_due_payable_amount(sum_gross)
-            .set_payer_party_debtor_financial_account_ibanid("DE89370400440532013000")
-            .set_payer_payee_creditor_financial_account_ibanid("DE02120300000000202051")
-            .set_payee_party_creditor_financial_account_name("Someone's Account")
-            .set_payee_party_creditor_financial_account_proprietary_id("ACC-123")
-            .set_payee_party_creditor_financial_account_payee_specified_creditor_financial_institution_bicid(
-                "COBADEFFXXX",
-            );
+            .set_payer_financial_account_ibanid("DE89370400440532013000")
+            .set_payee_account_ibanid("DE02120300000000202051")
+            .set_payee_creditor_account_name("Someone's Account")
+            .set_payee_financial_account_proprietary_id("ACC-123")
+            .set_payee_creditor_bic_id("COBADEFFXXX");
         let xml = invoice_builder.to_xml_string(specification_level).unwrap();
 
         assert!(xml.contains("<ram:TypeCode>30</ram:TypeCode>"));

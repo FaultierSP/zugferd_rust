@@ -27,16 +27,16 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
 
-        if self.payer_party_debtor_financial_account_ibanid.is_some()
-            || self.payer_payee_creditor_financial_account_ibanid.is_some()
+        if self.payer_financial_account_ibanid.is_some()
+            || self.payer_financial_account_ibanid.is_some()
             || self
-                .payee_party_creditor_financial_account_name
+                .payee_creditor_account_name
                 .is_some()
             || self
-                .payee_party_creditor_financial_account_proprietary_id
+                .payee_financial_account_proprietary_id
                 .is_some()
             || self
-                .payee_specified_creditor_financial_institution_bicid
+                .payee_creditor_bic_id
                 .is_some()
             || self
                 .specified_trade_settlement_payment_means_type_code
@@ -81,12 +81,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         ),
                     });
             }
-            if let Some(ibanid) = self.payer_party_debtor_financial_account_ibanid {
+            if let Some(ibanid) = self.payer_financial_account_ibanid {
                 payment_means.payer_party_debtor_financial_account =
                     Some(PayerPartyDebtorFinancialAccount { ibanid });
             }
             if let Some(account_name) =
-                self.payee_party_creditor_financial_account_name
+                self.payee_creditor_account_name
             {
                 let payee_account = payment_means
                     .payee_party_creditor_financial_account
@@ -98,7 +98,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 payee_account.account_name = Some(account_name);
             }
             if let Some(proprietary_id) =
-                self.payee_party_creditor_financial_account_proprietary_id
+                self.payee_financial_account_proprietary_id
             {
                 let payee_account = payment_means
                     .payee_party_creditor_financial_account
@@ -109,7 +109,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     });
                 payee_account.proprietary_id = Some(proprietary_id);
             }
-            if let Some(ibanid) = self.payer_payee_creditor_financial_account_ibanid {
+            if let Some(ibanid) = self.payer_financial_account_ibanid {
                 let payee_account = payment_means
                     .payee_party_creditor_financial_account
                     .get_or_insert(PayeePartyCreditorFinancialAccount {
@@ -119,7 +119,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     });
                 payee_account.ibanid = Some(ibanid);
             }
-            if let Some(bicid) = self.payee_specified_creditor_financial_institution_bicid {
+            if let Some(bicid) = self.payee_creditor_bic_id {
                 payment_means.payee_specified_creditor_financial_institution =
                     Some(PayeeSpecifiedCreditorFinancialInstitution { bicid });
             }
