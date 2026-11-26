@@ -85,6 +85,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     payee_account_ibanid: Option<&'invoice_builder str>,
     payee_financial_account_proprietary_id: Option<&'invoice_builder str>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
+    specified_trade_allowance_charge: Vec<SpecifiedTradeAllowanceCharge<'invoice_builder>>,
 
     //Basic specification
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
@@ -144,6 +145,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             payee_financial_account_proprietary_id: None,
             payee_party_creditor_financial_account_info: None,
             specified_trade_payment_terms: None,
+            specified_trade_allowance_charge: Vec::new(),
 
             included_supply_chain_trade_line_items: Vec::new(),
             buyer_trade_party_trading_business_name: None,

@@ -197,7 +197,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                         .specified_trade_settlement_payment_means
                         .clone(),
                     applicable_trade_tax: self.applicable_trade_tax.clone(),
-                    specified_trade_allowance_charge: Vec::new(),
+                    specified_trade_allowance_charge: self.specified_trade_allowance_charge.clone(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),
                     specified_trade_settlement_header_monetary_summation: monetary_summation,
                 },

@@ -1,9 +1,6 @@
 use super::InvoiceBuilder;
 use crate::components::enums::currency_code::CurrencyCode;
-use crate::components::structs::{
-    ApplicableTradeSettlementFinancialCard, PayeePartyCreditorFinancialAccount,
-    PayeePartyCreditorFinancialAccountInfo, PayeeSpecifiedCreditorFinancialInstitution,
-};
+use crate::components::structs::SpecifiedTradeAllowanceCharge;
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     pub fn set_invoice_currency_code(&mut self, invoice_currency_code: CurrencyCode) -> &mut Self {
@@ -11,135 +8,15 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
-    // payments
-
-    // type_code gemaess Codeliste UNTDID 4461
-    pub fn set_specified_trade_settlement_payment_means_type_code(
+    /// Adds a document level allowance or charge (BG-20 / BG-21).
+    /// Can be called multiple times to add several entries.
+    pub fn add_specified_trade_allowance_charge(
         &mut self,
-        type_code: &'invoice_builder str,
+        allowance_charge: SpecifiedTradeAllowanceCharge<'invoice_builder>,
     ) -> &mut Self {
-        self.specified_trade_settlement_payment_means_type_code = Some(type_code);
+        self.specified_trade_allowance_charge.push(allowance_charge);
         self
     }
-    
-    pub fn set_specified_trade_settlement_payment_means_information(
-        &mut self,
-        information: &'invoice_builder str,
-    ) -> &mut Self {
-        self.specified_trade_settlement_payment_means_information = Some(information);
-        self
-    }
-
-    /// Sets the required card identifier when card payment details are provided.
-    pub fn set_applicable_settlement_financial_card_id(
-        &mut self,
-        card_id: &'invoice_builder str,
-    ) -> &mut Self {
-        let card = self.applicable_settlement_financial_card.get_or_insert(
-            ApplicableTradeSettlementFinancialCard {
-                id: card_id,
-                cardholder_name: None,
-            },
-        );
-        card.id = card_id;
-        self
-    }
-
-    /// Sets the optional cardholder name; the card identifier is still required.
-    pub fn set_applicable_settlement_financial_card_cardholder_name(
-        &mut self,
-        cardholder_name: &'invoice_builder str,
-    ) -> &mut Self {
-        let card = self.applicable_settlement_financial_card.get_or_insert(
-            ApplicableTradeSettlementFinancialCard {
-                id: "",
-                cardholder_name: None,
-            },
-        );
-        card.cardholder_name = Some(cardholder_name);
-        self
-    }       
-
-    pub fn set_payer_financial_account_ibanid(
-        &mut self,
-        ibanid: &'invoice_builder str,
-    ) -> &mut Self {
-        self.payer_financial_account_ibanid = Some(ibanid);
-        self
-    }
-
-    pub fn set_payee_account_ibanid(
-        &mut self,
-        ibanid: &'invoice_builder str,
-    ) -> &mut Self {
-        let info = self
-            .payee_party_creditor_financial_account_info
-            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
-                account: PayeePartyCreditorFinancialAccount {
-                    ibanid: None,
-                    account_name: None,
-                    proprietary_id: None,
-                },
-                institution: None,
-            });
-        info.account.ibanid = Some(ibanid);
-        self
-    }
-
-    pub fn set_payee_creditor_account_name(
-        &mut self,
-        account_name: &'invoice_builder str,
-    ) -> &mut Self {
-        let info = self
-            .payee_party_creditor_financial_account_info
-            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
-                account: PayeePartyCreditorFinancialAccount {
-                    ibanid: None,
-                    account_name: None,
-                    proprietary_id: None,
-                },
-                institution: None,
-            });
-        info.account.account_name = Some(account_name);
-        self
-    }
-
-    pub fn set_payee_financial_account_proprietary_id(
-        &mut self,
-        proprietary_id: &'invoice_builder str,
-    ) -> &mut Self {
-        let info = self
-            .payee_party_creditor_financial_account_info
-            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
-                account: PayeePartyCreditorFinancialAccount {
-                    ibanid: None,
-                    account_name: None,
-                    proprietary_id: None,
-                },
-                institution: None,
-            });
-        info.account.proprietary_id = Some(proprietary_id);
-        self
-    }
-
-    pub fn set_payee_creditor_bic_id(
-        &mut self,
-        bicid: &'invoice_builder str,
-    ) -> &mut Self {
-        let info = self
-            .payee_party_creditor_financial_account_info
-            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
-                account: PayeePartyCreditorFinancialAccount {
-                    ibanid: None,
-                    account_name: None,
-                    proprietary_id: None,
-                },
-                institution: None,
-            });
-        info.institution = Some(PayeeSpecifiedCreditorFinancialInstitution { bicid });
-        self
-    }
-
 
     /// Sum of all net amounts
     ///
