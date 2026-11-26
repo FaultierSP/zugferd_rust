@@ -28,7 +28,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self.all_fields_are_set(specification_level)?;
 
         if self.payer_financial_account_ibanid.is_some()
-            || self.payer_financial_account_ibanid.is_some()
+            || self.payee_account_ibanid.is_some()
             || self
                 .payee_creditor_account_name
                 .is_some()
@@ -109,7 +109,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                     });
                 payee_account.proprietary_id = Some(proprietary_id);
             }
-            if let Some(ibanid) = self.payer_financial_account_ibanid {
+            if let Some(ibanid) = self.payee_account_ibanid {
                 let payee_account = payment_means
                     .payee_party_creditor_financial_account
                     .get_or_insert(PayeePartyCreditorFinancialAccount {

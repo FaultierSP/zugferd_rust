@@ -109,6 +109,8 @@ fn full_builder<'a>() -> InvoiceBuilder<'a> {
         .set_buyers_postal_trade_address_postcode_code("77777")
         .set_buyers_postal_trade_address_city_name("Springfield")
         .set_occurrence_date(date(2024, 7, 6))
+        .set_payer_financial_account_ibanid("DE89370400440532013000")
+        .set_payee_account_ibanid("DE02120300000000202051")
         .set_applicable_trade_tax_basis_amount(100.0)
         .set_applicable_trade_tax_calculated_amount(19.0)
         .set_applicable_trade_tax_rate_applicable_percent(19.0)

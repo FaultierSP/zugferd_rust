@@ -1,6 +1,7 @@
 use serde::{Serialize, Serializer};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
+/// UNTDID 5189 — Allowance codes, represents the reason codes for allowances and charges according to the relevant standard.
 pub enum AllowanceChargeReasonCode {
     BonusForWorksAheadOfSchedule,
     OtherBonus,

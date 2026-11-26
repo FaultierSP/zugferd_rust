@@ -161,46 +161,46 @@ if specification_level >= SpecificationLevel::En16931 {
         error_text += "Specified trade settlement payment means information not set\n";
     }
     if self.applicable_settlement_financial_card_id.is_none() {
-        error_text += "Applicable settlement financial card ID not set\n";
+        error_text += "Optional field: Applicable settlement financial card ID not set\n";
     }
     if self.applicable_settlement_financial_card_cardholder_name.is_none() {
-        error_text += "Applicable settlement financial card cardholder name not set\n";
+        error_text += "Optional field: Applicable settlement financial card cardholder name not set\n";
     }
     if self.payee_creditor_account_name.is_none() {
-        error_text += "Payee creditor account name not set\n";
+        error_text += "Optional field: Payee creditor account name not set\n";
     }
     if self.payee_creditor_bic_id.is_none() {
-        error_text += "Payee creditor BIC ID not set\n";
+        error_text += "Optional field: Payee creditor BIC ID not set\n";
     }   
 
     if self.buyer_trade_party_trading_business_name.is_none() {
-        error_text += "Buyer trade party trading business name not set\n";
+        error_text += "Optional field: Buyer trade party trading business name not set\n";
     }
     if self.buyers_defined_trade_contact_person_name.is_none() {
-        error_text += "Buyer's defined trade contact person name not set\n";
+        error_text += "Optional field: Buyer's defined trade contact person name not set\n";
     }
     if self.buyers_defined_trade_contact_department_name.is_none() {
         error_text += "Buyer's defined trade contact department name not set\n";
     }
     if self.buyers_defined_trade_contact_complete_number.is_none() {
-        error_text += "Buyer's defined trade contact complete number not set\n";
+        error_text += "Optional field: Buyer's defined trade contact complete number not set\n";
     }
 
     if self.sellers_description.is_none() {
-        error_text += "Seller's description not set\n";
+        error_text += "Optional field: Seller's description not set\n";
     }   
 
     if self.seller_trade_party_trading_business_name.is_none() {    
-        error_text += "Seller trade party trading business name not set\n";
+        error_text += "Optional field: Seller trade party trading business name not set\n";
     }
     if self.sellers_defined_trade_contact_person_name.is_none() {
-        error_text += "Seller's defined trade contact person name not set\n";
+        error_text += "Optional field: Seller's defined trade contact person name not set\n";
     }
     if self.sellers_defined_trade_contact_department_name.is_none() {
-        error_text += "Seller's defined trade contact department name not set\n";
+        error_text += "Optional field: Seller's defined trade contact department name not set\n";
     }
     if self.sellers_defined_trade_contact_complete_number.is_none() {
-        error_text += "Seller's defined trade contact complete number not set\n";
+        error_text += "Optional field: Seller's defined trade contact complete number not set\n";
     }   
         
 }
