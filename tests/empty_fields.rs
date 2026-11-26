@@ -74,6 +74,45 @@ fn payment_card_id_is_emitted_without_cardholder_name() {
 }
 
 #[test]
+fn direct_debit_mandate_and_due_date_can_be_set_in_either_order() {
+    let due_date = date(2025, 4, 12);
+    for mandate_first in [true, false] {
+        let mut builder = minimum_builder("", "");
+        if mandate_first {
+            builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+            builder.set_specified_trade_payment_terms_due_date(due_date);
+        } else {
+            builder.set_specified_trade_payment_terms_due_date(due_date);
+            builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+        }
+        let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+        assert!(
+            xml.contains("<ram:DirectDebitMandateID>MANDATE-123</ram:DirectDebitMandateID>"),
+            "{xml}"
+        );
+        assert!(xml.contains("20250412"), "{xml}");
+    }
+}
+
+#[test]
+fn direct_debit_mandate_does_not_replace_required_due_date() {
+    let mut builder = minimum_builder("", "");
+    builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+    let error = builder
+        .all_fields_are_set(SpecificationLevel::Basic)
+        .unwrap_err();
+    assert!(
+        error.contains("Specified trade payment terms: Due date time not set"),
+        "{error}"
+    );
+    let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+    assert!(
+        xml.contains("<ram:DirectDebitMandateID>MANDATE-123</ram:DirectDebitMandateID>"),
+        "{xml}"
+    );
+}
+
+#[test]
 fn payment_card_requires_nonempty_id() {
     for code in ["48", "54", "55"] {
         let mut builder = minimum_builder("", "");

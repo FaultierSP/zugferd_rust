@@ -286,6 +286,16 @@ fn basic_validates_against_xsd() {
 }
 
 #[test]
+fn basic_with_direct_debit_mandate_validates_against_xsd() {
+    let level = SpecificationLevel::Basic;
+    let mut builder = builder_for(level);
+    builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+    let xml = builder.to_xml_string(level).expect("invoice should build");
+    assert!(xml.contains("<ram:DirectDebitMandateID>MANDATE-123</ram:DirectDebitMandateID>"));
+    validate(&xml, "BASIC");
+}
+
+#[test]
 fn basic_wl_with_two_vat_categories_validates_against_xsd() {
     let level = SpecificationLevel::BasicWithoutLines;
     let mut b = builder_for(level);

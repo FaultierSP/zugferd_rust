@@ -59,14 +59,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         let card_selected = matches!(
             self.specified_trade_settlement_payment_means_type_code,
             Some("48" | "54" | "55")
-        ) || self.applicable_settlement_financial_card_id.is_some()
-            || self
-                .applicable_settlement_financial_card_cardholder_name
-                .is_some();
+        ) || self.applicable_settlement_financial_card.is_some();
         if card_selected
             && self
-                .applicable_settlement_financial_card_id
-                .is_none_or(|id| id.trim().is_empty())
+                .applicable_settlement_financial_card
+                .as_ref()
+                .is_none_or(|card| card.id.trim().is_empty())
         {
             error_text += "Applicable trade settlement financial card: ID not set\n";
         }
@@ -109,7 +107,11 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 error_text += "Payer financial account IBAN not set\n";
             }
 
-            if self.payee_account_ibanid.is_none() {
+            if self.payee_account_ibanid.is_none()
+                && self
+                    .payee_party_creditor_financial_account_info
+                    .is_none()
+            {
                 error_text += "Payee account IBAN not set\n";
             }
 
@@ -130,7 +132,11 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 }
             }
 
-            if self.specified_trade_payment_terms.is_none() {
+            if self
+                .specified_trade_payment_terms
+                .as_ref()
+                .is_none_or(|terms| terms.due_date_time.is_none())
+            {
                 error_text += "Specified trade payment terms: Due date time not set\n";
             }
 
@@ -157,51 +163,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
 
 if specification_level >= SpecificationLevel::En16931 {
     
-    if self.specified_trade_settlement_payment_means_information.is_none() {
-        error_text += "Specified trade settlement payment means information not set\n";
-    }
-    if self.applicable_settlement_financial_card_id.is_none() {
-        error_text += "Optional field: Applicable settlement financial card ID not set\n";
-    }
-    if self.applicable_settlement_financial_card_cardholder_name.is_none() {
-        error_text += "Optional field: Applicable settlement financial card cardholder name not set\n";
-    }
-    if self.payee_creditor_account_name.is_none() {
-        error_text += "Optional field: Payee creditor account name not set\n";
-    }
-    if self.payee_creditor_bic_id.is_none() {
-        error_text += "Optional field: Payee creditor BIC ID not set\n";
-    }   
-
-    if self.buyer_trade_party_trading_business_name.is_none() {
-        error_text += "Optional field: Buyer trade party trading business name not set\n";
-    }
-    if self.buyers_defined_trade_contact_person_name.is_none() {
-        error_text += "Optional field: Buyer's defined trade contact person name not set\n";
-    }
-    if self.buyers_defined_trade_contact_department_name.is_none() {
-        error_text += "Buyer's defined trade contact department name not set\n";
-    }
-    if self.buyers_defined_trade_contact_complete_number.is_none() {
-        error_text += "Optional field: Buyer's defined trade contact complete number not set\n";
-    }
-
-    if self.sellers_description.is_none() {
-        error_text += "Optional field: Seller's description not set\n";
-    }   
-
-    if self.seller_trade_party_trading_business_name.is_none() {    
-        error_text += "Optional field: Seller trade party trading business name not set\n";
-    }
-    if self.sellers_defined_trade_contact_person_name.is_none() {
-        error_text += "Optional field: Seller's defined trade contact person name not set\n";
-    }
-    if self.sellers_defined_trade_contact_department_name.is_none() {
-        error_text += "Optional field: Seller's defined trade contact department name not set\n";
-    }
-    if self.sellers_defined_trade_contact_complete_number.is_none() {
-        error_text += "Optional field: Seller's defined trade contact complete number not set\n";
-    }   
+    //no additional mandatory fields for En16931 beyond what has already been checked
         
 }
 

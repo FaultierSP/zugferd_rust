@@ -1,5 +1,6 @@
 use super::InvoiceBuilder;
 use crate::components::enums::country_code::CountryCode;
+use crate::components::structs::DefinedTradeContact;
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     /// Buyer reference
@@ -181,32 +182,53 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         contact_person_name: T,
     ) -> &mut Self {
-        self.buyers_defined_trade_contact_person_name = Some(contact_person_name.into());
+        let contact = self
+            .buyers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.person_name = Some(contact_person_name.into());
         self
     }
 
-/// Define Trade Contact Department name for the buyer
-/// BT-56-0
-pub fn set_buyers_definedtrade_contact_department_name<T: Into<&'invoice_builder str>>(
-    &mut self,
-    department_name: T,
-) -> &mut Self {
-    self.buyers_defined_trade_contact_department_name = Some(department_name.into());
-    self
-}   
+    /// Define Trade Contact Department name for the buyer
+    /// BT-56-0
+    pub fn set_buyers_definedtrade_contact_department_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        department_name: T,
+    ) -> &mut Self {
+        let contact = self
+            .buyers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.department_name = Some(department_name.into());
+        self
+    }
 
-/// Define Trade Contact telephone universal communication type for the buyer
-/// BT-57-00
-/// 
-/// Define Trade Contact complete number for the buyer
-/// BT-57
-pub fn set_buyers_definedtrade_contact_complete_number<T: Into<&'invoice_builder str>>(
-    &mut self,
-    department_name: T,
-) -> &mut Self {
-    self.buyers_defined_trade_contact_complete_number = Some(department_name.into());
-    self
-}   
+    /// Define Trade Contact telephone universal communication type for the buyer
+    /// BT-57-00
+    ///
+    /// Define Trade Contact complete number for the buyer
+    /// BT-57
+    pub fn set_buyers_definedtrade_contact_complete_number<T: Into<&'invoice_builder str>>(
+        &mut self,
+        department_name: T,
+    ) -> &mut Self {
+        let contact = self
+            .buyers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.complete_number = Some(department_name.into());
+        self
+    }   
 
     /// Postal code, zip code or similar
     ///
@@ -285,6 +307,60 @@ pub fn set_buyers_definedtrade_contact_complete_number<T: Into<&'invoice_builder
         buyers_order_specified_document: T,
     ) -> &mut Self {
         self.buyers_order_specified_document = Some(buyers_order_specified_document.into());
+        self
+    }
+
+    /// Defined Trade Contact for the seller.
+    /// BT-72
+    pub fn set_sellers_definedtrade_contact_person_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        contact_person_name: T,
+    ) -> &mut Self {
+        let contact = self
+            .sellers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.person_name = Some(contact_person_name.into());
+        self
+    }
+
+    /// Define Trade Contact Department name for the seller
+    /// BT-72-0
+    pub fn set_sellers_definedtrade_contact_department_name<T: Into<&'invoice_builder str>>(
+        &mut self,
+        department_name: T,
+    ) -> &mut Self {
+        let contact = self
+            .sellers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.department_name = Some(department_name.into());
+        self
+    }
+
+    /// Define Trade Contact telephone universal communication type for the seller
+    /// BT-73-00
+    ///
+    /// Define Trade Contact complete number for the seller
+    /// BT-73
+    pub fn set_sellers_definedtrade_contact_complete_number<T: Into<&'invoice_builder str>>(
+        &mut self,
+        complete_number: T,
+    ) -> &mut Self {
+        let contact = self
+            .sellers_defined_trade_contact
+            .get_or_insert(DefinedTradeContact {
+                person_name: None,
+                department_name: None,
+                complete_number: None,
+            });
+        contact.complete_number = Some(complete_number.into());
         self
     }
 }

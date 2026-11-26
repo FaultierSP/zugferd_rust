@@ -151,6 +151,17 @@ pub struct BuyerTradeParty<'invoice> {
     pub postal_trade_address: PostalTradeAddress<'invoice>,
 }
 
+/// Composite struct for trade contact information (person, department, phone)
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct DefinedTradeContact<'invoice> {
+    #[serde(rename = "ram:PersonName", skip_serializing_if = "Option::is_none")]
+    pub person_name: Option<&'invoice str>,
+    #[serde(rename = "ram:DepartmentName", skip_serializing_if = "Option::is_none")]
+    pub department_name: Option<&'invoice str>,
+    #[serde(rename = "ram:CompleteNumber", skip_serializing_if = "Option::is_none")]
+    pub complete_number: Option<&'invoice str>,
+}
+
 #[derive(Serialize, Clone, Debug)]
 pub struct BuyerOrderReferencedDocument<'invoice> {
     #[serde(rename = "ram:IssuerAssignedID")]

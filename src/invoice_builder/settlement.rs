@@ -1,5 +1,9 @@
 use super::InvoiceBuilder;
 use crate::components::enums::currency_code::CurrencyCode;
+use crate::components::structs::{
+    ApplicableTradeSettlementFinancialCard, PayeePartyCreditorFinancialAccount,
+    PayeePartyCreditorFinancialAccountInfo, PayeeSpecifiedCreditorFinancialInstitution,
+};
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     pub fn set_invoice_currency_code(&mut self, invoice_currency_code: CurrencyCode) -> &mut Self {
@@ -31,7 +35,13 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         card_id: &'invoice_builder str,
     ) -> &mut Self {
-        self.applicable_settlement_financial_card_id = Some(card_id);
+        let card = self.applicable_settlement_financial_card.get_or_insert(
+            ApplicableTradeSettlementFinancialCard {
+                id: card_id,
+                cardholder_name: None,
+            },
+        );
+        card.id = card_id;
         self
     }
 
@@ -40,7 +50,13 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         cardholder_name: &'invoice_builder str,
     ) -> &mut Self {
-        self.applicable_settlement_financial_card_cardholder_name = Some(cardholder_name);
+        let card = self.applicable_settlement_financial_card.get_or_insert(
+            ApplicableTradeSettlementFinancialCard {
+                id: "",
+                cardholder_name: None,
+            },
+        );
+        card.cardholder_name = Some(cardholder_name);
         self
     }       
 
@@ -56,16 +72,35 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         ibanid: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_account_ibanid = Some(ibanid);
+        let info = self
+            .payee_party_creditor_financial_account_info
+            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
+                account: PayeePartyCreditorFinancialAccount {
+                    ibanid: None,
+                    account_name: None,
+                    proprietary_id: None,
+                },
+                institution: None,
+            });
+        info.account.ibanid = Some(ibanid);
         self
     }
-
 
     pub fn set_payee_creditor_account_name(
         &mut self,
         account_name: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_creditor_account_name = Some(account_name);
+        let info = self
+            .payee_party_creditor_financial_account_info
+            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
+                account: PayeePartyCreditorFinancialAccount {
+                    ibanid: None,
+                    account_name: None,
+                    proprietary_id: None,
+                },
+                institution: None,
+            });
+        info.account.account_name = Some(account_name);
         self
     }
 
@@ -73,7 +108,17 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         proprietary_id: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_financial_account_proprietary_id = Some(proprietary_id);
+        let info = self
+            .payee_party_creditor_financial_account_info
+            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
+                account: PayeePartyCreditorFinancialAccount {
+                    ibanid: None,
+                    account_name: None,
+                    proprietary_id: None,
+                },
+                institution: None,
+            });
+        info.account.proprietary_id = Some(proprietary_id);
         self
     }
 
@@ -81,7 +126,17 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         bicid: &'invoice_builder str,
     ) -> &mut Self {
-        self.payee_creditor_bic_id = Some(bicid);
+        let info = self
+            .payee_party_creditor_financial_account_info
+            .get_or_insert(PayeePartyCreditorFinancialAccountInfo {
+                account: PayeePartyCreditorFinancialAccount {
+                    ibanid: None,
+                    account_name: None,
+                    proprietary_id: None,
+                },
+                institution: None,
+            });
+        info.institution = Some(PayeeSpecifiedCreditorFinancialInstitution { bicid });
         self
     }
 

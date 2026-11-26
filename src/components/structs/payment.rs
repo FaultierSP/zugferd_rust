@@ -63,6 +63,13 @@ pub struct PayeeSpecifiedCreditorFinancialInstitution<'invoice> {
     pub bicid: &'invoice str,
 }
 
+/// Composite struct for all payee financial account information
+#[derive(Serialize, Clone, Copy, Debug)]
+pub struct PayeePartyCreditorFinancialAccountInfo<'invoice> {
+    pub account: PayeePartyCreditorFinancialAccount<'invoice>,
+    pub institution: Option<PayeeSpecifiedCreditorFinancialInstitution<'invoice>>,
+}
+
 #[derive(Serialize, Clone, Debug)]
 pub struct SpecifiedTradePaymentTerms<'invoice> {
     /// `BT-20`: A textual description of the payment terms that apply to the amount due for payment (Including description of possible penalties).
@@ -74,6 +81,12 @@ pub struct SpecifiedTradePaymentTerms<'invoice> {
         skip_serializing_if = "Option::is_none"
     )]
     pub due_date_time: Option<DueDateDateTime<'invoice>>,
+    /// `BT-89`: The direct debit mandate reference.
+    #[serde(
+        rename = "ram:DirectDebitMandateID",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub direct_debit_mandate_id: Option<&'invoice str>,
 }
 
 #[derive(Serialize, Clone, Debug)]

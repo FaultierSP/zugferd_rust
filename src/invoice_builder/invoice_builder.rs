@@ -92,20 +92,14 @@ pub struct InvoiceBuilder<'invoice_builder> {
     //EN 16931 specification
     //Payment information according to EN 16931 specification
     specified_trade_settlement_payment_means_information: Option<&'invoice_builder str>,
-    applicable_settlement_financial_card_id: Option<&'invoice_builder str>,
-    applicable_settlement_financial_card_cardholder_name: Option<&'invoice_builder str>,
-    payee_creditor_account_name: Option<&'invoice_builder str>,
-    payee_creditor_bic_id: Option<&'invoice_builder str>,
+    applicable_settlement_financial_card: Option<ApplicableTradeSettlementFinancialCard<'invoice_builder>>,
+    payee_party_creditor_financial_account_info: Option<PayeePartyCreditorFinancialAccountInfo<'invoice_builder>>,
     // parties according to EN 16931 specification
     buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
-    buyers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
-    buyers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
-    buyers_defined_trade_contact_complete_number: Option<&'invoice_builder str>,
+    buyers_defined_trade_contact: Option<DefinedTradeContact<'invoice_builder>>,
     sellers_description: Option<&'invoice_builder str>,
     seller_trade_party_trading_business_name: Option<&'invoice_builder str>,
-    sellers_defined_trade_contact_person_name: Option<&'invoice_builder str>,
-    sellers_defined_trade_contact_department_name: Option<&'invoice_builder str>,
-    sellers_defined_trade_contact_complete_number: Option<&'invoice_builder str>,
+    sellers_defined_trade_contact: Option<DefinedTradeContact<'invoice_builder>>,
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
@@ -144,25 +138,19 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             monetary_summation_allowance_total_amount: None,
             specified_trade_settlement_payment_means_type_code: None,
             specified_trade_settlement_payment_means_information: None,
-            applicable_settlement_financial_card_id: None,
-            applicable_settlement_financial_card_cardholder_name: None,
+            applicable_settlement_financial_card: None,
             payer_financial_account_ibanid: None,
             payee_account_ibanid: None,
-            payee_creditor_account_name: None,
             payee_financial_account_proprietary_id: None,
-            payee_creditor_bic_id: None,
+            payee_party_creditor_financial_account_info: None,
             specified_trade_payment_terms: None,
 
             included_supply_chain_trade_line_items: Vec::new(),
             buyer_trade_party_trading_business_name: None,
-            buyers_defined_trade_contact_person_name: None,
-            buyers_defined_trade_contact_department_name: None,
-            buyers_defined_trade_contact_complete_number: None,
+            buyers_defined_trade_contact: None,
             sellers_description: None,
             seller_trade_party_trading_business_name: None,
-            sellers_defined_trade_contact_person_name: None,
-            sellers_defined_trade_contact_department_name: None,
-            sellers_defined_trade_contact_complete_number: None,
+            sellers_defined_trade_contact: None,
 
         }
     }

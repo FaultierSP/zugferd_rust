@@ -30,13 +30,10 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         if self.payer_financial_account_ibanid.is_some()
             || self.payee_account_ibanid.is_some()
             || self
-                .payee_creditor_account_name
-                .is_some()
-            || self
                 .payee_financial_account_proprietary_id
                 .is_some()
             || self
-                .payee_creditor_bic_id
+                .payee_party_creditor_financial_account_info
                 .is_some()
             || self
                 .specified_trade_settlement_payment_means_type_code
@@ -44,10 +41,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             || self
                 .specified_trade_settlement_payment_means_information
                 .is_some()
-            || self.applicable_settlement_financial_card_id.is_some()
-            || self
-                .applicable_settlement_financial_card_cardholder_name
-                .is_some()
+            || self.applicable_settlement_financial_card.is_some()
         {
             if self.specified_trade_settlement_payment_means.is_empty() {
                 self.specified_trade_settlement_payment_means
@@ -72,56 +66,16 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 .unwrap_or(PaymentMeansCode::CreditTransfer);
             payment_means.information =
                 non_empty(self.specified_trade_settlement_payment_means_information);
-            if let Some(card_id) = self.applicable_settlement_financial_card_id {
-                payment_means.applicable_trade_settlement_financial_card =
-                    Some(ApplicableTradeSettlementFinancialCard {
-                        id: card_id,
-                        cardholder_name: non_empty(
-                            self.applicable_settlement_financial_card_cardholder_name,
-                        ),
-                    });
+            if let Some(card) = self.applicable_settlement_financial_card {
+                payment_means.applicable_trade_settlement_financial_card = Some(card);
             }
             if let Some(ibanid) = self.payer_financial_account_ibanid {
                 payment_means.payer_party_debtor_financial_account =
                     Some(PayerPartyDebtorFinancialAccount { ibanid });
             }
-            if let Some(account_name) =
-                self.payee_creditor_account_name
-            {
-                let payee_account = payment_means
-                    .payee_party_creditor_financial_account
-                    .get_or_insert(PayeePartyCreditorFinancialAccount {
-                        ibanid: None,
-                        account_name: None,
-                        proprietary_id: None,
-                    });
-                payee_account.account_name = Some(account_name);
-            }
-            if let Some(proprietary_id) =
-                self.payee_financial_account_proprietary_id
-            {
-                let payee_account = payment_means
-                    .payee_party_creditor_financial_account
-                    .get_or_insert(PayeePartyCreditorFinancialAccount {
-                        ibanid: None,
-                        account_name: None,
-                        proprietary_id: None,
-                    });
-                payee_account.proprietary_id = Some(proprietary_id);
-            }
-            if let Some(ibanid) = self.payee_account_ibanid {
-                let payee_account = payment_means
-                    .payee_party_creditor_financial_account
-                    .get_or_insert(PayeePartyCreditorFinancialAccount {
-                        ibanid: None,
-                        account_name: None,
-                        proprietary_id: None,
-                    });
-                payee_account.ibanid = Some(ibanid);
-            }
-            if let Some(bicid) = self.payee_creditor_bic_id {
-                payment_means.payee_specified_creditor_financial_institution =
-                    Some(PayeeSpecifiedCreditorFinancialInstitution { bicid });
+            if let Some(info) = self.payee_party_creditor_financial_account_info {
+                payment_means.payee_party_creditor_financial_account = Some(info.account);
+                payment_means.payee_specified_creditor_financial_institution = info.institution;
             }
         }
 
