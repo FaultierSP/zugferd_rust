@@ -1,4 +1,5 @@
 use super::{InvoiceBuilder, InvoiceBuilderError};
+use crate::components::enums::payment_means_code::PaymentMeansCode;
 use crate::components::enums::specification_level::SpecificationLevel;
 use crate::components::structs::*;
 
@@ -8,6 +9,115 @@ fn non_empty(value: Option<&str>) -> Option<&str> {
 }
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
+    /// Builds an EN 16931 invoice with additional fields, without changing the
+    /// existing invoice and line-item struct APIs.
+    pub fn build_with_details(
+        &mut self,
+        details: AdditionalInvoiceDetails<'invoice_builder>,
+    ) -> Result<InvoiceWithDetails<'invoice_builder>, String> {
+        let details = self.collect_additional_details(details)?;
+        InvoiceWithDetails::new(self.build_base(SpecificationLevel::En16931)?, details)
+    }
+
+    fn collect_additional_details(
+        &self,
+        mut details: AdditionalInvoiceDetails<'invoice_builder>,
+    ) -> Result<AdditionalInvoiceDetails<'invoice_builder>, String> {
+        macro_rules! merge_field {
+            ($field:ident) => {
+                if details.$field.is_some() && self.$field.is_some() {
+                    return Err(format!("{} was supplied twice", stringify!($field)));
+                }
+                if details.$field.is_none() {
+                    details.$field = self.$field.clone();
+                }
+            };
+        }
+        merge_field!(seller_region);
+        merge_field!(buyer_region);
+        merge_field!(tax_representative);
+        merge_field!(ship_to);
+        merge_field!(seller_order_reference);
+        merge_field!(tender_reference);
+        merge_field!(object_reference);
+        merge_field!(project);
+        merge_field!(receiving_advice_reference);
+        merge_field!(accounting_currency_tax);
+        merge_field!(tax_point);
+        if !self.line_details.is_empty() && !details.line_details.is_empty() {
+            return Err("Line details were supplied twice".into());
+        }
+        if details.line_details.is_empty() {
+            details.line_details = self.line_details.clone();
+        }
+        let mut documents = self.supporting_documents.clone();
+        documents.extend(details.supporting_documents);
+        details.supporting_documents = documents;
+        let mut charges = self.document_charges.clone();
+        charges.extend(details.document_charges);
+        details.document_charges = charges;
+
+        if details.seller_description.is_some() && self.sellers_description.is_some() {
+            return Err("Seller description was supplied twice".into());
+        }
+        details.seller_description = details.seller_description.or(self.sellers_description);
+        for (detail, existing) in [
+            (
+                &mut details.seller_contact,
+                &self.sellers_defined_trade_contact,
+            ),
+            (
+                &mut details.buyer_contact,
+                &self.buyers_defined_trade_contact,
+            ),
+        ] {
+            if let Some(existing) = existing {
+                let contact = detail.get_or_insert_with(TradeContact::default);
+                for (field, value) in [
+                    (&mut contact.person_name, existing.person_name),
+                    (&mut contact.department_name, existing.department_name),
+                    (&mut contact.telephone, existing.telephone),
+                    (&mut contact.email, existing.email),
+                ] {
+                    if field.is_some() && value.is_some() {
+                        return Err(
+                            "Contact field was supplied both through the builder and EN 16931 details"
+                                .into(),
+                        );
+                    }
+                    *field = field.or(value);
+                }
+            }
+        }
+        Ok(details)
+    }
+
+    fn has_additional_fields(&self) -> bool {
+        self.sellers_defined_trade_contact
+            .as_ref()
+            .and_then(|contact| contact.email)
+            .is_some()
+            || self
+                .buyers_defined_trade_contact
+                .as_ref()
+                .and_then(|contact| contact.email)
+                .is_some()
+            || self.seller_region.is_some()
+            || self.buyer_region.is_some()
+            || self.tax_representative.is_some()
+            || self.ship_to.is_some()
+            || self.seller_order_reference.is_some()
+            || self.tender_reference.is_some()
+            || self.object_reference.is_some()
+            || !self.supporting_documents.is_empty()
+            || self.project.is_some()
+            || self.receiving_advice_reference.is_some()
+            || self.accounting_currency_tax.is_some()
+            || self.tax_point.is_some()
+            || !self.document_charges.is_empty()
+            || !self.line_details.is_empty()
+    }
+
     // What the whole crate is actually about
     pub fn to_xml_string(
         mut self,
@@ -23,8 +133,86 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         &mut self,
         specification_level: SpecificationLevel,
     ) -> Result<Invoice<'invoice_builder>, String> {
+        let supported = matches!(
+            specification_level,
+            SpecificationLevel::En16931 | SpecificationLevel::XRechnung
+        );
+        if self.has_additional_fields() && !supported {
+            return Err("EN 16931 fields require the EN 16931 or XRechnung profile".into());
+        }
+        let has_contact_or_description = self.sellers_description.is_some()
+            || self.sellers_defined_trade_contact.is_some()
+            || self.buyers_defined_trade_contact.is_some();
+        let details = if supported && (self.has_additional_fields() || has_contact_or_description) {
+            Some(self.collect_additional_details(AdditionalInvoiceDetails::default())?)
+        } else {
+            None
+        };
+        let invoice = self.build_base(specification_level)?;
+        match details {
+            Some(details) => invoice.with_additional_details(details),
+            None => Ok(invoice),
+        }
+    }
+
+    fn build_base(
+        &mut self,
+        specification_level: SpecificationLevel,
+    ) -> Result<Invoice<'invoice_builder>, String> {
         //Check if none of the fields is empty
         self.all_fields_are_set(specification_level)?;
+
+        if self.payer_financial_account_ibanid.is_some()
+            || self.payee_account_ibanid.is_some()
+            || self
+                .payee_financial_account_proprietary_id
+                .is_some()
+            || self
+                .payee_party_creditor_financial_account_info
+                .is_some()
+            || self
+                .specified_trade_settlement_payment_means_type_code
+                .is_some()
+            || self
+                .specified_trade_settlement_payment_means_information
+                .is_some()
+            || self.applicable_settlement_financial_card.is_some()
+        {
+            if self.specified_trade_settlement_payment_means.is_empty() {
+                self.specified_trade_settlement_payment_means
+                    .push(SpecifiedTradeSettlementPaymentMeans {
+                        type_code: self
+                            .specified_trade_settlement_payment_means_type_code
+                            .map(PaymentMeansCode::MutuallyDefined)
+                            .unwrap_or(PaymentMeansCode::CreditTransfer),
+                        information: non_empty(
+                            self.specified_trade_settlement_payment_means_information,
+                        ),
+                        applicable_trade_settlement_financial_card: None,
+                        payer_party_debtor_financial_account: None,
+                        payee_party_creditor_financial_account: None,
+                        payee_specified_creditor_financial_institution: None,
+                    });
+            }
+            let payment_means = &mut self.specified_trade_settlement_payment_means[0];
+            payment_means.type_code = self
+                .specified_trade_settlement_payment_means_type_code
+                .map(PaymentMeansCode::MutuallyDefined)
+                .unwrap_or(PaymentMeansCode::CreditTransfer);
+            payment_means.information =
+                non_empty(self.specified_trade_settlement_payment_means_information);
+            if let Some(card) = self.applicable_settlement_financial_card {
+                payment_means.applicable_trade_settlement_financial_card = Some(card);
+            }
+            if let Some(ibanid) = self.payer_financial_account_ibanid {
+                payment_means.payer_party_debtor_financial_account =
+                    Some(PayerPartyDebtorFinancialAccount { ibanid });
+            }
+            if let Some(info) = self.payee_party_creditor_financial_account_info {
+                payment_means.payee_party_creditor_financial_account = Some(info.account);
+                payment_means.payee_specified_creditor_financial_institution = info.institution;
+            }
+        }
 
         let invoice_currency_code = self
             .invoice_currency_code
@@ -140,7 +328,9 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 ),
                 applicable_header_trade_settlement: ApplicableHeaderTradeSettlement {
                     invoice_currency_code,
-                    specified_trade_settlement_payment_means: Vec::new(),
+                    specified_trade_settlement_payment_means: self
+                        .specified_trade_settlement_payment_means
+                        .clone(),
                     applicable_trade_tax: self.applicable_trade_tax.clone(),
                     specified_trade_allowance_charge: self.specified_trade_allowance_charge.clone(),
                     specified_trade_payment_terms: self.specified_trade_payment_terms.clone(),

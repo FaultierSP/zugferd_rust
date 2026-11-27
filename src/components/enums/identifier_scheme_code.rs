@@ -2,6 +2,7 @@ use serde::{Serialize, Serializer};
 
 #[derive(Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
+/// ISO/IEC 6523 — Identifier scheme code
 pub enum IdentifierSchemeCode {
     GTIN,
     SIRENE,

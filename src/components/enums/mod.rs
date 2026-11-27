@@ -1,9 +1,11 @@
 pub mod allowance_charge_reason_code;
+pub mod charge_codes_untdid7161;
 pub mod country_code;
 pub mod currency_code;
 pub mod identifier_scheme_code;
 pub mod invoice_type_code;
 pub mod payment_means_code;
+pub mod product_service_id_untdid7143;
 pub mod specification_level;
 pub mod unit_code;
 pub mod vat_category_code;

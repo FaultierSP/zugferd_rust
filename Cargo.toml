@@ -1,6 +1,6 @@
 [package]
 name = "zugferd"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["FaultierSP <faultiersp@decreation.org>"]
 description = "Generate a ZUGFeRD XML for European e-invoices."
@@ -8,7 +8,8 @@ repository = "https://github.com/FaultierSP/zugferd_rust"
 license = "Apache-2.0"
 
 [dependencies]
-chrono = { version = "0.4.45", default-features = false, features = ["alloc"] }
+base64 = "0.23.0"
+chrono = { version = "0.4.45", default-features = false, features = ["alloc", "serde"] }
 quick-xml = { version = "0.42.0", features = ["serialize"] }
 rust_decimal = "1.43.0"
 serde = { version = "1.0.229", features = ["derive"] }

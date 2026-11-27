@@ -47,11 +47,30 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+    /// Sets the VAT exemption reason text (BT-120) for the first VAT breakdown.
+    pub fn set_applicable_trade_tax_exemption_reason(
+        &mut self,
+        reason: &'invoice_builder str,
+    ) -> &mut Self {
+        self.first_applicable_trade_tax_mut().exemption_reason = Some(reason);
+        self
+    }
+
+    /// Sets the VAT exemption reason code (BT-121) for the first VAT breakdown.
+    pub fn set_applicable_trade_tax_exemption_reason_code(
+        &mut self,
+        code: &'invoice_builder str,
+    ) -> &mut Self {
+        self.first_applicable_trade_tax_mut().exemption_reason_code = Some(code);
+        self
+    }
+
     /// VAT Percentage for the given [`VATCategoryCode`]
     ///
     /// BT-119
     pub fn set_applicable_trade_tax_rate_applicable_percent(&mut self, amount: f64) -> &mut Self {
-        self.first_applicable_trade_tax_mut().rate_applicable_percent = Some(amount);
+        self.first_applicable_trade_tax_mut()
+            .rate_applicable_percent = Some(amount);
         self
     }
 
@@ -65,11 +84,28 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             let new_struct = SpecifiedTradePaymentTerms {
                 description: None,
                 due_date_time: Some(due_date_time),
+                direct_debit_mandate_id: None,
             };
 
             self.specified_trade_payment_terms = Some(new_struct);
         }
 
+        self
+    }
+
+    /// Sets the direct debit mandate reference (BT-89).
+    pub fn set_specified_trade_payment_terms_direct_debit_mandate_id(
+        &mut self,
+        mandate_id: &'invoice_builder str,
+    ) -> &mut Self {
+        let terms = self
+            .specified_trade_payment_terms
+            .get_or_insert(SpecifiedTradePaymentTerms {
+                description: None,
+                due_date_time: None,
+                direct_debit_mandate_id: None,
+            });
+        terms.direct_debit_mandate_id = Some(mandate_id);
         self
     }
 

@@ -58,6 +58,83 @@ fn non_empty_strings_are_kept() {
     assert!(xml.contains("LegalOrg-001"), "{xml}");
 }
 
+#[test]
+fn payment_card_id_is_emitted_without_cardholder_name() {
+    let mut builder = minimum_builder("", "");
+    builder
+        .set_specified_trade_settlement_payment_means_type_code("54")
+        .set_applicable_settlement_financial_card_id("CARD-123");
+
+    let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+    assert!(
+        xml.contains("<ram:ApplicableTradeSettlementFinancialCard><ram:ID>CARD-123</ram:ID></ram:ApplicableTradeSettlementFinancialCard>"),
+        "{xml}"
+    );
+    assert!(!xml.contains("CardholderName"), "{xml}");
+}
+
+#[test]
+fn direct_debit_mandate_and_due_date_can_be_set_in_either_order() {
+    let due_date = date(2025, 4, 12);
+    for mandate_first in [true, false] {
+        let mut builder = minimum_builder("", "");
+        if mandate_first {
+            builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+            builder.set_specified_trade_payment_terms_due_date(due_date);
+        } else {
+            builder.set_specified_trade_payment_terms_due_date(due_date);
+            builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+        }
+        let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+        assert!(
+            xml.contains("<ram:DirectDebitMandateID>MANDATE-123</ram:DirectDebitMandateID>"),
+            "{xml}"
+        );
+        assert!(xml.contains("20250412"), "{xml}");
+    }
+}
+
+#[test]
+fn direct_debit_mandate_does_not_replace_required_due_date() {
+    let mut builder = minimum_builder("", "");
+    builder.set_specified_trade_payment_terms_direct_debit_mandate_id("MANDATE-123");
+    let error = builder
+        .all_fields_are_set(SpecificationLevel::Basic)
+        .unwrap_err();
+    assert!(
+        error.contains("Specified trade payment terms: Due date time not set"),
+        "{error}"
+    );
+    let xml = builder.to_xml_string(SpecificationLevel::Minimum).unwrap();
+    assert!(
+        xml.contains("<ram:DirectDebitMandateID>MANDATE-123</ram:DirectDebitMandateID>"),
+        "{xml}"
+    );
+}
+
+#[test]
+fn payment_card_requires_nonempty_id() {
+    for code in ["48", "54", "55"] {
+        let mut builder = minimum_builder("", "");
+        builder.set_specified_trade_settlement_payment_means_type_code(code);
+        let error = builder.build(SpecificationLevel::Minimum).unwrap_err();
+        assert!(error.contains("financial card: ID not set"), "{error}");
+
+        builder.set_applicable_settlement_financial_card_id("  ");
+        let error = builder
+            .to_xml_string(SpecificationLevel::Minimum)
+            .unwrap_err();
+        assert!(error.contains("financial card: ID not set"), "{error}");
+    }
+
+    let mut builder = minimum_builder("", "");
+    builder.set_applicable_settlement_financial_card_cardholder_name("Invoice Buyer");
+    let error = builder
+        .to_xml_string(SpecificationLevel::Minimum)
+        .unwrap_err();
+    assert!(error.contains("financial card: ID not set"), "{error}");
+}
+
 /// Full invoice as required from BASIC WL upwards, with empty optional values mixed in.
 fn full_builder<'a>() -> InvoiceBuilder<'a> {
     let mut b = minimum_builder("", "");
@@ -71,6 +148,8 @@ fn full_builder<'a>() -> InvoiceBuilder<'a> {
         .set_buyers_postal_trade_address_postcode_code("77777")
         .set_buyers_postal_trade_address_city_name("Springfield")
         .set_occurrence_date(date(2024, 7, 6))
+        .set_payer_financial_account_ibanid("DE89370400440532013000")
+        .set_payee_account_ibanid("DE02120300000000202051")
         .set_applicable_trade_tax_basis_amount(100.0)
         .set_applicable_trade_tax_calculated_amount(19.0)
         .set_applicable_trade_tax_rate_applicable_percent(19.0)
@@ -150,9 +229,7 @@ fn basic_omits_empty_fields() {
     assert_empty_fields_omitted(SpecificationLevel::Basic);
 }
 
-// Enable once the EN 16931 profile is supported (it needs more mandatory fields).
 #[test]
-#[ignore = "EN 16931 profile not implemented yet"]
 fn en16931_omits_empty_fields() {
     assert_empty_fields_omitted(SpecificationLevel::En16931);
 }

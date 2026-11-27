@@ -86,6 +86,39 @@ invoice_builder
     .set_monetary_summation_due_payable_amount(sum_gross - customer_paid_already);
 ~~~
 
+After setting the required EN 16931 data and adding invoice lines, set
+additional fields on the builder:
+
+~~~rust
+use zugferd::{ProjectReference, SpecificationLevel, TaxPoint};
+
+invoice_builder
+    .set_sellers_definedtrade_contact_person_name("Seller contact")
+    .set_sellers_definedtrade_contact_email("seller@example.org")
+    .set_buyers_definedtrade_contact_email("buyer@example.org")
+    .set_project(ProjectReference { id: "P-123", name: "Project" })
+    .set_tax_point(TaxPoint::DateCode("5"));
+let xml_string = invoice_builder.to_xml_string(SpecificationLevel::En16931)?;
+~~~
+
+The standard `build` and `to_xml_string` methods include these fields for the
+EN 16931 and XRechnung profiles. Use `set_line_details` for additional line
+fields: if provided, it must contain one entry for each invoice line, in the
+same order. The contact setters update the existing seller and buyer trade
+contacts; `set_seller_contact` and `set_buyer_contact` also update those same
+contacts, changing only fields supplied as `Some`. Attachments take bytes and
+are encoded as base64. `TradeAllowanceCharge` accepts separate allowance and
+charge reason codes. Invoice totals and code-list validity remain the caller's
+responsibility; XSD validation does not replace EN 16931 business-rule validation.
+
+To build an EN 16931 invoice with a group of additional fields, use
+`build_with_details(AdditionalInvoiceDetails)`. It combines its input with
+builder fields and reports duplicate values rather than silently overriding them.
+
+The EN 16931 XML mappings use `ram:ID` for a project reference,
+`ram:ReferenceTypeCode` for an object-reference scheme, `ram:Description` for
+an item attribute name, and `ram:DueDateTypeCode` for the VAT point date code.
+
 Generate XML:
 
 ~~~rust
@@ -103,14 +136,25 @@ match invoice_builder.to_xml_string(SpecificationLevel::Minimum) {
 println!("Generated ZUGFeRD XML: {}",xml_string);
 ~~~
 
-Please check `main.rs` for further examples.
+Document-level allowances and charges can be added with
+`InvoiceBuilder::add_specified_trade_allowance_charge`. Line-level allowances
+and charges belong in `SpecifiedLineTradeSettlement::specified_trade_allowance_charge`.
+Document-level allowances and charges require at least Basic Without Lines.
+Amounts and totals must be calculated by the caller.
+
+For the first VAT breakdown, exemption text and code can be set using
+`set_applicable_trade_tax_exemption_reason` and
+`set_applicable_trade_tax_exemption_reason_code`. Additional breakdowns can
+provide these fields through `add_applicable_trade_tax`.
+
+// Please check `main.rs` for further examples.
 
 ## Roadmap
 
 - [x] generation of minimum level
 - [x] generation of basic level without lines
 - [x] generation of basic level
-- [ ] generation of EN 16931 level
+- [x] generation of EN 16931 level
 - [ ] generation of extended level
 - [ ] validation of all levels
 - [ ] parsing of all levels

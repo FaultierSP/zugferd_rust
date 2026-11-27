@@ -56,6 +56,25 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text += "Invoice currency code not set\n";
         }
 
+        if specification_level < SpecificationLevel::BasicWithoutLines
+            && !self.specified_trade_allowance_charge.is_empty()
+        {
+            error_text += "Document-level allowances and charges require Basic Without Lines or higher\n";
+        }
+
+        let card_selected = matches!(
+            self.specified_trade_settlement_payment_means_type_code,
+            Some("48" | "54" | "55")
+        ) || self.applicable_settlement_financial_card.is_some();
+        if card_selected
+            && self
+                .applicable_settlement_financial_card
+                .as_ref()
+                .is_none_or(|card| card.id.trim().is_empty())
+        {
+            error_text += "Applicable trade settlement financial card: ID not set\n";
+        }
+
         // Additional checks for different specification levels
         if specification_level >= SpecificationLevel::BasicWithoutLines {
             if self.applicable_trade_tax.is_empty() {
@@ -90,6 +109,18 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 error_text += "Occurrence date not set\n";
             }
 
+            if self.payer_financial_account_ibanid.is_none() {
+                error_text += "Payer financial account IBAN not set\n";
+            }
+
+            if self.payee_account_ibanid.is_none()
+                && self
+                    .payee_party_creditor_financial_account_info
+                    .is_none()
+            {
+                error_text += "Payee account IBAN not set\n";
+            }
+
             for applicable_trade_tax_checker in &self.applicable_trade_tax {
                 if applicable_trade_tax_checker.calculated_amount.is_none() {
                     error_text += "Applicable trade tax: Calculated amount not set\n";
@@ -107,7 +138,11 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
                 }
             }
 
-            if self.specified_trade_payment_terms.is_none() {
+            if self
+                .specified_trade_payment_terms
+                .as_ref()
+                .is_none_or(|terms| terms.due_date_time.is_none())
+            {
                 error_text += "Specified trade payment terms: Due date time not set\n";
             }
 
@@ -131,6 +166,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         {
             error_text += "No included supply chain trade line items set\n";
         }
+
+if specification_level >= SpecificationLevel::En16931 {
+    
+    //no additional mandatory fields for En16931 beyond what has already been checked
+        
+}
 
         if specification_level >= SpecificationLevel::Extended {
             if self.buyer_reference.is_none() {
