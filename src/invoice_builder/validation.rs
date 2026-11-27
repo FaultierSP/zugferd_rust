@@ -56,6 +56,12 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             error_text += "Invoice currency code not set\n";
         }
 
+        if specification_level < SpecificationLevel::BasicWithoutLines
+            && !self.specified_trade_allowance_charge.is_empty()
+        {
+            error_text += "Document-level allowances and charges require Basic Without Lines or higher\n";
+        }
+
         let card_selected = matches!(
             self.specified_trade_settlement_payment_means_type_code,
             Some("48" | "54" | "55")

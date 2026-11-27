@@ -47,6 +47,24 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
         self
     }
 
+    /// Sets the VAT exemption reason text (BT-120) for the first VAT breakdown.
+    pub fn set_applicable_trade_tax_exemption_reason(
+        &mut self,
+        reason: &'invoice_builder str,
+    ) -> &mut Self {
+        self.first_applicable_trade_tax_mut().exemption_reason = Some(reason);
+        self
+    }
+
+    /// Sets the VAT exemption reason code (BT-121) for the first VAT breakdown.
+    pub fn set_applicable_trade_tax_exemption_reason_code(
+        &mut self,
+        code: &'invoice_builder str,
+    ) -> &mut Self {
+        self.first_applicable_trade_tax_mut().exemption_reason_code = Some(code);
+        self
+    }
+
     /// VAT Percentage for the given [`VATCategoryCode`]
     ///
     /// BT-119

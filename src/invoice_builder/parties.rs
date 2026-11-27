@@ -1,8 +1,53 @@
 use super::InvoiceBuilder;
 use crate::components::enums::country_code::CountryCode;
-use crate::components::structs::DefinedTradeContact;
+use crate::components::structs::{ShipTo, TaxRepresentative, TradeContact};
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
+    pub fn set_seller_contact(&mut self, contact: TradeContact<'invoice_builder>) -> &mut Self {
+        let current = self
+            .sellers_defined_trade_contact
+            .get_or_insert_with(Default::default);
+        current.person_name = contact.person_name.or(current.person_name);
+        current.department_name = contact.department_name.or(current.department_name);
+        current.telephone = contact.telephone.or(current.telephone);
+        current.email = contact.email.or(current.email);
+        self
+    }
+
+    pub fn set_buyer_contact(&mut self, contact: TradeContact<'invoice_builder>) -> &mut Self {
+        let current = self
+            .buyers_defined_trade_contact
+            .get_or_insert_with(Default::default);
+        current.person_name = contact.person_name.or(current.person_name);
+        current.department_name = contact.department_name.or(current.department_name);
+        current.telephone = contact.telephone.or(current.telephone);
+        current.email = contact.email.or(current.email);
+        self
+    }
+
+    pub fn set_seller_region(&mut self, region: &'invoice_builder str) -> &mut Self {
+        self.seller_region = Some(region);
+        self
+    }
+
+    pub fn set_buyer_region(&mut self, region: &'invoice_builder str) -> &mut Self {
+        self.buyer_region = Some(region);
+        self
+    }
+
+    pub fn set_tax_representative(
+        &mut self,
+        representative: TaxRepresentative<'invoice_builder>,
+    ) -> &mut Self {
+        self.tax_representative = Some(representative);
+        self
+    }
+
+    pub fn set_ship_to(&mut self, ship_to: ShipTo<'invoice_builder>) -> &mut Self {
+        self.ship_to = Some(ship_to);
+        self
+    }
+
     /// Buyer reference
     ///
     /// An identifier assigned by the Buyer used for internal routing purposes.
@@ -184,11 +229,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .buyers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
+            .get_or_insert_with(Default::default);
         contact.person_name = Some(contact_person_name.into());
         self
     }
@@ -201,11 +242,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .buyers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
+            .get_or_insert_with(Default::default);
         contact.department_name = Some(department_name.into());
         self
     }
@@ -221,14 +258,21 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .buyers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
-        contact.complete_number = Some(department_name.into());
+            .get_or_insert_with(Default::default);
+        contact.telephone = Some(department_name.into());
         self
     }   
+
+    /// Sets the buyer contact email address (BT-58).
+    pub fn set_buyers_definedtrade_contact_email<T: Into<&'invoice_builder str>>(
+        &mut self,
+        email: T,
+    ) -> &mut Self {
+        self.buyers_defined_trade_contact
+            .get_or_insert_with(Default::default)
+            .email = Some(email.into());
+        self
+    }
 
     /// Postal code, zip code or similar
     ///
@@ -318,11 +362,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .sellers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
+            .get_or_insert_with(Default::default);
         contact.person_name = Some(contact_person_name.into());
         self
     }
@@ -335,11 +375,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .sellers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
+            .get_or_insert_with(Default::default);
         contact.department_name = Some(department_name.into());
         self
     }
@@ -355,12 +391,19 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
     ) -> &mut Self {
         let contact = self
             .sellers_defined_trade_contact
-            .get_or_insert(DefinedTradeContact {
-                person_name: None,
-                department_name: None,
-                complete_number: None,
-            });
-        contact.complete_number = Some(complete_number.into());
+            .get_or_insert_with(Default::default);
+        contact.telephone = Some(complete_number.into());
+        self
+    }
+
+    /// Sets the seller contact email address (BT-43).
+    pub fn set_sellers_definedtrade_contact_email<T: Into<&'invoice_builder str>>(
+        &mut self,
+        email: T,
+    ) -> &mut Self {
+        self.sellers_defined_trade_contact
+            .get_or_insert_with(Default::default)
+            .email = Some(email.into());
         self
     }
 }

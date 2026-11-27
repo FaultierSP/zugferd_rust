@@ -3,11 +3,36 @@ use crate::components::enums::currency_code::CurrencyCode;
 use crate::components::structs::{
     ApplicableTradeSettlementFinancialCard, PayeePartyCreditorFinancialAccount,
     PayeePartyCreditorFinancialAccountInfo, PayeeSpecifiedCreditorFinancialInstitution,
+    TradeAllowanceCharge, TaxPoint, SpecifiedTradeAllowanceCharge, TaxTotalAmount,
 };
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
+    pub fn set_accounting_currency_tax(&mut self, tax: TaxTotalAmount) -> &mut Self {
+        self.accounting_currency_tax = Some(tax);
+        self
+    }
+
+    pub fn set_tax_point(&mut self, tax_point: TaxPoint<'invoice_builder>) -> &mut Self {
+        self.tax_point = Some(tax_point);
+        self
+    }
+
+    pub fn add_document_charge(&mut self, charge: TradeAllowanceCharge<'invoice_builder>) -> &mut Self {
+        self.document_charges.push(charge);
+        self
+    }
+
     pub fn set_invoice_currency_code(&mut self, invoice_currency_code: CurrencyCode) -> &mut Self {
         self.invoice_currency_code = Some(invoice_currency_code);
+        self
+    }
+
+    /// Adds a document-level allowance or charge (BG-20 / BG-21).
+    pub fn add_specified_trade_allowance_charge(
+        &mut self,
+        allowance_charge: SpecifiedTradeAllowanceCharge<'invoice_builder>,
+    ) -> &mut Self {
+        self.specified_trade_allowance_charge.push(allowance_charge);
         self
     }
 

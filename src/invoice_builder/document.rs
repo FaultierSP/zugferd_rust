@@ -1,9 +1,50 @@
 use super::InvoiceBuilder;
 use crate::components::enums::invoice_type_code::InvoiceTypeCode;
-use crate::components::structs::{DateTimeString, IncludedNote};
+use crate::components::structs::{
+    DateTimeString, IncludedNote, ObjectReference, ProjectReference, SupportingDocument,
+};
 use chrono::NaiveDate;
 
 impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
+    pub fn set_seller_order_reference(&mut self, reference: &'invoice_builder str) -> &mut Self {
+        self.seller_order_reference = Some(reference);
+        self
+    }
+
+    pub fn set_tender_reference(&mut self, reference: &'invoice_builder str) -> &mut Self {
+        self.tender_reference = Some(reference);
+        self
+    }
+
+    pub fn set_object_reference(
+        &mut self,
+        reference: ObjectReference<'invoice_builder>,
+    ) -> &mut Self {
+        self.object_reference = Some(reference);
+        self
+    }
+
+    pub fn add_supporting_document(
+        &mut self,
+        document: SupportingDocument<'invoice_builder>,
+    ) -> &mut Self {
+        self.supporting_documents.push(document);
+        self
+    }
+
+    pub fn set_project(&mut self, project: ProjectReference<'invoice_builder>) -> &mut Self {
+        self.project = Some(project);
+        self
+    }
+
+    pub fn set_receiving_advice_reference(
+        &mut self,
+        reference: &'invoice_builder str,
+    ) -> &mut Self {
+        self.receiving_advice_reference = Some(reference);
+        self
+    }
+
     /// Identifies the business process context in which the transaction appears,
     /// to enable the Buyer to process the Invoice in an appropriate way.
     ///

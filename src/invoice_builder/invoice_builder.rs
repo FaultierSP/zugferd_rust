@@ -85,6 +85,7 @@ pub struct InvoiceBuilder<'invoice_builder> {
     payee_account_ibanid: Option<&'invoice_builder str>,
     payee_financial_account_proprietary_id: Option<&'invoice_builder str>,
     specified_trade_payment_terms: Option<SpecifiedTradePaymentTerms<'invoice_builder>>,
+    specified_trade_allowance_charge: Vec<SpecifiedTradeAllowanceCharge<'invoice_builder>>,
 
     //Basic specification
     included_supply_chain_trade_line_items: Vec<IncludedSupplyChainTradeLineItem<'invoice_builder>>,
@@ -96,10 +97,25 @@ pub struct InvoiceBuilder<'invoice_builder> {
     payee_party_creditor_financial_account_info: Option<PayeePartyCreditorFinancialAccountInfo<'invoice_builder>>,
     // parties according to EN 16931 specification
     buyer_trade_party_trading_business_name: Option<&'invoice_builder str>,
-    buyers_defined_trade_contact: Option<DefinedTradeContact<'invoice_builder>>,
+    buyers_defined_trade_contact: Option<TradeContact<'invoice_builder>>,
     sellers_description: Option<&'invoice_builder str>,
     seller_trade_party_trading_business_name: Option<&'invoice_builder str>,
-    sellers_defined_trade_contact: Option<DefinedTradeContact<'invoice_builder>>,
+    sellers_defined_trade_contact: Option<TradeContact<'invoice_builder>>,
+
+    seller_region: Option<&'invoice_builder str>,
+    buyer_region: Option<&'invoice_builder str>,
+    tax_representative: Option<TaxRepresentative<'invoice_builder>>,
+    ship_to: Option<ShipTo<'invoice_builder>>,
+    seller_order_reference: Option<&'invoice_builder str>,
+    tender_reference: Option<&'invoice_builder str>,
+    object_reference: Option<ObjectReference<'invoice_builder>>,
+    supporting_documents: Vec<SupportingDocument<'invoice_builder>>,
+    project: Option<ProjectReference<'invoice_builder>>,
+    receiving_advice_reference: Option<&'invoice_builder str>,
+    accounting_currency_tax: Option<TaxTotalAmount>,
+    tax_point: Option<TaxPoint<'invoice_builder>>,
+    document_charges: Vec<TradeAllowanceCharge<'invoice_builder>>,
+    line_details: Vec<InvoiceLineDetails<'invoice_builder>>,
 }
 
 impl<'invoice_builder> Default for InvoiceBuilder<'invoice_builder> {
@@ -144,6 +160,7 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             payee_financial_account_proprietary_id: None,
             payee_party_creditor_financial_account_info: None,
             specified_trade_payment_terms: None,
+            specified_trade_allowance_charge: Vec::new(),
 
             included_supply_chain_trade_line_items: Vec::new(),
             buyer_trade_party_trading_business_name: None,
@@ -151,6 +168,20 @@ impl<'invoice_builder> InvoiceBuilder<'invoice_builder> {
             sellers_description: None,
             seller_trade_party_trading_business_name: None,
             sellers_defined_trade_contact: None,
+            seller_region: None,
+            buyer_region: None,
+            tax_representative: None,
+            ship_to: None,
+            seller_order_reference: None,
+            tender_reference: None,
+            object_reference: None,
+            supporting_documents: Vec::new(),
+            project: None,
+            receiving_advice_reference: None,
+            accounting_currency_tax: None,
+            tax_point: None,
+            document_charges: Vec::new(),
+            line_details: Vec::new(),
 
         }
     }

@@ -229,9 +229,7 @@ fn basic_omits_empty_fields() {
     assert_empty_fields_omitted(SpecificationLevel::Basic);
 }
 
-// Enable once the EN 16931 profile is supported (it needs more mandatory fields).
 #[test]
-#[ignore = "EN 16931 profile not implemented yet"]
 fn en16931_omits_empty_fields() {
     assert_empty_fields_omitted(SpecificationLevel::En16931);
 }

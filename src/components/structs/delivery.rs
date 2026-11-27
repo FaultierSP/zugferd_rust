@@ -1,4 +1,6 @@
+use super::agreement::{AddressView, PostalAddressDetails, ReferenceView};
 use super::context_document::DateTimeString;
+use super::invoice::AdditionalInvoiceDetails;
 use serde::Serialize;
 
 #[derive(Serialize, Clone, Debug)]
@@ -39,6 +41,53 @@ impl<'invoice> ApplicableHeaderTradeDelivery<'invoice> {
             } else {
                 None
             },
+        }
+    }
+}
+
+#[derive(Serialize, Clone, Debug)]
+pub struct ShipTo<'a> {
+    pub address: PostalAddressDetails<'a>,
+}
+
+#[derive(Serialize)]
+struct ShipToView<'s, 'a> {
+    #[serde(rename = "ram:PostalTradeAddress")]
+    address: AddressView<'s, 'a>,
+}
+
+#[derive(Serialize)]
+pub(super) struct DeliveryView<'s, 'a> {
+    #[serde(
+        rename = "ram:ShipToTradeParty",
+        skip_serializing_if = "Option::is_none"
+    )]
+    ship_to: Option<ShipToView<'s, 'a>>,
+    #[serde(
+        rename = "ram:ActualDeliverySupplyChainEvent",
+        skip_serializing_if = "Option::is_none"
+    )]
+    event: &'s Option<ActualDeliverySupplyChainEvent<'a>>,
+    #[serde(
+        rename = "ram:ReceivingAdviceReferencedDocument",
+        skip_serializing_if = "Option::is_none"
+    )]
+    receiving_advice: Option<ReferenceView<'a>>,
+}
+
+impl<'s, 'a> DeliveryView<'s, 'a> {
+    pub(super) fn new(
+        base: &'s ApplicableHeaderTradeDelivery<'a>,
+        details: &'s AdditionalInvoiceDetails<'a>,
+    ) -> Self {
+        Self {
+            ship_to: details.ship_to.as_ref().map(|ship| ShipToView {
+                address: AddressView::new(&ship.address.address, ship.address.region),
+            }),
+            event: &base.actual_delivery_supply_chain_event,
+            receiving_advice: details
+                .receiving_advice_reference
+                .map(|id| ReferenceView::id(id, None, None)),
         }
     }
 }
